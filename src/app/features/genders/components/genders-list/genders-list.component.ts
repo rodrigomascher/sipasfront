@@ -19,6 +19,16 @@ import * as GendersSelectors from '../../store/genders.selectors';
         <button class="btn btn-primary" routerLink="/genders/create">+ Novo Gênero</button>
       </div>
 
+      <div class="search-box">
+        <input
+          type="text"
+          placeholder="Buscar por descrição..."
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearch()"
+          class="search-input"
+        />
+      </div>
+
       <div *ngIf="loading$ | async" style="text-align: center; padding: 20px;">
         Carregando...
       </div>
@@ -33,8 +43,8 @@ import * as GendersSelectors from '../../store/genders.selectors';
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let gender of genders$ | async">
-            <td>{{ gender.id }}</td>
+          <tr *ngFor="let gender of filteredGenders">
+            <td>#{{ gender.id }}</td>
             <td>{{ gender.description }}</td>
             <td>{{ gender.active ? 'Sim' : 'Não' }}</td>
             <td class="actions">
@@ -166,11 +176,32 @@ import * as GendersSelectors from '../../store/genders.selectors';
       padding: 40px;
       color: #999;
     }
+
+    .search-box {
+      margin-bottom: 1.5rem;
+    }
+
+    .search-input {
+      width: 100%;
+      max-width: 500px;
+      padding: 0.75rem;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #1976d2;
+      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+    }
   `]
 })
 export class GendersListComponent implements OnInit {
   genders$: Observable<Gender[]>;
   loading$: Observable<boolean>;
+  filteredGenders: Gender[] = [];
+  searchTerm: string = '';
 
   constructor(
     private store: Store<{ genders: any }>,
@@ -182,6 +213,17 @@ export class GendersListComponent implements OnInit {
 
   ngOnInit() {
     this.store.dispatch(GendersActions.loadGenders());
+    this.genders$.subscribe(genders => {
+      this.filteredGenders = genders;
+    });
+  }
+
+  onSearch() {
+    this.genders$.subscribe(genders => {
+      this.filteredGenders = genders.filter(gender =>
+        gender.description.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+    });
   }
 
   delete(id: number) {

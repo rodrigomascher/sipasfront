@@ -19,6 +19,16 @@ import * as Selectors from '../../store/gender-identities.selectors';
         <button class="btn btn-primary" routerLink="/gender-identities/create">+ Nova Identidade</button>
       </div>
 
+      <div class="search-box">
+        <input
+          type="text"
+          placeholder="Buscar por descrição..."
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearch()"
+          class="search-input"
+        />
+      </div>
+
       <div *ngIf="loading$ | async" style="text-align: center; padding: 20px;">
         Carregando...
       </div>
@@ -33,8 +43,8 @@ import * as Selectors from '../../store/gender-identities.selectors';
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let item of genderIdentities$ | async">
-            <td>{{ item.id }}</td>
+          <tr *ngFor="let item of filteredItems">
+            <td>#{{ item.id }}</td>
             <td>{{ item.description }}</td>
             <td>{{ item.active ? 'Sim' : 'Não' }}</td>
             <td class="actions">
@@ -166,11 +176,32 @@ import * as Selectors from '../../store/gender-identities.selectors';
       padding: 40px;
       color: #999;
     }
+
+    .search-box {
+      margin-bottom: 1.5rem;
+    }
+
+    .search-input {
+      width: 100%;
+      max-width: 500px;
+      padding: 0.75rem;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #1976d2;
+      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+    }
   `]
 })
 export class GenderIdentitiesListComponent implements OnInit {
   genderIdentities$: Observable<GenderIdentity[]>;
   loading$: Observable<boolean>;
+  filteredItems: GenderIdentity[] = [];
+  searchTerm: string = '';
 
   constructor(private store: Store<{ genderIdentities: any }>) {
     this.genderIdentities$ = this.store.select(Selectors.selectAllGenderIdentities);
@@ -179,6 +210,17 @@ export class GenderIdentitiesListComponent implements OnInit {
 
   ngOnInit() {
     this.store.dispatch(Actions.loadGenderIdentities());
+    this.genderIdentities$.subscribe(items => {
+      this.filteredItems = items;
+    });
+  }
+
+  onSearch() {
+    this.genderIdentities$.subscribe(items => {
+      this.filteredItems = items.filter(item =>
+        item.description.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+    });
   }
 
   delete(id: number) {
