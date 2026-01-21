@@ -328,6 +328,7 @@ export class GenericListComponent implements OnInit, OnDestroy {
   @Input() createRoute: string = '';
   @Input() searchPlaceholder: string = 'Buscar...';
   @Input() emptyMessage: string = 'Nenhum item encontrado';
+  @Input() searchFields: string[] = ['description'];
   @Input() paginationConfig: PaginationConfig = {
     pageSize: 10,
     pageSizeOptions: [5, 10, 25, 50, 100]

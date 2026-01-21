@@ -36,6 +36,8 @@ export const relationshipDegreeReducer = createReducer(
     page: response.page,
     pageSize: response.pageSize,
     totalPages: response.totalPages,
+    loading: false,
+  })),
   on(RelationshipDegreeActions.loadRelationshipDegreesFailure, (state, { error }) => ({
     ...state,
     error,

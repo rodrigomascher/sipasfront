@@ -84,4 +84,9 @@ export class RelationshipDegreeListComponent implements OnInit {
   }
 
   onPaginationChange(params: PaginationParams): void {
-    this.store.dispatch(RelationshipDegreeActions.loadRelationshipDegrees({ params }));
+    this.store.dispatch(RelationshipDegreeActions.loadRelationshipDegrees({ params }));  }
+
+  onDelete(item: RelationshipDegree): void {
+    this.store.dispatch(RelationshipDegreeActions.deleteRelationshipDegree({ id: item.id }));
+  }
+}

@@ -85,6 +85,9 @@ export class FamilyCompositionListComponent implements OnInit {
 
   onPaginationChange(params: PaginationParams): void {
     this.store.dispatch(FamilyCompositionActions.loadFamilyCompositions({ params }));
-    }));
   }
-}
+
+  onDelete(item: FamilyComposition): void {
+    this.store.dispatch(FamilyCompositionActions.deleteFamilyComposition({ 
+      idFamilyComposition: item.idFamilyComposition, 
+      idPerson: item.idPerson 
