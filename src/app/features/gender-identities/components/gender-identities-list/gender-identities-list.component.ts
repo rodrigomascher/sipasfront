@@ -13,38 +13,35 @@ import * as Selectors from '../../store/gender-identities.selectors';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   template: `
-    <div style="padding: 20px;">
-      <h2>Identidades de Gênero</h2>
-      
-      <div style="margin-bottom: 20px;">
-        <a routerLink="/gender-identities/create" style="padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">
-          + Nova Identidade
-        </a>
+    <div class="container">
+      <div class="header">
+        <h1>Identidades de Gênero</h1>
+        <button class="btn btn-primary" routerLink="/gender-identities/create">+ Nova Identidade</button>
       </div>
 
       <div *ngIf="loading$ | async" style="text-align: center; padding: 20px;">
         Carregando...
       </div>
 
-      <table style="width: 100%; border-collapse: collapse;" *ngIf="!(loading$ | async)">
+      <table class="data-table" *ngIf="!(loading$ | async)">
         <thead>
-          <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
-            <th style="padding: 12px; text-align: left;">ID</th>
-            <th style="padding: 12px; text-align: left;">Descrição</th>
-            <th style="padding: 12px; text-align: left;">Ativo</th>
-            <th style="padding: 12px; text-align: center;">Ações</th>
+          <tr>
+            <th>ID</th>
+            <th>Descrição</th>
+            <th>Ativo</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let item of genderIdentities$ | async" style="border-bottom: 1px solid #dee2e6;">
-            <td style="padding: 12px;">{{ item.id }}</td>
-            <td style="padding: 12px;">{{ item.description }}</td>
-            <td style="padding: 12px;">{{ item.active ? 'Sim' : 'Não' }}</td>
-            <td style="padding: 12px; text-align: center;">
-              <a [routerLink]="['/gender-identities', item.id, 'edit']" style="margin-right: 10px; color: #007bff; text-decoration: none;">
+          <tr *ngFor="let item of genderIdentities$ | async">
+            <td>{{ item.id }}</td>
+            <td>{{ item.description }}</td>
+            <td>{{ item.active ? 'Sim' : 'Não' }}</td>
+            <td class="actions">
+              <button class="btn-sm btn-info" [routerLink]="['/gender-identities', item.id, 'edit']" title="Editar">
                 Editar
-              </a>
-              <button (click)="delete(item.id)" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+              </button>
+              <button class="btn-sm btn-danger" (click)="delete(item.id)" title="Deletar">
                 Deletar
               </button>
             </td>
@@ -52,11 +49,124 @@ import * as Selectors from '../../store/gender-identities.selectors';
         </tbody>
       </table>
 
-      <div *ngIf="(genderIdentities$ | async)?.length === 0 && !(loading$ | async)" style="text-align: center; padding: 40px; color: #999;">
-        Nenhuma identidade cadastrada
+      <div *ngIf="(genderIdentities$ | async)?.length === 0 && !(loading$ | async)" class="no-data">
+        <p>Nenhuma identidade cadastrada</p>
       </div>
     </div>
   `,
+  styles: [`
+    .container {
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      color: #333;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background-color: #1976d2;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #1565c0;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .data-table thead {
+      background: #f8f9fa;
+      border-bottom: 2px solid #dee2e6;
+    }
+
+    .data-table th {
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .data-table td {
+      padding: 12px;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .data-table tbody tr:hover {
+      background: #f8f9fa;
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+
+    .btn-sm {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-info {
+      background-color: #17a2b8;
+      color: white;
+    }
+
+    .btn-info:hover {
+      background-color: #138496;
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+  `]
 })
 export class GenderIdentitiesListComponent implements OnInit {
   genderIdentities$: Observable<GenderIdentity[]>;
