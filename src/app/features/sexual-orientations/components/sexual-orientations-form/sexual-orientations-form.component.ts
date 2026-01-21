@@ -12,49 +12,189 @@ import * as Selectors from '../../store/sexual-orientations.selectors';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
-    <div style="padding: 20px; max-width: 600px; margin: 0 auto;">
-      <h2>{{ isEditMode ? 'Editar Orientação' : 'Nova Orientação' }}</h2>
+    <div class="container">
+      <div class="form-header">
+        <h1>{{ isEditMode ? 'Editar Orientação Sexual' : 'Nova Orientação Sexual' }}</h1>
+        <button class="btn btn-secondary" routerLink="/sexual-orientations">← Voltar</button>
+      </div>
 
-      <form [formGroup]="form" (ngSubmit)="submit()" style="margin-top: 20px;">
-        <div style="margin-bottom: 15px;">
-          <label style="display: block; margin-bottom: 5px; font-weight: bold;">Descrição *</label>
-          <input
-            type="text"
-            formControlName="description"
-            placeholder="Ex: Heterossexual"
-            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box;"
-          />
-          <div *ngIf="form.get('description')?.invalid && form.get('description')?.touched" style="color: #dc3545; font-size: 12px; margin-top: 5px;">
-            Campo obrigatório
+      <div class="form-card">
+        <div *ngIf="error$ | async as error" class="alert alert-danger">
+          ⚠️ {{ error }}
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="submit()">
+          <div class="form-group">
+            <label for="description">Descrição *</label>
+            <input
+              type="text"
+              id="description"
+              formControlName="description"
+              placeholder="Ex: Heterossexual, Homossexual"
+              required
+            />
+            <small *ngIf="form.get('description')?.invalid && form.get('description')?.touched" class="error">
+              Campo obrigatório
+            </small>
           </div>
-        </div>
 
-        <div style="margin-bottom: 15px;">
-          <label style="display: flex; align-items: center;">
-            <input type="checkbox" formControlName="active" style="margin-right: 8px;" />
-            <span>Ativo</span>
-          </label>
-        </div>
+          <div class="form-group">
+            <label for="active">
+              <input
+                type="checkbox"
+                id="active"
+                formControlName="active"
+              />
+              Ativo
+            </label>
+          </div>
 
-        <div style="display: flex; gap: 10px;">
-          <button
-            type="submit"
-            [disabled]="!form.valid || (loading$ | async)"
-            style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; flex: 1;"
-          >
-            {{ isEditMode ? 'Atualizar' : 'Criar' }}
-          </button>
-          <a routerLink="/sexual-orientations" style="padding: 10px 20px; background: #6c757d; color: white; text-decoration: none; border-radius: 4px; text-align: center; flex: 1;">
-            Cancelar
-          </a>
-        </div>
-      </form>
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              class="btn btn-primary" 
+              [disabled]="!form.valid || (loading$ | async)"
+            >
+              {{ (loading$ | async) ? 'Salvando...' : (isEditMode ? 'Atualizar' : 'Salvar') }}
+            </button>
+            <button type="button" class="btn btn-secondary" routerLink="/sexual-orientations">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   `,
+  styles: [`
+    .container {
+      padding: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .form-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2rem;
+      color: #333;
+    }
+
+    .form-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #333;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #1976d2;
+      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+    }
+
+    input[type="checkbox"] {
+      margin-right: 0.5rem;
+      cursor: pointer;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background-color: #1976d2;
+      color: white;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: #1565c0;
+    }
+
+    .btn-primary:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background-color: #f0f0f0;
+      color: #333;
+      border: 1px solid #ddd;
+    }
+
+    .btn-secondary:hover {
+      background-color: #e0e0e0;
+    }
+
+    .alert {
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+    }
+
+    .alert-danger {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    small.error {
+      display: block;
+      color: #dc3545;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+  `]
 })
 export class SexualOrientationsFormComponent implements OnInit {
   form: FormGroup;
   loading$: Observable<boolean>;
+  error$: Observable<string | null>;
   isEditMode = false;
   itemId: number | null = null;
 
@@ -69,6 +209,7 @@ export class SexualOrientationsFormComponent implements OnInit {
       active: [true],
     });
     this.loading$ = this.store.select(Selectors.selectSexualOrientationsLoading);
+    this.error$ = this.store.select(Selectors.selectSexualOrientationsError);
   }
 
   ngOnInit() {
