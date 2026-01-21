@@ -47,6 +47,21 @@ export const routes: Routes = [
     loadChildren: () => import('./features/persons/persons.routes').then(m => m.personsRoutes)
   },
   {
+    path: 'genders',
+    canActivate: [authGuard],
+    loadChildren: () => import('./features/genders/genders.routes').then(m => m.gendersRoutes)
+  },
+  {
+    path: 'gender-identities',
+    canActivate: [authGuard],
+    loadChildren: () => import('./features/gender-identities/gender-identities.routes').then(m => m.genderIdentitiesRoutes)
+  },
+  {
+    path: 'sexual-orientations',
+    canActivate: [authGuard],
+    loadChildren: () => import('./features/sexual-orientations/sexual-orientations.routes').then(m => m.sexualOrientationsRoutes)
+  },
+  {
     path: '**',
     redirectTo: '/auth/login'
   }

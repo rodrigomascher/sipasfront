@@ -46,6 +46,9 @@ import { AuthService } from './core/services/auth.service';
                 <li><a routerLink="/departments" routerLinkActive="active">Departamentos</a></li>
                 <li><a routerLink="/roles" routerLinkActive="active">Cargos</a></li>
                 <li><a routerLink="/employees" routerLinkActive="active">Funcionários</a></li>
+                <li><a routerLink="/genders" routerLinkActive="active">Gêneros</a></li>
+                <li><a routerLink="/gender-identities" routerLinkActive="active">Identidades de Gênero</a></li>
+                <li><a routerLink="/sexual-orientations" routerLinkActive="active">Orientação Sexual</a></li>
               </ul>
             </div>
 

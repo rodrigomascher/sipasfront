@@ -15,12 +15,18 @@ import { departmentsReducer } from './app/store/departments/departments.reducer'
 import { rolesReducer } from './app/store/roles/roles.reducer';
 import { employeesReducer } from './app/store/employees/employees.reducer';
 import { personsReducer } from './app/features/persons/store/persons.reducer';
+import { gendersReducer } from './app/features/genders/store/genders.reducer';
+import { genderIdentitiesReducer } from './app/features/gender-identities/store/gender-identities.reducer';
+import { sexualOrientationsReducer } from './app/features/sexual-orientations/store/sexual-orientations.reducer';
 import { UnitsEffects } from './app/store/units/units.effects';
 import { UsersEffects } from './app/store/users/users.effects';
 import { DepartmentsEffects } from './app/store/departments/departments.effects';
 import { RolesEffects } from './app/store/roles/roles.effects';
 import { EmployeesEffects } from './app/store/employees/employees.effects';
 import { PersonsEffects } from './app/features/persons/store/persons.effects';
+import { GendersEffects } from './app/features/genders/store/genders.effects';
+import { GenderIdentitiesEffects } from './app/features/gender-identities/store/gender-identities.effects';
+import { SexualOrientationsEffects } from './app/features/sexual-orientations/store/sexual-orientations.effects';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -34,9 +40,12 @@ bootstrapApplication(AppComponent, {
       departments: departmentsReducer,
       roles: rolesReducer,
       employees: employeesReducer,
-      persons: personsReducer
+      persons: personsReducer,
+      genders: gendersReducer,
+      genderIdentities: genderIdentitiesReducer,
+      sexualOrientations: sexualOrientationsReducer
     }),
-    provideEffects([UnitsEffects, UsersEffects, DepartmentsEffects, RolesEffects, EmployeesEffects, PersonsEffects]),
+    provideEffects([UnitsEffects, UsersEffects, DepartmentsEffects, RolesEffects, EmployeesEffects, PersonsEffects, GendersEffects, GenderIdentitiesEffects, SexualOrientationsEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: environment.production }),
   ],
 }).catch(err => console.error(err));

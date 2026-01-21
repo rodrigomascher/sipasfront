@@ -71,11 +71,6 @@ import { LoadingSpinnerComponent } from '../../../../shared/components/loading-s
 
           <div class="form-row">
             <div class="form-group">
-              <label>Apelido</label>
-              <input type="text" formControlName="nickname" placeholder="Apelido" />
-            </div>
-
-            <div class="form-group">
               <label>Sexo</label>
               <select formControlName="sex">
                 <option value="">Selecione...</option>
@@ -83,17 +78,35 @@ import { LoadingSpinnerComponent } from '../../../../shared/components/loading-s
                 <option value="2">Feminino</option>
               </select>
             </div>
-          </div>
 
-          <div class="form-row">
             <div class="form-group">
               <label>Gênero</label>
-              <input type="text" formControlName="genderId" placeholder="ID do Gênero" />
+              <select formControlName="genderId">
+                <option value="">Selecione...</option>
+                <option *ngFor="let gender of (genders$ | async)" [value]="gender.id">
+                  {{ gender.description }}
+                </option>
+              </select>
             </div>
 
             <div class="form-group">
               <label>Identidade de Gênero</label>
-              <input type="text" formControlName="genderIdentityId" placeholder="ID da Identidade de Gênero" />
+              <select formControlName="genderIdentityId">
+                <option value="">Selecione...</option>
+                <option *ngFor="let identity of (genderIdentities$ | async)" [value]="identity.id">
+                  {{ identity.description }}
+                </option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Orientação Sexual</label>
+              <select formControlName="sexualOrientation">
+                <option value="">Selecione...</option>
+                <option *ngFor="let orientation of (sexualOrientations$ | async)" [value]="orientation.id">
+                  {{ orientation.description }}
+                </option>
+              </select>
             </div>
           </div>
 
@@ -164,17 +177,6 @@ import { LoadingSpinnerComponent } from '../../../../shared/components/loading-s
             </div>
           </div>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label>RG Mãe</label>
-              <input type="text" formControlName="motherRg" placeholder="RG da Mãe" />
-            </div>
-
-            <div class="form-group">
-              <label>RG Pai</label>
-              <input type="text" formControlName="fatherRg" placeholder="RG do Pai" />
-            </div>
-          </div>
         </div>
 
         <!-- Tab 3: Certidão -->
@@ -277,18 +279,6 @@ import { LoadingSpinnerComponent } from '../../../../shared/components/loading-s
         <div class="tab-content" *ngIf="selectedTab === 4">
           <div class="form-row">
             <div class="form-group">
-              <label>Orientação Sexual</label>
-              <select formControlName="sexualOrientation">
-                <option value="">Selecione...</option>
-                <option value="H">Heterossexual</option>
-                <option value="G">Gay</option>
-                <option value="L">Lésbica</option>
-                <option value="B">Bissexual</option>
-                <option value="O">Outro</option>
-              </select>
-            </div>
-
-            <div class="form-group">
               <label>Raça/Cor</label>
               <input type="text" formControlName="raceId" placeholder="ID Raça/Cor" />
             </div>
@@ -297,9 +287,7 @@ import { LoadingSpinnerComponent } from '../../../../shared/components/loading-s
               <label>Etnia</label>
               <input type="text" formControlName="ethnicityId" placeholder="ID Etnia" />
             </div>
-          </div>
 
-          <div class="form-row">
             <div class="form-group">
               <label>Estado Civil</label>
               <input type="text" formControlName="maritalStatusId" placeholder="ID Estado Civil" />
@@ -566,6 +554,9 @@ export class PersonsFormComponent implements OnInit {
   persons$: Observable<Person[]>;
   loading$: Observable<boolean>;
   error$: Observable<any>;
+  genders$: Observable<any[]>;
+  genderIdentities$: Observable<any[]>;
+  sexualOrientations$: Observable<any[]>;
 
   tabs = [
     'Dados Básicos',
@@ -589,7 +580,7 @@ export class PersonsFormComponent implements OnInit {
       lastName: ['', [Validators.required, Validators.minLength(3)]],
       birthDate: ['', Validators.required],
       fullName: [''],
-      nickname: [''],
+      socialName: [''],
       sex: [''],
       genderId: [''],
       genderIdentityId: [''],
@@ -603,8 +594,6 @@ export class PersonsFormComponent implements OnInit {
       arrivalDateBrazil: [''],
       motherPersonId: [''],
       fatherPersonId: [''],
-      motherRg: [''],
-      fatherRg: [''],
       motherResidenceOrder: [''],
       fatherResidenceOrder: [''],
       cpf: [''],
@@ -657,10 +646,17 @@ export class PersonsFormComponent implements OnInit {
     this.persons$ = this.store.select(state => (state as any).persons?.persons || []);
     this.loading$ = this.store.select(state => (state as any).persons?.loading || false);
     this.error$ = this.store.select(state => (state as any).persons?.error || null);
+    this.genders$ = this.store.select(state => (state as any).genders?.genders || []);
+    this.genderIdentities$ = this.store.select(state => (state as any).genderIdentities?.genderIdentities || []);
+    this.sexualOrientations$ = this.store.select(state => (state as any).sexualOrientations?.sexualOrientations || []);
   }
 
   ngOnInit(): void {
     this.store.dispatch(PersonsActions.loadPersons());
+    // Load dropdown data
+    this.store.dispatch({type: '[Genders] Load'});
+    this.store.dispatch({type: '[Gender Identities] Load'});
+    this.store.dispatch({type: '[Sexual Orientations] Load'});
 
     this.route.params.subscribe(params => {
       if (params['id']) {
