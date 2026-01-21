@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import * as Actions from '../../store/gender-identities.actions';
@@ -10,7 +10,7 @@ import * as Selectors from '../../store/gender-identities.selectors';
 @Component({
   selector: 'app-gender-identities-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule],
   template: `
     <div class="container">
       <div class="form-header">
@@ -19,10 +19,6 @@ import * as Selectors from '../../store/gender-identities.selectors';
       </div>
 
       <div class="form-card">
-        <div *ngIf="error$ | async as error" class="alert alert-danger">
-          ⚠️ {{ error }}
-        </div>
-
         <form [formGroup]="form" (ngSubmit)="submit()">
           <div class="form-group">
             <label for="description">Descrição *</label>
@@ -62,6 +58,10 @@ import * as Selectors from '../../store/gender-identities.selectors';
             </button>
           </div>
         </form>
+
+        <div *ngIf="error$ | async as error" class="alert alert-danger">
+          {{ error }}
+        </div>
       </div>
     </div>
   `,
@@ -178,6 +178,7 @@ import * as Selectors from '../../store/gender-identities.selectors';
     }
 
     .alert-danger {
+      margin-top: 1rem;
       background-color: #f8d7da;
       color: #721c24;
       border: 1px solid #f5c6cb;
@@ -241,5 +242,9 @@ export class GenderIdentitiesFormComponent implements OnInit {
     setTimeout(() => {
       this.router.navigate(['/gender-identities']);
     }, 1000);
+  }
+
+  onCancel() {
+    this.router.navigate(['/gender-identities']);
   }
 }

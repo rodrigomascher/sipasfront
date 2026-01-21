@@ -199,6 +199,12 @@ export class GendersFormComponent implements OnInit {
       if (params['id']) {
         this.itemId = +params['id'];
         this.isEditMode = true;
+        this.store.dispatch(Actions.loadGenderById({ id: this.itemId }));
+        this.store.select(Selectors.selectSelectedGender).subscribe((gender) => {
+          if (gender) {
+            this.form.patchValue(gender);
+          }
+        });
       }
     });
   }
