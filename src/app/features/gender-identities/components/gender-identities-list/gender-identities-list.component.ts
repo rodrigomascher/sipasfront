@@ -27,8 +27,7 @@ import * as Selectors from '../../store/gender-identities.selectors';
       (delete)="onDelete($event)"
     ></app-generic-list>
   `
-
-}
+})
 export class GenderIdentitiesListComponent implements OnInit {
   genderIdentities$: Observable<GenderIdentity[]>;
   loading$: Observable<boolean>;
@@ -69,4 +68,4 @@ export class GenderIdentitiesListComponent implements OnInit {
       this.store.dispatch(Actions.deleteGenderIdentity({ id: item.id }));
     }
   }
-
+}

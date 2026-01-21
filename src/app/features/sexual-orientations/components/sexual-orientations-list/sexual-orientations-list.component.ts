@@ -27,8 +27,7 @@ import * as Selectors from '../../store/sexual-orientations.selectors';
       (delete)="onDelete($event)"
     ></app-generic-list>
   `
-
-}
+})
 export class SexualOrientationsListComponent implements OnInit {
   sexualOrientations$: Observable<SexualOrientation[]>;
   loading$: Observable<boolean>;
@@ -69,4 +68,4 @@ export class SexualOrientationsListComponent implements OnInit {
       this.store.dispatch(Actions.deleteSexualOrientation({ id: item.id }));
     }
   }
-
+}
