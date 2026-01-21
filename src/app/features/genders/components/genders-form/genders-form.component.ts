@@ -16,6 +16,10 @@ import * as GendersSelectors from '../../store/genders.selectors';
     <div style="padding: 20px; max-width: 600px; margin: 0 auto;">
       <h2>{{ isEditMode ? 'Editar Gênero' : 'Novo Gênero' }}</h2>
 
+      <div *ngIf="error$ | async as error" style="background: #f8d7da; color: #721c24; padding: 12px; border-radius: 4px; margin-bottom: 15px; border: 1px solid #f5c6cb;">
+        ⚠️ Erro: {{ error }}
+      </div>
+
       <form [formGroup]="form" (ngSubmit)="submit()" style="margin-top: 20px;">
         <div style="margin-bottom: 15px;">
           <label style="display: block; margin-bottom: 5px; font-weight: bold;">Descrição *</label>
@@ -43,7 +47,7 @@ import * as GendersSelectors from '../../store/genders.selectors';
             [disabled]="!form.valid || (loading$ | async)"
             style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; flex: 1;"
           >
-            {{ isEditMode ? 'Atualizar' : 'Criar' }}
+            {{ (loading$ | async) ? 'Processando...' : (isEditMode ? 'Atualizar' : 'Criar') }}
           </button>
           <a routerLink="/genders" style="padding: 10px 20px; background: #6c757d; color: white; text-decoration: none; border-radius: 4px; text-align: center; flex: 1;">
             Cancelar
@@ -56,6 +60,7 @@ import * as GendersSelectors from '../../store/genders.selectors';
 export class GendersFormComponent implements OnInit {
   form: FormGroup;
   loading$: Observable<boolean>;
+  error$: Observable<any>;
   isEditMode = false;
   genderId: number | null = null;
 
@@ -70,6 +75,7 @@ export class GendersFormComponent implements OnInit {
       active: [true],
     });
     this.loading$ = this.store.select(GendersSelectors.selectGendersLoading);
+    this.error$ = this.store.select(GendersSelectors.selectGendersError);
   }
 
   ngOnInit() {
