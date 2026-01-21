@@ -1,15 +1,23 @@
 import { createReducer, on } from '@ngrx/store';
 import * as FamilyCompositionActions from './family-composition.actions';
-import { FamilyComposition } from './family-composition.actions';
+import { FamilyComposition, PaginatedResponse } from './family-composition.actions';
 
 export interface FamilyCompositionState {
   familyCompositions: FamilyComposition[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: FamilyCompositionState = {
   familyCompositions: [],
+  total: 0,
+  page: 1,
+  pageSize: 10,
+  totalPages: 0,
   loading: false,
   error: null,
 };
@@ -21,9 +29,13 @@ export const familyCompositionReducer = createReducer(
     loading: true,
     error: null,
   })),
-  on(FamilyCompositionActions.loadFamilyCompositionsSuccess, (state, { familyCompositions }) => ({
+  on(FamilyCompositionActions.loadFamilyCompositionsSuccess, (state, { response }) => ({
     ...state,
-    familyCompositions,
+    familyCompositions: response.data,
+    total: response.total,
+    page: response.page,
+    pageSize: response.pageSize,
+    totalPages: response.totalPages,
     loading: false,
   })),
   on(FamilyCompositionActions.loadFamilyCompositionsFailure, (state, { error }) => ({

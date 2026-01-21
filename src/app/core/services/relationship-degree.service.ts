@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@environment/environment';
 
@@ -25,6 +25,22 @@ export interface UpdateRelationshipDegreeDto {
   updatedBy?: string;
 }
 
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export interface PaginationParams {
+  page?: number;
+  pageSize?: number;
+  sortBy?: string;
+  sortDirection?: 'asc' | 'desc';
+  search?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -33,8 +49,16 @@ export class RelationshipDegreeService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<RelationshipDegree[]> {
-    return this.http.get<RelationshipDegree[]>(this.apiUrl);
+  getAll(params?: PaginationParams): Observable<PaginatedResponse<RelationshipDegree>> {
+    let httpParams = new HttpParams();
+    if (params) {
+      if (params.page) httpParams = httpParams.set('page', params.page.toString());
+      if (params.pageSize) httpParams = httpParams.set('pageSize', params.pageSize.toString());
+      if (params.sortBy) httpParams = httpParams.set('sortBy', params.sortBy);
+      if (params.sortDirection) httpParams = httpParams.set('sortDirection', params.sortDirection);
+      if (params.search) httpParams = httpParams.set('search', params.search);
+    }
+    return this.http.get<PaginatedResponse<RelationshipDegree>>(this.apiUrl, { params: httpParams });
   }
 
   getOne(id: number): Observable<RelationshipDegree> {

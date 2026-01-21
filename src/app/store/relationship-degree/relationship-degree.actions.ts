@@ -1,4 +1,5 @@
 import { createAction, props } from '@ngrx/store';
+import { PaginationParams } from '../../core/services/relationship-degree.service';
 
 export interface RelationshipDegree {
   id: number;
@@ -10,13 +11,22 @@ export interface RelationshipDegree {
   updatedAt: Date;
 }
 
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 export const loadRelationshipDegrees = createAction(
   '[Relationship Degree] Load Relationship Degrees',
+  props<{ params?: PaginationParams }>(),
 );
 
 export const loadRelationshipDegreesSuccess = createAction(
   '[Relationship Degree] Load Relationship Degrees Success',
-  props<{ relationshipDegrees: RelationshipDegree[] }>(),
+  props<{ response: PaginatedResponse<RelationshipDegree> }>(),
 );
 
 export const loadRelationshipDegreesFailure = createAction(

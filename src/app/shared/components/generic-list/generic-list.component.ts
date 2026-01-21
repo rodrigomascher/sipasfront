@@ -3,13 +3,27 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
-import { takeUntil, debounceTime, startWith } from 'rxjs/operators';
+import { takeUntil, debounceTime } from 'rxjs/operators';
 import { GenericActionsComponent, GenericAction } from '../generic-actions/generic-actions.component';
 
 export interface ListColumn {
   key: string;
   label: string;
   formatter?: (value: any) => string;
+  sortable?: boolean;
+}
+
+export interface PaginationConfig {
+  pageSize: number;
+  pageSizeOptions: number[];
+}
+
+export interface PaginationParams {
+  page: number;
+  pageSize: number;
+  sortBy?: string;
+  sortDirection?: 'asc' | 'desc';
+  search?: string;
 }
 
 export type ListAction = GenericAction;
@@ -39,15 +53,26 @@ export type ListAction = GenericAction;
         Carregando...
       </div>
 
-      <table class="data-table" *ngIf="!(loading$ | async) && (filteredItems$ | async)?.length">
+      <table class="data-table" *ngIf="!(loading$ | async) && (items$ | async)?.length">
         <thead>
           <tr>
-            <th *ngFor="let col of columns">{{ col.label }}</th>
+            <th 
+              *ngFor="let col of columns"
+              [class.sortable]="col.sortable"
+              (click)="col.sortable && onSort(col.key)"
+            >
+              <div class="header-content">
+                {{ col.label }}
+                <span class="sort-icon" *ngIf="col.sortable && sortColumn === col.key">
+                  {{ sortDirection === 'asc' ? '▲' : '▼' }}
+                </span>
+              </div>
+            </th>
             <th>Ações</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let item of (filteredItems$ | async)">
+          <tr *ngFor="let item of (items$ | async)">
             <td *ngFor="let col of columns">
               {{ col.formatter ? col.formatter(item[col.key]) : item[col.key] }}
             </td>
@@ -62,8 +87,45 @@ export type ListAction = GenericAction;
         </tbody>
       </table>
 
-      <div *ngIf="(filteredItems$ | async)?.length === 0 && !(loading$ | async)" class="no-data">
+      <div *ngIf="(items$ | async)?.length === 0 && !(loading$ | async)" class="no-data">
         <p>{{ emptyMessage }}</p>
+      </div>
+
+      <!-- Pagination Controls -->
+      <div class="pagination-container" *ngIf="(totalItems$ | async) && paginationConfig">
+        <div class="pagination-info">
+          Mostrando {{ (currentPageStart$ | async) }} a {{ (currentPageEnd$ | async) }} de {{ (totalItems$ | async) }} registros
+        </div>
+        
+        <div class="pagination-controls">
+          <select [(ngModel)]="pageSize" (change)="onPageSizeChange()" class="page-size-select">
+            <option *ngFor="let size of paginationConfig.pageSizeOptions" [value]="size">
+              {{ size }} registros
+            </option>
+          </select>
+
+          <div class="pagination-buttons">
+            <button 
+              class="btn btn-sm btn-pagination"
+              (click)="previousPage()"
+              [disabled]="(currentPage$ | async) === 1"
+            >
+              ← Anterior
+            </button>
+
+            <span class="page-info">
+              Página {{ (currentPage$ | async) }} de {{ (totalPages$ | async) }}
+            </span>
+
+            <button 
+              class="btn btn-sm btn-pagination"
+              (click)="nextPage()"
+              [disabled]="(currentPage$ | async) === (totalPages$ | async)"
+            >
+              Próxima →
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   `,
@@ -108,6 +170,26 @@ export type ListAction = GenericAction;
       background-color: #1565c0;
     }
 
+    .btn-sm {
+      padding: 0.5rem 1rem;
+      font-size: 13px;
+    }
+
+    .btn-pagination {
+      background-color: #e3e6f0;
+      color: #525f7f;
+      border: 1px solid #dee2e6;
+    }
+
+    .btn-pagination:hover:not(:disabled) {
+      background-color: #d3d6e0;
+    }
+
+    .btn-pagination:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
     .search-box {
       margin-bottom: 1.5rem;
     }
@@ -134,6 +216,7 @@ export type ListAction = GenericAction;
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
     }
 
     .data-table thead {
@@ -146,6 +229,27 @@ export type ListAction = GenericAction;
       text-align: left;
       font-weight: 600;
       color: #333;
+      user-select: none;
+    }
+
+    .data-table th.sortable {
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .data-table th.sortable:hover {
+      background-color: #f0f0f0;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .sort-icon {
+      font-size: 0.8rem;
+      color: #1976d2;
     }
 
     .data-table td {
@@ -162,11 +266,61 @@ export type ListAction = GenericAction;
       padding: 40px;
       color: #999;
     }
+
+    .pagination-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 4px;
+      margin-top: 1rem;
+    }
+
+    .pagination-info {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .pagination-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .page-size-select {
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .pagination-buttons {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .page-info {
+      font-size: 13px;
+      color: #666;
+      min-width: 120px;
+      text-align: center;
+    }
   `]
 })
 export class GenericListComponent implements OnInit, OnDestroy {
   @Input() items$!: Observable<any[]>;
   @Input() loading$!: Observable<boolean>;
+  @Input() totalItems$!: Observable<number>;
+  @Input() currentPage$!: Observable<number>;
+  @Input() totalPages$!: Observable<number>;
+  @Input() currentPageStart$!: Observable<number>;
+  @Input() currentPageEnd$!: Observable<number>;
   @Input() columns: ListColumn[] = [];
   @Input() actions: ListAction[] = [];
   @Input() title: string = '';
@@ -174,20 +328,26 @@ export class GenericListComponent implements OnInit, OnDestroy {
   @Input() createRoute: string = '';
   @Input() searchPlaceholder: string = 'Buscar...';
   @Input() emptyMessage: string = 'Nenhum item encontrado';
-  @Input() searchFields: string[] = ['description'];
+  @Input() paginationConfig: PaginationConfig = {
+    pageSize: 10,
+    pageSizeOptions: [5, 10, 25, 50, 100]
+  };
 
+  @Output() paginationChange = new EventEmitter<PaginationParams>();
   @Output() delete = new EventEmitter<any>();
 
-  filteredItems$!: Observable<any[]>;
   searchTerm: string = '';
+  pageSize: number = 10;
+  currentPage: number = 1;
+  sortColumn: string = '';
+  sortDirection: 'asc' | 'desc' = 'asc';
+
   private searchTerm$ = new Subject<string>();
   private destroy$ = new Subject<void>();
 
   ngOnInit() {
-    this.filteredItems$ = this.items$.pipe(
-      takeUntil(this.destroy$),
-      startWith([])
-    );
+    this.pageSize = this.paginationConfig.pageSize;
+    this.emitPaginationChange();
 
     this.searchTerm$
       .pipe(
@@ -195,24 +355,55 @@ export class GenericListComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe(() => {
-        this.filteredItems$ = this.items$.pipe(
-          takeUntil(this.destroy$),
-          startWith([])
-        );
+        this.currentPage = 1;
+        this.emitPaginationChange();
       });
   }
 
   onSearch() {
     this.searchTerm$.next(this.searchTerm);
-    this.filteredItems$ = this.items$.pipe(
-      startWith([]),
-      takeUntil(this.destroy$)
-    );
+  }
+
+  onSort(column: string) {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+    this.currentPage = 1;
+    this.emitPaginationChange();
+  }
+
+  onPageSizeChange() {
+    this.currentPage = 1;
+    this.emitPaginationChange();
+  }
+
+  nextPage() {
+    this.currentPage++;
+    this.emitPaginationChange();
+  }
+
+  previousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.emitPaginationChange();
+    }
+  }
+
+  private emitPaginationChange() {
+    this.paginationChange.emit({
+      page: this.currentPage,
+      pageSize: this.pageSize,
+      sortBy: this.sortColumn,
+      sortDirection: this.sortDirection,
+      search: this.searchTerm
+    });
   }
 
   onActionTriggered(event: any) {
     // Handler for when an action is triggered
-    // Can be used for logging or other side effects
   }
 
   ngOnDestroy() {

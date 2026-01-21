@@ -10,10 +10,10 @@ export class RelationshipDegreeEffects {
   loadRelationshipDegrees$ = createEffect(() =>
     this.actions$.pipe(
       ofType(RelationshipDegreeActions.loadRelationshipDegrees),
-      switchMap(() =>
-        this.service.getAll().pipe(
-          map((relationshipDegrees) =>
-            RelationshipDegreeActions.loadRelationshipDegreesSuccess({ relationshipDegrees }),
+      switchMap(({ params }) =>
+        this.service.getAll(params).pipe(
+          map((response) =>
+            RelationshipDegreeActions.loadRelationshipDegreesSuccess({ response }),
           ),
           catchError((error) =>
             of(RelationshipDegreeActions.loadRelationshipDegreesFailure({ error: error.message })),

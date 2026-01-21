@@ -1,4 +1,5 @@
 import { createAction, props } from '@ngrx/store';
+import { PaginationParams } from '../../core/services/family-composition.service';
 
 export interface FamilyComposition {
   idFamilyComposition: number;
@@ -13,13 +14,22 @@ export interface FamilyComposition {
   updatedAt: Date;
 }
 
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 export const loadFamilyCompositions = createAction(
   '[Family Composition] Load Family Compositions',
+  props<{ params?: PaginationParams }>(),
 );
 
 export const loadFamilyCompositionsSuccess = createAction(
   '[Family Composition] Load Family Compositions Success',
-  props<{ familyCompositions: FamilyComposition[] }>(),
+  props<{ response: PaginatedResponse<FamilyComposition> }>(),
 );
 
 export const loadFamilyCompositionsFailure = createAction(

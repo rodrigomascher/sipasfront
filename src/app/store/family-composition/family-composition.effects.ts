@@ -10,10 +10,10 @@ export class FamilyCompositionEffects {
   loadFamilyCompositions$ = createEffect(() =>
     this.actions$.pipe(
       ofType(FamilyCompositionActions.loadFamilyCompositions),
-      switchMap(() =>
-        this.service.getAll().pipe(
-          map((familyCompositions) =>
-            FamilyCompositionActions.loadFamilyCompositionsSuccess({ familyCompositions }),
+      switchMap(({ params }) =>
+        this.service.getAll(params).pipe(
+          map((response) =>
+            FamilyCompositionActions.loadFamilyCompositionsSuccess({ response }),
           ),
           catchError((error) =>
             of(FamilyCompositionActions.loadFamilyCompositionsFailure({ error: error.message })),

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { RelationshipDegree } from '../../../../core/services/relationship-degree.service';
-import { GenericListComponent, ListColumn } from '../../../../shared/components/generic-list/generic-list.component';
+import { GenericListComponent, ListColumn, PaginationParams } from '../../../../shared/components/generic-list/generic-list.component';
 import { GenericAction } from '../../../../shared/components/generic-actions/generic-actions.component';
 import * as RelationshipDegreeActions from '../../../../store/relationship-degree/relationship-degree.actions';
 import * as RelationshipDegreeSelectors from '../../../../store/relationship-degree/relationship-degree.selectors';
@@ -17,6 +17,11 @@ import * as RelationshipDegreeSelectors from '../../../../store/relationship-deg
     <app-generic-list
       [items$]="relationshipDegrees$"
       [loading$]="loading$"
+      [totalItems$]="totalItems$"
+      [currentPage$]="currentPage$"
+      [totalPages$]="totalPages$"
+      [currentPageStart$]="currentPageStart$"
+      [currentPageEnd$]="currentPageEnd$"
       [columns]="columns"
       [actions]="actions"
       title="Graus de Parentesco"
@@ -25,18 +30,25 @@ import * as RelationshipDegreeSelectors from '../../../../store/relationship-deg
       searchPlaceholder="Buscar por descrição..."
       emptyMessage="Nenhum grau de parentesco encontrado"
       [searchFields]="['description']"
+      (paginationChange)="onPaginationChange($event)"
     ></app-generic-list>
   `
 })
 export class RelationshipDegreeListComponent implements OnInit {
   relationshipDegrees$: Observable<RelationshipDegree[]>;
   loading$: Observable<boolean>;
+  totalItems$: Observable<number>;
+  currentPage$: Observable<number>;
+  totalPages$: Observable<number>;
+  currentPageStart$: Observable<number>;
+  currentPageEnd$: Observable<number>;
+
   columns: ListColumn[] = [
-    { key: 'id', label: 'ID', formatter: (val) => `#${val}` },
-    { key: 'description', label: 'Descrição' },
+    { key: 'id', label: 'ID', formatter: (val) => `#${val}`, sortable: true },
+    { key: 'description', label: 'Descrição', sortable: true },
     { key: 'active', label: 'Ativo', formatter: (val) => val ? '✓' : '✗' },
     { key: 'createdBy', label: 'Criado Por' },
-    { key: 'createdAt', label: 'Criado Em', formatter: (val) => new Date(val).toLocaleDateString() },
+    { key: 'createdAt', label: 'Criado Em', formatter: (val) => new Date(val).toLocaleDateString(), sortable: true },
   ];
   actions: GenericAction[] = [
     {
@@ -60,13 +72,16 @@ export class RelationshipDegreeListComponent implements OnInit {
   ) {
     this.relationshipDegrees$ = this.store.select(RelationshipDegreeSelectors.selectAllRelationshipDegrees);
     this.loading$ = this.store.select(RelationshipDegreeSelectors.selectRelationshipDegreeLoading);
+    this.totalItems$ = this.store.select(RelationshipDegreeSelectors.selectTotalItems);
+    this.currentPage$ = this.store.select(RelationshipDegreeSelectors.selectCurrentPage);
+    this.totalPages$ = this.store.select(RelationshipDegreeSelectors.selectTotalPages);
+    this.currentPageStart$ = this.store.select(RelationshipDegreeSelectors.selectCurrentPageStart);
+    this.currentPageEnd$ = this.store.select(RelationshipDegreeSelectors.selectCurrentPageEnd);
   }
 
   ngOnInit(): void {
-    this.store.dispatch(RelationshipDegreeActions.loadRelationshipDegrees());
+    this.store.dispatch(RelationshipDegreeActions.loadRelationshipDegrees({ params: {} }));
   }
 
-  onDelete(item: RelationshipDegree): void {
-    this.store.dispatch(RelationshipDegreeActions.deleteRelationshipDegree({ id: item.id }));
-  }
-}
+  onPaginationChange(params: PaginationParams): void {
+    this.store.dispatch(RelationshipDegreeActions.loadRelationshipDegrees({ params }));
