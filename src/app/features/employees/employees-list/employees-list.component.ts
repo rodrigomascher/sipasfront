@@ -4,7 +4,8 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Employee } from '../../../core/services/employees.service';
-import { GenericListComponent, ListColumn, ListAction } from '../../../shared/components/generic-list/generic-list.component';
+import { GenericListComponent, ListColumn } from '../../../shared/components/generic-list/generic-list.component';
+import { GenericAction } from '../../../shared/components/generic-actions/generic-actions.component';
 import { 
   selectAllEmployees, 
   selectEmployeesLoading
@@ -41,7 +42,7 @@ export class EmployeesListComponent implements OnInit {
     { key: 'phone', label: 'Telefone', formatter: (val) => val || '-' },
     { key: 'position', label: 'Cargo', formatter: (val) => val || '-' }
   ];
-  actions: ListAction[] = [
+  actions: GenericAction[] = [
     {
       label: 'Editar',
       icon: '✎',
@@ -52,6 +53,7 @@ export class EmployeesListComponent implements OnInit {
       label: 'Deletar',
       icon: '🗑',
       class: 'btn-danger',
+      confirm: 'Tem certeza que deseja deletar este funcionário?',
       callback: (item) => this.onDelete(item)
     }
   ];
@@ -69,8 +71,6 @@ export class EmployeesListComponent implements OnInit {
   }
 
   onDelete(item: Employee): void {
-    if (confirm('Tem certeza que deseja deletar este funcionário?')) {
-      this.store.dispatch(EmployeesActions.deleteEmployee({ id: item.id }));
-    }
+    this.store.dispatch(EmployeesActions.deleteEmployee({ id: item.id }));
   }
 }

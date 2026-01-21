@@ -1,8 +1,10 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil, debounceTime, startWith } from 'rxjs/operators';
+import { GenericActionsComponent, GenericAction } from '../generic-actions/generic-actions.component';
 
 export interface ListColumn {
   key: string;
@@ -10,17 +12,12 @@ export interface ListColumn {
   formatter?: (value: any) => string;
 }
 
-export interface ListAction {
-  label: string;
-  icon?: string;
-  class: string;
-  callback: (item: any) => void;
-}
+export type ListAction = GenericAction;
 
 @Component({
   selector: 'app-generic-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, GenericActionsComponent],
   template: `
     <div class="container">
       <div class="header">
@@ -42,7 +39,7 @@ export interface ListAction {
         Carregando...
       </div>
 
-      <table class="data-table" *ngIf="!(loading$ | async)">
+      <table class="data-table" *ngIf="!(loading$ | async) && (filteredItems$ | async)?.length">
         <thead>
           <tr>
             <th *ngFor="let col of columns">{{ col.label }}</th>
@@ -50,25 +47,22 @@ export interface ListAction {
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let item of filteredItems">
+          <tr *ngFor="let item of (filteredItems$ | async)">
             <td *ngFor="let col of columns">
               {{ col.formatter ? col.formatter(item[col.key]) : item[col.key] }}
             </td>
-            <td class="actions">
-              <button
-                *ngFor="let action of actions"
-                [class]="'btn-sm ' + action.class"
-                (click)="action.callback(item)"
-                [title]="action.label"
-              >
-                {{ action.icon ? action.icon + ' ' : '' }}{{ action.label }}
-              </button>
+            <td>
+              <app-generic-actions
+                [actions]="actions"
+                [item]="item"
+                (actionTriggered)="onActionTriggered($event)"
+              ></app-generic-actions>
             </td>
           </tr>
         </tbody>
       </table>
 
-      <div *ngIf="(items$ | async)?.length === 0 && !(loading$ | async)" class="no-data">
+      <div *ngIf="(filteredItems$ | async)?.length === 0 && !(loading$ | async)" class="no-data">
         <p>{{ emptyMessage }}</p>
       </div>
     </div>
@@ -163,42 +157,6 @@ export interface ListAction {
       background-color: #f9f9f9;
     }
 
-    .actions {
-      display: flex;
-      gap: 0.5rem;
-      justify-content: center;
-    }
-
-    .btn-sm {
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      text-decoration: none;
-      display: inline-block;
-    }
-
-    .btn-info {
-      background-color: #17a2b8;
-      color: white;
-    }
-
-    .btn-info:hover {
-      background-color: #138496;
-    }
-
-    .btn-danger {
-      background-color: #dc3545;
-      color: white;
-    }
-
-    .btn-danger:hover {
-      background-color: #c82333;
-    }
-
     .no-data {
       text-align: center;
       padding: 40px;
@@ -206,7 +164,7 @@ export interface ListAction {
     }
   `]
 })
-export class GenericListComponent implements OnInit {
+export class GenericListComponent implements OnInit, OnDestroy {
   @Input() items$!: Observable<any[]>;
   @Input() loading$!: Observable<boolean>;
   @Input() columns: ListColumn[] = [];
@@ -220,22 +178,45 @@ export class GenericListComponent implements OnInit {
 
   @Output() delete = new EventEmitter<any>();
 
-  filteredItems: any[] = [];
+  filteredItems$!: Observable<any[]>;
   searchTerm: string = '';
+  private searchTerm$ = new Subject<string>();
+  private destroy$ = new Subject<void>();
 
   ngOnInit() {
-    this.items$.subscribe(items => {
-      this.filteredItems = items;
-    });
+    this.filteredItems$ = this.items$.pipe(
+      takeUntil(this.destroy$),
+      startWith([])
+    );
+
+    this.searchTerm$
+      .pipe(
+        debounceTime(300),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        this.filteredItems$ = this.items$.pipe(
+          takeUntil(this.destroy$),
+          startWith([])
+        );
+      });
   }
 
   onSearch() {
-    this.items$.subscribe(items => {
-      this.filteredItems = items.filter(item =>
-        this.searchFields.some(field =>
-          String(item[field]).toLowerCase().includes(this.searchTerm.toLowerCase())
-        )
-      );
-    });
+    this.searchTerm$.next(this.searchTerm);
+    this.filteredItems$ = this.items$.pipe(
+      startWith([]),
+      takeUntil(this.destroy$)
+    );
+  }
+
+  onActionTriggered(event: any) {
+    // Handler for when an action is triggered
+    // Can be used for logging or other side effects
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

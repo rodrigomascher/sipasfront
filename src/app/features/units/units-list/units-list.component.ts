@@ -4,7 +4,8 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Unit } from '../../../core/services/units.service';
-import { GenericListComponent, ListColumn, ListAction } from '../../../shared/components/generic-list/generic-list.component';
+import { GenericListComponent, ListColumn } from '../../../shared/components/generic-list/generic-list.component';
+import { GenericAction } from '../../../shared/components/generic-actions/generic-actions.component';
 import { 
   selectAllUnits, 
   selectUnitsLoading
@@ -42,7 +43,7 @@ export class UnitsListComponent implements OnInit {
     { key: 'state', label: 'Estado' },
     { key: 'isArmored', label: 'Blindada', formatter: (val) => val ? 'Sim' : 'Não' }
   ];
-  actions: ListAction[] = [
+  actions: GenericAction[] = [
     {
       label: 'Editar',
       icon: '✎',
@@ -53,6 +54,7 @@ export class UnitsListComponent implements OnInit {
       label: 'Deletar',
       icon: '🗑',
       class: 'btn-danger',
+      confirm: 'Tem certeza que deseja deletar esta unidade?',
       callback: (item) => this.onDelete(item)
     }
   ];
@@ -70,8 +72,6 @@ export class UnitsListComponent implements OnInit {
   }
 
   onDelete(item: Unit): void {
-    if (confirm('Tem certeza que deseja deletar esta unidade?')) {
-      this.store.dispatch(UnitsActions.deleteUnit({ id: item.id }));
-    }
+    this.store.dispatch(UnitsActions.deleteUnit({ id: item.id }));
   }
 }

@@ -4,7 +4,8 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { SexualOrientation } from '../../../../core/services/sexual-orientations.service';
-import { GenericListComponent, ListColumn, ListAction } from '../../../../shared/components/generic-list/generic-list.component';
+import { GenericListComponent, ListColumn } from '../../../../shared/components/generic-list/generic-list.component';
+import { GenericAction } from '../../../../shared/components/generic-actions/generic-actions.component';
 import * as Actions from '../../store/sexual-orientations.actions';
 import * as Selectors from '../../store/sexual-orientations.selectors';
 
@@ -36,7 +37,7 @@ export class SexualOrientationsListComponent implements OnInit {
     { key: 'description', label: 'Descrição' },
     { key: 'active', label: 'Ativo', formatter: (val) => val ? 'Sim' : 'Não' }
   ];
-  actions: ListAction[] = [
+  actions: GenericAction[] = [
     {
       label: 'Editar',
       icon: '✎',
@@ -47,6 +48,7 @@ export class SexualOrientationsListComponent implements OnInit {
       label: 'Deletar',
       icon: '🗑',
       class: 'btn-danger',
+      confirm: 'Tem certeza?',
       callback: (item) => this.onDelete(item)
     }
   ];
@@ -64,8 +66,6 @@ export class SexualOrientationsListComponent implements OnInit {
   }
 
   onDelete(item: SexualOrientation) {
-    if (confirm('Tem certeza?')) {
-      this.store.dispatch(Actions.deleteSexualOrientation({ id: item.id }));
-    }
+    this.store.dispatch(Actions.deleteSexualOrientation({ id: item.id }));
   }
 }

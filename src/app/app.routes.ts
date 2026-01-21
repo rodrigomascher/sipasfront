@@ -62,6 +62,16 @@ export const routes: Routes = [
     loadChildren: () => import('./features/sexual-orientations/sexual-orientations.routes').then(m => m.sexualOrientationsRoutes)
   },
   {
+    path: 'relationship-degrees',
+    canActivate: [authGuard],
+    loadChildren: () => import('./features/relationship-degrees/relationship-degrees.routes').then(m => m.relationshipDegreeRoutes)
+  },
+  {
+    path: 'family-composition',
+    canActivate: [authGuard],
+    loadChildren: () => import('./features/family-composition/family-composition.routes').then(m => m.familyCompositionRoutes)
+  },
+  {
     path: '**',
     redirectTo: '/auth/login'
   }

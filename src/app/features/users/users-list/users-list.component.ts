@@ -4,7 +4,8 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { User } from '../../../core/services/users.service';
-import { GenericListComponent, ListColumn, ListAction } from '../../../shared/components/generic-list/generic-list.component';
+import { GenericListComponent, ListColumn } from '../../../shared/components/generic-list/generic-list.component';
+import { GenericAction } from '../../../shared/components/generic-actions/generic-actions.component';
 import * as UsersActions from '../../../store/users/users.actions';
 import * as UsersSelectors from '../../../store/users/users.selectors';
 
@@ -38,7 +39,7 @@ export class UsersListComponent implements OnInit {
     { key: 'isActive', label: 'Status', formatter: (val) => val ? 'Ativo' : 'Inativo' },
     { key: 'lastLogin', label: 'Último Acesso', formatter: (val) => val ? new Date(val).toLocaleDateString('pt-BR') : 'Nunca' }
   ];
-  actions: ListAction[] = [
+  actions: GenericAction[] = [
     {
       label: 'Editar',
       icon: '✎',
@@ -49,6 +50,7 @@ export class UsersListComponent implements OnInit {
       label: 'Deletar',
       icon: '🗑',
       class: 'btn-danger',
+      confirm: 'Tem certeza que deseja deletar este usuário?',
       callback: (item) => this.onDelete(item)
     }
   ];
@@ -66,8 +68,6 @@ export class UsersListComponent implements OnInit {
   }
 
   onDelete(item: User): void {
-    if (confirm('Tem certeza que deseja deletar este usuário?')) {
-      this.store.dispatch(UsersActions.deleteUser({ id: item.id }));
-    }
+    this.store.dispatch(UsersActions.deleteUser({ id: item.id }));
   }
 }

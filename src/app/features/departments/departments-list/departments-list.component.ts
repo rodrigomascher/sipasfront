@@ -4,7 +4,8 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Department } from '../../../core/services/departments.service';
-import { GenericListComponent, ListColumn, ListAction } from '../../../shared/components/generic-list/generic-list.component';
+import { GenericListComponent, ListColumn } from '../../../shared/components/generic-list/generic-list.component';
+import { GenericAction } from '../../../shared/components/generic-actions/generic-actions.component';
 import { 
   selectAllDepartments, 
   selectDepartmentsLoading
@@ -39,7 +40,7 @@ export class DepartmentsListComponent implements OnInit {
     { key: 'name', label: 'Nome' },
     { key: 'description', label: 'Descrição', formatter: (val) => val || '-' }
   ];
-  actions: ListAction[] = [
+  actions: GenericAction[] = [
     {
       label: 'Editar',
       icon: '✎',
@@ -50,6 +51,7 @@ export class DepartmentsListComponent implements OnInit {
       label: 'Deletar',
       icon: '🗑',
       class: 'btn-danger',
+      confirm: 'Tem certeza que deseja deletar este departamento?',
       callback: (item) => this.onDelete(item)
     }
   ];
@@ -67,8 +69,6 @@ export class DepartmentsListComponent implements OnInit {
   }
 
   onDelete(item: Department): void {
-    if (confirm('Tem certeza que deseja deletar este departamento?')) {
-      this.store.dispatch(DepartmentsActions.deleteDepartment({ id: item.id }));
-    }
+    this.store.dispatch(DepartmentsActions.deleteDepartment({ id: item.id }));
   }
 }

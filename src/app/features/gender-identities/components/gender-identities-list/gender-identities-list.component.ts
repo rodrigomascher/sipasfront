@@ -4,7 +4,8 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { GenderIdentity } from '../../../../core/services/gender-identities.service';
-import { GenericListComponent, ListColumn, ListAction } from '../../../../shared/components/generic-list/generic-list.component';
+import { GenericListComponent, ListColumn } from '../../../../shared/components/generic-list/generic-list.component';
+import { GenericAction } from '../../../../shared/components/generic-actions/generic-actions.component';
 import * as Actions from '../../store/gender-identities.actions';
 import * as Selectors from '../../store/gender-identities.selectors';
 
@@ -36,7 +37,7 @@ export class GenderIdentitiesListComponent implements OnInit {
     { key: 'description', label: 'Descrição' },
     { key: 'active', label: 'Ativo', formatter: (val) => val ? 'Sim' : 'Não' }
   ];
-  actions: ListAction[] = [
+  actions: GenericAction[] = [
     {
       label: 'Editar',
       icon: '✎',
@@ -47,6 +48,7 @@ export class GenderIdentitiesListComponent implements OnInit {
       label: 'Deletar',
       icon: '🗑',
       class: 'btn-danger',
+      confirm: 'Tem certeza?',
       callback: (item) => this.onDelete(item)
     }
   ];
@@ -64,8 +66,6 @@ export class GenderIdentitiesListComponent implements OnInit {
   }
 
   onDelete(item: GenderIdentity) {
-    if (confirm('Tem certeza?')) {
-      this.store.dispatch(Actions.deleteGenderIdentity({ id: item.id }));
-    }
+    this.store.dispatch(Actions.deleteGenderIdentity({ id: item.id }));
   }
 }

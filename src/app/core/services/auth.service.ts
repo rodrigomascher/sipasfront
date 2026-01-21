@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, interval, map, startWith } from 'rxjs';
 import { environment } from '@environment/environment';
 
 export interface AuthCredentials {
@@ -56,5 +56,52 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     return !!this.getToken();
+  }
+
+  // Decodificar JWT e pegar tempo de expiração
+  private decodeToken(token: string): any {
+    try {
+      const parts = token.split('.');
+      if (parts.length !== 3) return null;
+      
+      const decoded = JSON.parse(atob(parts[1]));
+      return decoded;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  // Obter tempo restante em segundos
+  getTimeRemaining(): number {
+    const token = this.getToken();
+    if (!token) return 0;
+
+    const decoded = this.decodeToken(token);
+    if (!decoded || !decoded.exp) return 0;
+
+    const expirationTime = decoded.exp * 1000; // Converter para ms
+    const currentTime = Date.now();
+    const remaining = Math.max(0, Math.floor((expirationTime - currentTime) / 1000));
+
+    return remaining;
+  }
+
+  // Observable que atualiza a cada segundo
+  getTimeRemaining$(): Observable<number> {
+    return interval(1000).pipe(
+      startWith(0),
+      map(() => this.getTimeRemaining())
+    );
+  }
+
+  // Formatar segundos para HH:MM:SS
+  formatTime(seconds: number): string {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+
+    return [hours, minutes, secs]
+      .map(v => String(v).padStart(2, '0'))
+      .join(':');
   }
 }
