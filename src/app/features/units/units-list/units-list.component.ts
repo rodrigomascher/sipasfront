@@ -1,38 +1,35 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Unit } from '../../../core/services/units.service';
-import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import { GenericListComponent, ListColumn, ListAction } from '../../../shared/components/generic-list/generic-list.component';
 import { 
   selectAllUnits, 
-  selectUnitsLoading, 
-  selectUnitsError 
+  selectUnitsLoading
 } from '../../../store/units/units.selectors';
 import * as UnitsActions from '../../../store/units/units.actions';
 
 @Component({
   selector: 'app-units-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, LoadingSpinnerComponent],
+  imports: [CommonModule, GenericListComponent],
   template: `
-    <div class="container">
-      <div class="header">
-        <h1>Cadastro de Unidades</h1>
-        <button class="btn btn-primary" routerLink="/units/create">+ Nova Unidade</button>
-      </div>
-
-      <div class="search-box">
-        <input
-          type="text"
-          placeholder="Buscar por cidade..."
-          [(ngModel)]="searchTerm"
-          (ngModelChange)="onSearch()"
-          class="search-input"
-        />
-      </div>
+    <app-generic-list
+      [items$]="units$"
+      [loading$]="loading$"
+      [columns]="columns"
+      [actions]="actions"
+      title="Cadastro de Unidades"
+      createButtonLabel="Nova Unidade"
+      createRoute="/units/create"
+      searchPlaceholder="Buscar por cidade ou nome..."
+      emptyMessage="Nenhuma unidade encontrada"
+      [searchFields]="['city', 'name', 'type']"
+      (delete)="onDelete($event)"
+    ></app-generic-list>
+  `
 
       <app-loading-spinner *ngIf="loading$ | async" message="Carregando unidades..."></app-loading-spinner>
 
