@@ -48,6 +48,13 @@ import { AuthService } from './core/services/auth.service';
                 <li><a routerLink="/employees" routerLinkActive="active">Funcionários</a></li>
               </ul>
             </div>
+
+            <div class="menu-section">
+              <h3 class="menu-title">Munícipes</h3>
+              <ul class="menu-items">
+                <li><a routerLink="/persons" routerLinkActive="active">Cadastro de Munícipes</a></li>
+              </ul>
+            </div>
           </nav>
         </aside>
         

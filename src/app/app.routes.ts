@@ -42,6 +42,11 @@ export const routes: Routes = [
     loadChildren: () => import('./features/employees/employees.routes').then(m => m.EMPLOYEES_ROUTES)
   },
   {
+    path: 'persons',
+    canActivate: [authGuard],
+    loadChildren: () => import('./features/persons/persons.routes').then(m => m.personsRoutes)
+  },
+  {
     path: '**',
     redirectTo: '/auth/login'
   }

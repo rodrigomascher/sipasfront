@@ -14,11 +14,13 @@ import { usersReducer } from './app/store/users/users.reducer';
 import { departmentsReducer } from './app/store/departments/departments.reducer';
 import { rolesReducer } from './app/store/roles/roles.reducer';
 import { employeesReducer } from './app/store/employees/employees.reducer';
+import { personsReducer } from './app/features/persons/store/persons.reducer';
 import { UnitsEffects } from './app/store/units/units.effects';
 import { UsersEffects } from './app/store/users/users.effects';
 import { DepartmentsEffects } from './app/store/departments/departments.effects';
 import { RolesEffects } from './app/store/roles/roles.effects';
 import { EmployeesEffects } from './app/store/employees/employees.effects';
+import { PersonsEffects } from './app/features/persons/store/persons.effects';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -31,9 +33,10 @@ bootstrapApplication(AppComponent, {
       users: usersReducer,
       departments: departmentsReducer,
       roles: rolesReducer,
-      employees: employeesReducer
+      employees: employeesReducer,
+      persons: personsReducer
     }),
-    provideEffects([UnitsEffects, UsersEffects, DepartmentsEffects, RolesEffects, EmployeesEffects]),
+    provideEffects([UnitsEffects, UsersEffects, DepartmentsEffects, RolesEffects, EmployeesEffects, PersonsEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: environment.production }),
   ],
 }).catch(err => console.error(err));

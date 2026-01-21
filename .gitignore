@@ -1,0 +1,31 @@
+# Node modules
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Angular
+dist/
+.angular/
+.angular.cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+*.js.map
+*.d.ts.map
+
+# OS
+Thumbs.db
