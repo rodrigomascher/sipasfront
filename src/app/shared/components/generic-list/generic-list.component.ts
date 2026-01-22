@@ -9,7 +9,7 @@ import { GenericActionsComponent, GenericAction } from '../generic-actions/gener
 export interface ListColumn {
   key: string;
   label: string;
-  formatter?: (value: any) => string;
+  formatter?: (value: any, item?: any) => string;
   sortable?: boolean;
 }
 
@@ -74,7 +74,7 @@ export type ListAction = GenericAction;
         <tbody>
           <tr *ngFor="let item of (items$ | async)">
             <td *ngFor="let col of columns">
-              {{ col.formatter ? col.formatter(item[col.key]) : item[col.key] }}
+              {{ col.formatter ? col.formatter(item[col.key], item) : item[col.key] }}
             </td>
             <td>
               <app-generic-actions

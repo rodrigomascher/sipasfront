@@ -16,7 +16,7 @@ export interface Person {
   firstName: string;
   lastName: string;
   fullName?: string;
-  nickname?: string;
+  socialName?: string;
   birthDate: Date;
   sex?: number;
   genderId?: number;

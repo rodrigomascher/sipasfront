@@ -388,7 +388,7 @@ import { LoadingSpinnerComponent } from '../../../../shared/components/loading-s
           <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
             {{ isEditMode ? 'Atualizar' : 'Criar' }}
           </button>
-          <a routerLink=".." class="btn btn-outline">Cancelar</a>
+          <a routerLink="/persons" class="btn btn-outline">Cancelar</a>
         </div>
       </form>
     </div>
@@ -687,7 +687,7 @@ export class PersonsFormComponent implements OnInit {
     }
 
     setTimeout(() => {
-      this.router.navigate(['../..'], { relativeTo: this.route });
+      this.router.navigate(['/persons']);
     }, 1000);
   }
 }

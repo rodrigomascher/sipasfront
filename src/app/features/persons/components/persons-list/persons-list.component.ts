@@ -47,7 +47,10 @@ export class PersonsListComponent implements OnInit {
 
   columns: ListColumn[] = [
     { key: 'id', label: 'ID', formatter: (val) => `#${val}`, sortable: true },
-    { key: 'fullName', label: 'Nome', sortable: true },
+    { key: 'firstName', label: 'Nome', formatter: (val, item) => {
+      // Compõe o nome a partir de firstName e lastName
+      return item.firstName && item.lastName ? `${item.firstName} ${item.lastName}` : item.firstName || '-';
+    }, sortable: true },
     { key: 'cpf', label: 'CPF', sortable: true },
     { key: 'birthDate', label: 'Data de Nascimento', formatter: (val) => val ? new Date(val).toLocaleDateString('pt-BR') : '-', sortable: true },
     { key: 'monthlyIncome', label: 'Renda Mensal', formatter: (val) => val ? `R$ ${val.toFixed(2)}` : '-', sortable: true }
