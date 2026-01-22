@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
 import { AuthService } from '@core/services/auth.service';
 import { UnitsService } from '@core/services/units.service';
 import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
@@ -16,6 +15,7 @@ import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/load
         <div class="unit-selector-header">
           <h1>Selecione uma Unidade</h1>
           <p class="user-info">Bem-vindo, {{ user?.name }}!</p>
+          <p class="subtitle">Escolha a unidade que deseja acessar</p>
         </div>
 
         <div *ngIf="loading" class="loading-state">
@@ -28,14 +28,20 @@ import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/load
             type="button"
             class="unit-card"
             (click)="selectUnit(unit)"
+            (keyup.enter)="selectUnit(unit)"
+            tabindex="0"
           >
             <div class="unit-icon">🏢</div>
             <div class="unit-details">
-              <h3>{{ unit.name }}</h3>
-              <p class="unit-type">{{ unit.type }}</p>
-              <p class="unit-location">{{ unit.city }}, {{ unit.state }}</p>
+              <h3 class="unit-name">{{ unit.name }}</h3>
+              <div class="unit-info-row">
+                <span class="unit-badge">{{ unit.type }}</span>
+              </div>
+              <p class="unit-location">📍 {{ unit.city }}, {{ unit.state }}</p>
             </div>
-            <div class="unit-arrow">→</div>
+            <div class="unit-arrow">
+              <span>→</span>
+            </div>
           </button>
         </div>
 
@@ -60,7 +66,7 @@ import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/load
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       padding: 20px;
     }
@@ -71,7 +77,7 @@ import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/load
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
       padding: 40px;
       width: 100%;
-      max-width: 600px;
+      max-width: 700px;
     }
 
     .unit-selector-header {
@@ -83,32 +89,39 @@ import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/load
       font-size: 28px;
       font-weight: 700;
       color: #333;
-      margin-bottom: 8px;
+      margin: 0 0 8px;
     }
 
     .user-info {
       font-size: 14px;
       color: #666;
+      margin: 0 0 4px;
+      font-weight: 500;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: #999;
       margin: 0;
     }
 
     .units-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 15px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
       margin-bottom: 30px;
     }
 
     .unit-card {
       display: flex;
-      align-items: center;
-      gap: 15px;
+      flex-direction: column;
+      gap: 12px;
       padding: 16px;
       background: #f8f9fa;
       border: 2px solid #e0e0e0;
       border-radius: 8px;
       cursor: pointer;
-      transition: all 0.3s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       text-align: left;
     }
 
@@ -119,41 +132,60 @@ import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/load
       box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
     }
 
+    .unit-card:focus {
+      outline: 2px solid #007bff;
+      outline-offset: 2px;
+    }
+
+    .unit-card:active {
+      transform: translateY(0);
+    }
+
     .unit-icon {
-      font-size: 32px;
-      flex-shrink: 0;
+      font-size: 28px;
+      text-align: center;
     }
 
     .unit-details {
       flex: 1;
-      min-width: 0;
     }
 
-    .unit-details h3 {
-      margin: 0 0 4px;
+    .unit-name {
+      margin: 0 0 8px;
       font-size: 16px;
       font-weight: 600;
       color: #333;
       word-break: break-word;
+      line-height: 1.4;
     }
 
-    .unit-type {
-      margin: 2px 0;
+    .unit-info-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .unit-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      background: #e3f2fd;
+      color: #1976d2;
+      border-radius: 4px;
       font-size: 12px;
-      color: #666;
-      font-weight: 500;
+      font-weight: 600;
     }
 
     .unit-location {
-      margin: 2px 0;
+      margin: 0;
       font-size: 12px;
-      color: #999;
+      color: #666;
     }
 
     .unit-arrow {
-      font-size: 20px;
+      text-align: center;
+      font-size: 18px;
       color: #007bff;
-      flex-shrink: 0;
       opacity: 0;
       transition: opacity 0.3s;
     }
@@ -202,7 +234,7 @@ import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/load
       border-radius: 6px;
       cursor: pointer;
       font-size: 14px;
-      transition: background 0.3s;
+      transition: all 0.3s;
       font-weight: 500;
     }
 
@@ -213,6 +245,10 @@ import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/load
 
     .btn-secondary:hover {
       background: #545b62;
+    }
+
+    .btn-secondary:active {
+      transform: scale(0.98);
     }
   `]
 })
@@ -225,8 +261,7 @@ export class UnitSelectorComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private unitsService: UnitsService,
-    private router: Router,
-    private store: Store
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -261,9 +296,6 @@ export class UnitSelectorComponent implements OnInit {
   selectUnit(unit: any): void {
     // Armazenar unidade selecionada no localStorage
     localStorage.setItem('selectedUnit', JSON.stringify(unit));
-    
-    // Dispatch action no store se necessário
-    // this.store.dispatch(new SetSelectedUnit(unit));
     
     // Redirecionar para dashboard
     this.router.navigate(['/dashboard']);
