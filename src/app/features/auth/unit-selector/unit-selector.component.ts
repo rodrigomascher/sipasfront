@@ -243,6 +243,9 @@ export class UnitSelectorComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Indicar que estamos na tela de seleção (ocultar header)
+    this.selectedUnitService.setIsSelectingUnit(true);
+    
     this.user = this.authService.getUser();
     
     if (!this.user) {

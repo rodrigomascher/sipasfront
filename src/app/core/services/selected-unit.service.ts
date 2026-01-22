@@ -17,8 +17,10 @@ export class SelectedUnitService {
   private selectedUnitSubject = new BehaviorSubject<Unit | null>(
     this.getSelectedUnitFromStorage()
   );
+  private isSelectingUnitSubject = new BehaviorSubject<boolean>(false);
 
   selectedUnit$: Observable<Unit | null> = this.selectedUnitSubject.asObservable();
+  isSelectingUnit$: Observable<boolean> = this.isSelectingUnitSubject.asObservable();
 
   constructor() {}
 
@@ -28,6 +30,7 @@ export class SelectedUnitService {
   setSelectedUnit(unit: Unit | null): void {
     if (unit) {
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(unit));
+      this.isSelectingUnitSubject.next(false);
     } else {
       localStorage.removeItem(this.STORAGE_KEY);
     }
@@ -54,6 +57,20 @@ export class SelectedUnitService {
   clearSelectedUnit(): void {
     localStorage.removeItem(this.STORAGE_KEY);
     this.selectedUnitSubject.next(null);
+  }
+
+  /**
+   * Set unit selection state (show/hide header)
+   */
+  setIsSelectingUnit(isSelecting: boolean): void {
+    this.isSelectingUnitSubject.next(isSelecting);
+  }
+
+  /**
+   * Get unit selection state
+   */
+  isSelectingUnit(): boolean {
+    return this.isSelectingUnitSubject.value;
   }
 
   /**

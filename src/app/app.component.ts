@@ -4,6 +4,7 @@ import { RouterOutlet, Router, RouterLink, RouterLinkActive } from '@angular/rou
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AuthService } from './core/services/auth.service';
+import { SelectedUnitService } from './core/services/selected-unit.service';
 import { SessionTimerComponent } from './shared/components/session-timer/session-timer.component';
 
 @Component({
@@ -505,9 +506,20 @@ export class AppComponent implements OnInit {
     municipes: false
   };
 
-  constructor(private router: Router, private authService: AuthService) {
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private selectedUnitService: SelectedUnitService
+  ) {
     this.showHeader$ = this.router.events.pipe(
-      map(() => !this.router.url.includes('/auth/login'))
+      map(() => {
+        // Ocultar header se estiver em login ou na tela de seleção de unidade
+        const isLogin = this.router.url.includes('/auth/login');
+        const isUnitSelector = this.router.url.includes('/auth/unit-selector');
+        const isSelecting = this.selectedUnitService.isSelectingUnit();
+        
+        return !isLogin && !isUnitSelector && !isSelecting;
+      })
     );
     
     this.user$ = new Observable(observer => {
