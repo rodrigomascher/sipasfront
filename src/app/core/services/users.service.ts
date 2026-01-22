@@ -83,7 +83,7 @@ export class UsersService {
   }
 
   updateUser(id: number, user: UpdateUserDto): Observable<User> {
-    return this.http.patch<User>(`${this.apiUrl}/${id}`, user);
+    return this.http.put<User>(`${this.apiUrl}/${id}`, user);
   }
 
   deleteUser(id: number): Observable<void> {
