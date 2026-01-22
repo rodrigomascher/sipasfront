@@ -16,6 +16,7 @@ import { map } from 'rxjs/operators';
           type="button" 
           class="btn btn-primary btn-sm"
           (click)="toggleAddUnit()"
+          [disabled]="isLoading"
         >
           {{ showSelector ? '- Cancelar' : '+ Adicionar Unidade' }}
         </button>
@@ -26,11 +27,15 @@ import { map } from 'rxjs/operators';
         <div class="selector-content">
           <h5>Selecione uma Unidade para Adicionar</h5>
           <div class="unit-list">
+            <div *ngIf="isLoading" class="loading-area">
+              Adicionando unidade...
+            </div>
             <button
               type="button"
               *ngFor="let unit of (availableUnits$ | async)"
               class="unit-item"
               (click)="addUnit(unit)"
+              [disabled]="isLoading"
             >
               <strong>{{ unit.name }}</strong>
               <span class="unit-info">{{ unit.type }} • {{ unit.city }}, {{ unit.state }}</span>
@@ -67,6 +72,7 @@ import { map } from 'rxjs/operators';
                   type="button"
                   class="btn btn-danger btn-sm"
                   (click)="removeUnit(unit.id)"
+                  [disabled]="isLoading"
                 >
                   Remover
                 </button>
@@ -175,6 +181,18 @@ import { map } from 'rxjs/operators';
     .alert {
       margin: 0;
     }
+
+    .loading-area {
+      padding: 15px;
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+    }
+
+    button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
   `]
 })
 export class UserUnitsComponent implements OnInit {
@@ -182,6 +200,7 @@ export class UserUnitsComponent implements OnInit {
   @Output() unitsChanged = new EventEmitter<any[]>();
 
   showSelector = false;
+  isLoading = false;
   availableUnits$: Observable<any[]>;
 
   constructor(private unitsService: UnitsService) {
@@ -210,18 +229,28 @@ export class UserUnitsComponent implements OnInit {
   }
 
   addUnit(unit: any): void {
+    this.isLoading = true;
     const updated = [...(this.selectedUnits || []), unit];
     this.selectedUnits = updated;
     this.unitsChanged.emit(updated);
     this.showSelector = false;
     this.loadAvailableUnits();
+    // Reset loading state
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 500);
   }
 
   removeUnit(unitId: number): void {
+    this.isLoading = true;
     const updated = (this.selectedUnits || []).filter(u => u.id !== unitId);
     this.selectedUnits = updated;
     this.unitsChanged.emit(updated);
     this.loadAvailableUnits();
+    // Reset loading state
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 500);
   }
 }
 

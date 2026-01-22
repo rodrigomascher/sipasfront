@@ -50,11 +50,12 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
           </div>
 
           <div class="modal-actions">
-            <button type="button" class="btn btn-secondary" (click)="onCancel()">
+            <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isLoading">
               Cancelar
             </button>
-            <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
-              Alterar Senha
+            <button type="submit" class="btn btn-primary" [disabled]="form.invalid || isLoading">
+              <span *ngIf="!isLoading">Alterar Senha</span>
+              <span *ngIf="isLoading" class="loading-text">Alterando...</span>
             </button>
           </div>
         </form>
@@ -190,6 +191,17 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
     .btn-secondary:hover {
       background: #545b62;
     }
+
+    .loading-text {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
   `],
 })
 export class ChangePasswordDialogComponent {
@@ -197,6 +209,7 @@ export class ChangePasswordDialogComponent {
 
   form: FormGroup;
   isOpen = false;
+  isLoading = false;
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group(
@@ -221,9 +234,14 @@ export class ChangePasswordDialogComponent {
 
   onSubmit(): void {
     if (this.form.valid) {
+      this.isLoading = true;
       const newPassword = this.form.get('newPassword')?.value;
       this.passwordChanged.emit(newPassword);
-      this.close();
+      // Loading state will be reset by parent when handling response
+      setTimeout(() => {
+        this.isLoading = false;
+        this.close();
+      }, 500);
     }
   }
 
