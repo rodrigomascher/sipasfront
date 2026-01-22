@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { UnitsService } from '../../../core/services/units.service';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { GenericSimpleGridComponent, GridColumn, GridAction } from '../../../shared/components/generic-simple-grid/generic-simple-grid.component';
@@ -9,7 +10,7 @@ import { map } from 'rxjs/operators';
 @Component({
   selector: 'app-user-units',
   standalone: true,
-  imports: [CommonModule, LoadingSpinnerComponent, GenericSimpleGridComponent],
+  imports: [CommonModule, FormsModule, LoadingSpinnerComponent, GenericSimpleGridComponent],
   template: `
     <div class="user-units-container">
       <div class="user-units-header">
@@ -24,24 +25,51 @@ import { map } from 'rxjs/operators';
         </button>
       </div>
 
-      <!-- Seletor de unidades (dentro da área) -->
+      <!-- Seletor de unidades com autocomplete -->
       <div class="unit-selector" *ngIf="showSelector">
         <div class="selector-content">
-          <h5>Selecione uma Unidade para Adicionar</h5>
-          <div class="unit-list">
-            <app-loading-spinner *ngIf="isLoading" mode="mini" message="Adicionando unidade..."></app-loading-spinner>
-            <button
-              type="button"
-              *ngFor="let unit of (availableUnits$ | async)"
-              class="unit-item"
-              (click)="addUnit(unit)"
+          <div class="autocomplete-wrapper">
+            <input
+              type="text"
+              class="autocomplete-input"
+              placeholder="Buscar unidade..."
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="onSearchChange($event)"
+              (keyup.enter)="addSelectedUnit()"
               [disabled]="isLoading"
+            />
+            <button 
+              type="button"
+              class="btn btn-success"
+              (click)="addSelectedUnit()"
+              [disabled]="!selectedUnit || isLoading"
             >
-              <strong>{{ unit.name }}</strong>
-              <span class="unit-info">{{ unit.type }} • {{ unit.city }}, {{ unit.state }}</span>
+              Adicionar
             </button>
-            <div *ngIf="!(availableUnits$ | async) || (availableUnits$ | async)?.length === 0" class="alert alert-info">
-              Todas as unidades já foram adicionadas
+          </div>
+
+          <!-- Dropdown de sugestões -->
+          <div class="autocomplete-dropdown" *ngIf="filteredUnits$ | async as filtered">
+            <div 
+              *ngIf="filtered.length > 0"
+              class="dropdown-list"
+            >
+              <button
+                type="button"
+                *ngFor="let unit of filtered"
+                class="dropdown-item"
+                (click)="selectUnit(unit)"
+                [class.selected]="selectedUnit?.id === unit.id"
+              >
+                <strong>{{ unit.name }}</strong>
+                <span class="unit-info">{{ unit.type }} • {{ unit.city }}, {{ unit.state }}</span>
+              </button>
+            </div>
+            <div *ngIf="filtered.length === 0 && searchTerm" class="no-results">
+              Nenhuma unidade encontrada
+            </div>
+            <div *ngIf="filtered.length === 0 && !searchTerm" class="no-results">
+              Digite para buscar unidades
             </div>
           </div>
         </div>
@@ -86,48 +114,118 @@ import { map } from 'rxjs/operators';
       margin-bottom: 15px;
     }
 
-    .selector-content h5 {
-      margin-top: 0;
-      margin-bottom: 15px;
-      color: #333;
+    .selector-content {
+      position: relative;
     }
 
-    .unit-list {
+    .autocomplete-wrapper {
       display: flex;
-      flex-direction: column;
       gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    .autocomplete-input {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    .autocomplete-input:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+    }
+
+    .autocomplete-input:disabled {
+      background: #f5f5f5;
+      cursor: not-allowed;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+
+    .btn-success {
+      background: #28a745;
+      color: white;
+    }
+
+    .btn-success:hover:not(:disabled) {
+      background: #218838;
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .autocomplete-dropdown {
+      position: relative;
+      z-index: 100;
+    }
+
+    .dropdown-list {
       max-height: 300px;
       overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .unit-item {
+    .dropdown-item {
+      width: 100%;
+      padding: 10px 12px;
+      background: white;
+      border: none;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.2s;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      padding: 10px;
+      gap: 4px;
+    }
+
+    .dropdown-item:last-child {
+      border-bottom: none;
+    }
+
+    .dropdown-item:hover {
       background: #f5f5f5;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      cursor: pointer;
-      text-align: left;
-      transition: all 0.2s;
-      font-size: 14px;
     }
 
-    .unit-item:hover {
-      background: #e8f5e9;
-      border-color: #4caf50;
-      transform: translateX(5px);
+    .dropdown-item.selected {
+      background: #e7f3ff;
+      border-left: 3px solid #007bff;
+      padding-left: 9px;
     }
 
-    .unit-item strong {
+    .dropdown-item strong {
       color: #333;
-      margin-bottom: 4px;
     }
 
     .unit-info {
       font-size: 12px;
       color: #666;
+    }
+
+    .no-results {
+      padding: 15px;
+      text-align: center;
+      color: #999;
+      font-size: 14px;
+      background: #fafafa;
+      border-radius: 4px;
     }
 
     .btn-sm {
@@ -151,7 +249,11 @@ export class UserUnitsComponent implements OnInit {
 
   showSelector = false;
   isLoading = false;
+  searchTerm = '';
+  selectedUnit: any = null;
+  
   availableUnits$: Observable<any[]>;
+  filteredUnits$: Observable<any[]>;
 
   gridColumns: GridColumn[] = [
     { key: 'id', label: 'ID' },
@@ -171,6 +273,7 @@ export class UserUnitsComponent implements OnInit {
 
   constructor(private unitsService: UnitsService) {
     this.availableUnits$ = new Observable();
+    this.filteredUnits$ = new Observable();
   }
 
   ngOnInit(): void {
@@ -185,12 +288,46 @@ export class UserUnitsComponent implements OnInit {
         return response.data.filter(unit => !selectedIds.includes(unit.id));
       })
     );
+    this.filteredUnits$ = this.availableUnits$;
   }
 
   toggleAddUnit(): void {
     this.showSelector = !this.showSelector;
     if (this.showSelector) {
+      this.searchTerm = '';
+      this.selectedUnit = null;
       this.loadAvailableUnits();
+    }
+  }
+
+  onSearchChange(term: string): void {
+    this.searchTerm = term;
+    this.selectedUnit = null;
+    
+    this.filteredUnits$ = this.availableUnits$.pipe(
+      map(units => {
+        if (!term.trim()) {
+          return units;
+        }
+        const lowerTerm = term.toLowerCase();
+        return units.filter(unit => 
+          unit.name.toLowerCase().includes(lowerTerm) ||
+          unit.city.toLowerCase().includes(lowerTerm) ||
+          unit.state.toLowerCase().includes(lowerTerm) ||
+          unit.type.toLowerCase().includes(lowerTerm)
+        );
+      })
+    );
+  }
+
+  selectUnit(unit: any): void {
+    this.selectedUnit = unit;
+    this.searchTerm = unit.name;
+  }
+
+  addSelectedUnit(): void {
+    if (this.selectedUnit) {
+      this.addUnit(this.selectedUnit);
     }
   }
 
@@ -200,6 +337,8 @@ export class UserUnitsComponent implements OnInit {
     this.selectedUnits = updated;
     this.unitsChanged.emit(updated);
     this.showSelector = false;
+    this.searchTerm = '';
+    this.selectedUnit = null;
     this.loadAvailableUnits();
     // Reset loading state
     setTimeout(() => {
