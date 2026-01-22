@@ -2,13 +2,14 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UnitsService } from '../../../core/services/units.service';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import { SelectedUnitsGridComponent } from '../selected-units-grid/selected-units-grid.component';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-units',
   standalone: true,
-  imports: [CommonModule, LoadingSpinnerComponent],
+  imports: [CommonModule, LoadingSpinnerComponent, SelectedUnitsGridComponent],
   template: `
     <div class="user-units-container">
       <div class="user-units-header">
@@ -47,43 +48,12 @@ import { map } from 'rxjs/operators';
       </div>
 
       <!-- Grid de unidades selecionadas -->
-      <div class="user-units-grid" *ngIf="selectedUnits && selectedUnits.length > 0">
-        <table class="table table-sm">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nome</th>
-              <th>Tipo</th>
-              <th>Cidade</th>
-              <th>Estado</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let unit of selectedUnits">
-              <td>{{ unit.id }}</td>
-              <td>{{ unit.name }}</td>
-              <td>{{ unit.type }}</td>
-              <td>{{ unit.city }}</td>
-              <td>{{ unit.state }}</td>
-              <td>
-                <button 
-                  type="button"
-                  class="btn btn-danger btn-sm"
-                  (click)="removeUnit(unit.id)"
-                  [disabled]="isLoading"
-                >
-                  Remover
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="alert alert-info" *ngIf="!showSelector && (!selectedUnits || selectedUnits.length === 0)">
-        Nenhuma unidade selecionada
-      </div>
+      <app-selected-units-grid
+        [units]="selectedUnits"
+        [isLoading]="isLoading"
+        emptyMessage="Nenhuma unidade selecionada"
+        (unitRemoved)="removeUnit($event)">
+      </app-selected-units-grid>
     </div>
   `,
   styles: [`
@@ -157,19 +127,6 @@ import { map } from 'rxjs/operators';
     .unit-info {
       font-size: 12px;
       color: #666;
-    }
-
-    .user-units-grid {
-      margin-bottom: 15px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      overflow: hidden;
-      background: white;
-    }
-
-    .table {
-      margin: 0;
-      font-size: 14px;
     }
 
     .btn-sm {
