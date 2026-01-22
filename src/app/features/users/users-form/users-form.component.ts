@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
@@ -10,12 +10,18 @@ import { FormFieldConfig } from '../../../shared/components/generic-form/form-fi
 import * as UsersActions from '../../../store/users/users.actions';
 import * as UsersSelectors from '../../../store/users/users.selectors';
 import { UserUnitsComponent } from '../user-units/user-units.component';
+import { ChangePasswordDialogComponent } from '../change-password-dialog/change-password-dialog.component';
 
 @Component({
   selector: 'app-users-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormFieldComponent, UserUnitsComponent, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, FormFieldComponent, UserUnitsComponent, RouterLink, ChangePasswordDialogComponent],
   template: `
+    <app-change-password-dialog
+      #passwordDialog
+      (passwordChanged)="onPasswordChanged($event)"
+    ></app-change-password-dialog>
+
     <div class="form-container">
       <div class="form-header">
         <h2>{{ title }}</h2>
@@ -30,6 +36,27 @@ import { UserUnitsComponent } from '../user-units/user-units.component';
             [field]="field"
             [form]="form"
           ></app-form-field>
+          
+          <!-- Checkbox: Ativo/Inativo -->
+          <div class="checkbox-field">
+            <label>
+              <input type="checkbox" formControlName="isActive" />
+              Ativo
+            </label>
+          </div>
+          
+          <!-- Last Login (somente leitura) -->
+          <div class="readonly-field" *ngIf="isEdit && lastLoginDate">
+            <label>Último Login:</label>
+            <div class="readonly-value">{{ lastLoginDate | date: 'dd/MM/yyyy HH:mm:ss' }}</div>
+          </div>
+        </div>
+
+        <!-- Botão para alterar senha (apenas em edição) -->
+        <div *ngIf="isEdit" class="password-button-section">
+          <button type="button" class="btn btn-info" (click)="openChangePasswordDialog()">
+            🔑 Alterar Senha
+          </button>
         </div>
 
         <!-- Grid de unidades -->
@@ -95,6 +122,51 @@ import { UserUnitsComponent } from '../user-units/user-units.component';
       grid-column: 1 / -1;
     }
 
+    .checkbox-field {
+      display: flex;
+      align-items: center;
+    }
+
+    .checkbox-field label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      margin: 0;
+    }
+
+    .checkbox-field input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .readonly-field {
+      padding: 12px;
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .readonly-field label {
+      font-weight: 500;
+      color: #666;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .readonly-value {
+      color: #333;
+      font-family: monospace;
+    }
+
+    .password-button-section {
+      margin: 20px 0;
+      padding: 15px 0;
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #eee;
+    }
+
     .form-actions {
       display: flex;
       gap: 10px;
@@ -137,6 +209,15 @@ import { UserUnitsComponent } from '../user-units/user-units.component';
       background: #545b62;
     }
 
+    .btn-info {
+      background: #17a2b8;
+      color: white;
+    }
+
+    .btn-info:hover {
+      background: #138496;
+    }
+
     .alert {
       padding: 12px 20px;
       border-radius: 4px;
@@ -165,6 +246,9 @@ export class UsersFormComponent implements OnInit {
 
   selectedUnits: any[] = [];
   fields: FormFieldConfig[] = [];
+  lastLoginDate: Date | null = null;
+
+  @ViewChild(ChangePasswordDialogComponent) passwordDialog!: ChangePasswordDialogComponent;
 
   private userId: number | null = null;
 
@@ -183,7 +267,8 @@ export class UsersFormComponent implements OnInit {
     return this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       name: ['', [Validators.required, Validators.minLength(3)]],
-      password: !isEdit ? ['', [Validators.required, Validators.minLength(6)]] : ['']
+      password: !isEdit ? ['', [Validators.required, Validators.minLength(6)]] : [''],
+      isActive: [true],
     });
   }
 
@@ -232,9 +317,11 @@ export class UsersFormComponent implements OnInit {
           if (user) {
             this.form.patchValue({
               email: user.email,
-              name: user.name
+              name: user.name,
+              isActive: user.isActive !== false
             });
             this.selectedUnits = user.units || [];
+            this.lastLoginDate = user.lastLogin ? new Date(user.lastLogin) : null;
           }
         });
       } else {
@@ -245,6 +332,24 @@ export class UsersFormComponent implements OnInit {
 
   onUnitsChanged(units: any[]): void {
     this.selectedUnits = units;
+  }
+
+  openChangePasswordDialog(): void {
+    if (this.passwordDialog) {
+      this.passwordDialog.open();
+    }
+  }
+
+  onPasswordChanged(newPassword: string | null): void {
+    if (newPassword && this.userId) {
+      // Dispatch action to change password
+      this.store.dispatch(UsersActions.updateUser({
+        id: this.userId!,
+        user: {
+          password: newPassword
+        } as UpdateUserDto
+      }));
+    }
   }
 
   onSubmit(event: any): void {
@@ -263,6 +368,7 @@ export class UsersFormComponent implements OnInit {
       const updateDto: UpdateUserDto = {
         email: formValue.email,
         name: formValue.name,
+        isActive: formValue.isActive,
         unitIds: this.selectedUnits.map(u => u.id)
       };
       this.store.dispatch(UsersActions.updateUser({ id: this.userId, user: updateDto }));
@@ -281,5 +387,4 @@ export class UsersFormComponent implements OnInit {
     }, 1000);
   }
 }
-
 
