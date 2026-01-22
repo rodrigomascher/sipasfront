@@ -10,12 +10,19 @@ export class DepartmentsEffects {
   loadDepartments$ = createEffect(() =>
     this.actions$.pipe(
       ofType(DepartmentsActions.loadDepartments),
-      switchMap(({ params }) =>
-        this.departmentsService.getDepartments(params).pipe(
-          map((response) => DepartmentsActions.loadDepartmentsSuccess({ response })),
-          catchError(error => of(DepartmentsActions.loadDepartmentsFailure({ error: error.message })))
-        )
-      )
+      switchMap(({ params }) => {
+        console.log('[DepartmentsEffects] loadDepartments with params:', params);
+        return this.departmentsService.getDepartments(params).pipe(
+          map((response) => {
+            console.log('[DepartmentsEffects] loadDepartmentsSuccess response:', response);
+            return DepartmentsActions.loadDepartmentsSuccess({ response });
+          }),
+          catchError(error => {
+            console.error('[DepartmentsEffects] loadDepartmentsFailure error:', error);
+            return of(DepartmentsActions.loadDepartmentsFailure({ error: error.message }));
+          })
+        );
+      })
     )
   );
 

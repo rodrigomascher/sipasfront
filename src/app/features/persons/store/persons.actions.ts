@@ -1,14 +1,30 @@
 import { createAction, props } from '@ngrx/store';
 import { Person } from '../../../core/services/persons.service';
 
+export interface PaginationParams {
+  page?: number;
+  pageSize?: number;
+  sortBy?: string;
+  sortDirection?: 'asc' | 'desc';
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 // Load Actions
 export const loadPersons = createAction(
-  '[Persons] Load Persons'
+  '[Persons] Load Persons',
+  props<{ params?: PaginationParams }>()
 );
 
 export const loadPersonsSuccess = createAction(
   '[Persons] Load Persons Success',
-  props<{ persons: Person[] }>()
+  props<{ response: PaginatedResponse<Person> }>()
 );
 
 export const loadPersonsFailure = createAction(

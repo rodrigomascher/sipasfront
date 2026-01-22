@@ -5,23 +5,26 @@ import { environment } from '@environment/environment';
 
 export interface Employee {
   id: number;
-  name: string;
-  email: string;
-  phone?: string;
-  position?: string;
+  employeeId: string;
+  fullName: string;
+  unitId?: number;
   departmentId?: number;
-  createdBy?: number;
-  updatedBy?: number;
+  roleId?: number;
+  isTechnician?: boolean;
+  createdBy?: string;
+  updatedBy?: string;
   createdAt?: string;
   updatedAt?: string;
 }
 
 export interface CreateEmployeeDto {
-  name: string;
-  email: string;
-  phone?: string;
-  position?: string;
+  employeeId?: string;
+  fullName: string;
+  unitId?: number;
   departmentId?: number;
+  roleId?: number;
+  isTechnician?: boolean;
+  createdBy?: string;
 }
 
 export interface UpdateEmployeeDto extends Partial<CreateEmployeeDto> {}

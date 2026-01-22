@@ -652,7 +652,7 @@ export class PersonsFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(PersonsActions.loadPersons());
+    this.store.dispatch(PersonsActions.loadPersons({}));
     // Load dropdown data
     this.store.dispatch({type: '[Genders] Load'});
     this.store.dispatch({type: '[Gender Identities] Load'});

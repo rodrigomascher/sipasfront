@@ -10,12 +10,19 @@ export class RolesEffects {
   loadRoles$ = createEffect(() =>
     this.actions$.pipe(
       ofType(RolesActions.loadRoles),
-      switchMap(({ params }) =>
-        this.rolesService.getRoles(params).pipe(
-          map((response) => RolesActions.loadRolesSuccess({ response })),
-          catchError(error => of(RolesActions.loadRolesFailure({ error: error.message })))
-        )
-      )
+      switchMap(({ params }) => {
+        console.log('[RolesEffects] loadRoles with params:', params);
+        return this.rolesService.getRoles(params).pipe(
+          map((response) => {
+            console.log('[RolesEffects] loadRolesSuccess response:', response);
+            return RolesActions.loadRolesSuccess({ response });
+          }),
+          catchError(error => {
+            console.error('[RolesEffects] loadRolesFailure error:', error);
+            return of(RolesActions.loadRolesFailure({ error: error.message }));
+          })
+        );
+      })
     )
   );
 

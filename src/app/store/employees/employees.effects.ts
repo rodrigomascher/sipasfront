@@ -10,12 +10,19 @@ export class EmployeesEffects {
   loadEmployees$ = createEffect(() =>
     this.actions$.pipe(
       ofType(EmployeesActions.loadEmployees),
-      switchMap(({ params }) =>
-        this.employeesService.getEmployees(params).pipe(
-          map((response) => EmployeesActions.loadEmployeesSuccess({ response })),
-          catchError(error => of(EmployeesActions.loadEmployeesFailure({ error: error.message })))
-        )
-      )
+      switchMap(({ params }) => {
+        console.log('[EmployeesEffects] loadEmployees with params:', params);
+        return this.employeesService.getEmployees(params).pipe(
+          map((response) => {
+            console.log('[EmployeesEffects] loadEmployeesSuccess response:', response);
+            return EmployeesActions.loadEmployeesSuccess({ response });
+          }),
+          catchError(error => {
+            console.error('[EmployeesEffects] loadEmployeesFailure error:', error);
+            return of(EmployeesActions.loadEmployeesFailure({ error: error.message }));
+          })
+        );
+      })
     )
   );
 

@@ -23,6 +23,31 @@ export const selectPersonsError = createSelector(
   (state: PersonsState) => state.error
 );
 
+export const selectTotalItems = createSelector(
+  selectPersonsFeature,
+  (state: PersonsState) => state.total,
+);
+
+export const selectCurrentPage = createSelector(
+  selectPersonsFeature,
+  (state: PersonsState) => state.page,
+);
+
+export const selectTotalPages = createSelector(
+  selectPersonsFeature,
+  (state: PersonsState) => state.totalPages,
+);
+
+export const selectCurrentPageStart = createSelector(
+  selectPersonsFeature,
+  (state: PersonsState) => (state.page - 1) * state.pageSize + 1,
+);
+
+export const selectCurrentPageEnd = createSelector(
+  selectPersonsFeature,
+  (state: PersonsState) => Math.min(state.page * state.pageSize, state.total),
+);
+
 export const selectPersonCount = createSelector(
   selectAllPersons,
   (persons) => persons.length

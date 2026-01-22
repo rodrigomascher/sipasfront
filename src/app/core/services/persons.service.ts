@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Person {
@@ -99,6 +99,21 @@ export interface UpdatePersonDto {
   [key: string]: any;
 }
 
+export interface PaginationParams {
+  page?: number;
+  pageSize?: number;
+  sortBy?: string;
+  sortDirection?: 'asc' | 'desc';
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -108,10 +123,17 @@ export class PersonsService {
   constructor(private http: HttpClient) {}
 
   /**
-   * Get all persons
+   * Get all persons with pagination
    */
-  getPersons(): Observable<Person[]> {
-    return this.http.get<Person[]>(this.apiUrl);
+  getPersons(params?: PaginationParams): Observable<PaginatedResponse<Person>> {
+    let httpParams = new HttpParams();
+    if (params) {
+      if (params.page) httpParams = httpParams.set('page', params.page.toString());
+      if (params.pageSize) httpParams = httpParams.set('pageSize', params.pageSize.toString());
+      if (params.sortBy) httpParams = httpParams.set('sortBy', params.sortBy);
+      if (params.sortDirection) httpParams = httpParams.set('sortDirection', params.sortDirection);
+    }
+    return this.http.get<PaginatedResponse<Person>>(this.apiUrl, { params: httpParams });
   }
 
   /**

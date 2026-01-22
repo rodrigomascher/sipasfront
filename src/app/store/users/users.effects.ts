@@ -10,12 +10,19 @@ export class UsersEffects {
   loadUsers$ = createEffect(() =>
     this.actions$.pipe(
       ofType(UsersActions.loadUsers),
-      mergeMap(({ params }) =>
-        this.usersService.getUsers(params).pipe(
-          map(response => UsersActions.loadUsersSuccess({ response })),
-          catchError(error => of(UsersActions.loadUsersFailure({ error: error.message })))
-        )
-      )
+      mergeMap(({ params }) => {
+        console.log('[UsersEffects] loadUsers with params:', params);
+        return this.usersService.getUsers(params).pipe(
+          map(response => {
+            console.log('[UsersEffects] loadUsersSuccess response:', response);
+            return UsersActions.loadUsersSuccess({ response });
+          }),
+          catchError(error => {
+            console.error('[UsersEffects] loadUsersFailure error:', error);
+            return of(UsersActions.loadUsersFailure({ error: error.message }));
+          })
+        );
+      })
     )
   );
 

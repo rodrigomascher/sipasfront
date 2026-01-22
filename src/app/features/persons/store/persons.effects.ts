@@ -10,12 +10,19 @@ export class PersonsEffects {
   loadPersons$ = createEffect(() =>
     this.actions$.pipe(
       ofType(PersonsActions.loadPersons),
-      switchMap(() =>
-        this.personsService.getPersons().pipe(
-          map((persons) => PersonsActions.loadPersonsSuccess({ persons: persons as any[] })),
-          catchError((error) => of(PersonsActions.loadPersonsFailure({ error })))
-        )
-      )
+      switchMap(({ params }) => {
+        console.log('[PersonsEffects] loadPersons with params:', params);
+        return this.personsService.getPersons(params).pipe(
+          map((response) => {
+            console.log('[PersonsEffects] loadPersonsSuccess response:', response);
+            return PersonsActions.loadPersonsSuccess({ response });
+          }),
+          catchError((error) => {
+            console.error('[PersonsEffects] loadPersonsFailure error:', error);
+            return of(PersonsActions.loadPersonsFailure({ error }));
+          })
+        );
+      })
     )
   );
 

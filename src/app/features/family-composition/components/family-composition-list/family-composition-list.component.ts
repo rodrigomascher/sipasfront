@@ -80,7 +80,7 @@ export class FamilyCompositionListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(FamilyCompositionActions.loadFamilyCompositions({ params: {} }));
+    this.store.dispatch(FamilyCompositionActions.loadFamilyCompositions({ params: { page: 1, pageSize: 10 } }));
   }
 
   onPaginationChange(params: PaginationParams): void {

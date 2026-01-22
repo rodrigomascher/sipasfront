@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { User } from '../../../core/services/users.service';
-import { GenericListComponent, ListColumn } from '../../../shared/components/generic-list/generic-list.component';
+import { GenericListComponent, ListColumn, PaginationParams } from '../../../shared/components/generic-list/generic-list.component';
 import { GenericAction } from '../../../shared/components/generic-actions/generic-actions.component';
 import * as UsersActions from '../../../store/users/users.actions';
 import * as UsersSelectors from '../../../store/users/users.selectors';
@@ -17,6 +17,11 @@ import * as UsersSelectors from '../../../store/users/users.selectors';
     <app-generic-list
       [items$]="users$"
       [loading$]="loading$"
+      [totalItems$]="totalItems$"
+      [currentPage$]="currentPage$"
+      [totalPages$]="totalPages$"
+      [currentPageStart$]="currentPageStart$"
+      [currentPageEnd$]="currentPageEnd$"
       [columns]="columns"
       [actions]="actions"
       title="Cadastro de Usuários"
@@ -25,6 +30,7 @@ import * as UsersSelectors from '../../../store/users/users.selectors';
       searchPlaceholder="Buscar por email ou nome..."
       emptyMessage="Nenhum usuário encontrado"
       [searchFields]="['email', 'name']"
+      (paginationChange)="onPaginationChange($event)"
       (delete)="onDelete($event)"
     ></app-generic-list>
   `
@@ -32,12 +38,18 @@ import * as UsersSelectors from '../../../store/users/users.selectors';
 export class UsersListComponent implements OnInit {
   users$: Observable<User[]>;
   loading$: Observable<boolean>;
+  totalItems$: Observable<number>;
+  currentPage$: Observable<number>;
+  totalPages$: Observable<number>;
+  currentPageStart$: Observable<number>;
+  currentPageEnd$: Observable<number>;
+
   columns: ListColumn[] = [
-    { key: 'id', label: 'ID', formatter: (val) => `#${val}` },
-    { key: 'email', label: 'Email' },
-    { key: 'name', label: 'Nome' },
+    { key: 'id', label: 'ID', formatter: (val) => `#${val}`, sortable: true },
+    { key: 'email', label: 'Email', sortable: true },
+    { key: 'name', label: 'Nome', sortable: true },
     { key: 'isActive', label: 'Status', formatter: (val) => val ? 'Ativo' : 'Inativo' },
-    { key: 'lastLogin', label: 'Último Acesso', formatter: (val) => val ? new Date(val).toLocaleDateString('pt-BR') : 'Nunca' }
+    { key: 'lastLogin', label: 'Último Acesso', formatter: (val) => val ? new Date(val).toLocaleDateString('pt-BR') : 'Nunca', sortable: true }
   ];
   actions: GenericAction[] = [
     {
@@ -61,10 +73,19 @@ export class UsersListComponent implements OnInit {
   ) {
     this.users$ = this.store.select(UsersSelectors.selectAllUsers);
     this.loading$ = this.store.select(UsersSelectors.selectUsersLoading);
+    this.totalItems$ = this.store.select(UsersSelectors.selectTotalItems);
+    this.currentPage$ = this.store.select(UsersSelectors.selectCurrentPage);
+    this.totalPages$ = this.store.select(UsersSelectors.selectTotalPages);
+    this.currentPageStart$ = this.store.select(UsersSelectors.selectCurrentPageStart);
+    this.currentPageEnd$ = this.store.select(UsersSelectors.selectCurrentPageEnd);
   }
 
   ngOnInit(): void {
-    this.store.dispatch(UsersActions.loadUsers({}));
+    this.store.dispatch(UsersActions.loadUsers({ params: { page: 1, pageSize: 10 } }));
+  }
+
+  onPaginationChange(params: PaginationParams): void {
+    this.store.dispatch(UsersActions.loadUsers({ params }));
   }
 
   onDelete(item: User): void {

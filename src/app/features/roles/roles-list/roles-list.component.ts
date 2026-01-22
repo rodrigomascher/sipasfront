@@ -4,11 +4,16 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Role } from '../../../core/services/roles.service';
-import { GenericListComponent, ListColumn } from '../../../shared/components/generic-list/generic-list.component';
+import { GenericListComponent, ListColumn, PaginationParams } from '../../../shared/components/generic-list/generic-list.component';
 import { GenericAction } from '../../../shared/components/generic-actions/generic-actions.component';
 import { 
   selectAllRoles, 
-  selectRolesLoading
+  selectRolesLoading,
+  selectTotalItems,
+  selectCurrentPage,
+  selectTotalPages,
+  selectCurrentPageStart,
+  selectCurrentPageEnd
 } from '../../../store/roles/roles.selectors';
 import * as RolesActions from '../../../store/roles/roles.actions';
 
@@ -20,6 +25,11 @@ import * as RolesActions from '../../../store/roles/roles.actions';
     <app-generic-list
       [items$]="roles$"
       [loading$]="loading$"
+      [totalItems$]="totalItems$"
+      [currentPage$]="currentPage$"
+      [totalPages$]="totalPages$"
+      [currentPageStart$]="currentPageStart$"
+      [currentPageEnd$]="currentPageEnd$"
       [columns]="columns"
       [actions]="actions"
       title="Cadastro de Cargos"
@@ -28,6 +38,7 @@ import * as RolesActions from '../../../store/roles/roles.actions';
       searchPlaceholder="Buscar por nome..."
       emptyMessage="Nenhum cargo encontrado"
       [searchFields]="['name']"
+      (paginationChange)="onPaginationChange($event)"
       (delete)="onDelete($event)"
     ></app-generic-list>
   `
@@ -35,10 +46,16 @@ import * as RolesActions from '../../../store/roles/roles.actions';
 export class RolesListComponent implements OnInit {
   roles$: Observable<Role[]>;
   loading$: Observable<boolean>;
+  totalItems$: Observable<number>;
+  currentPage$: Observable<number>;
+  totalPages$: Observable<number>;
+  currentPageStart$: Observable<number>;
+  currentPageEnd$: Observable<number>;
+
   columns: ListColumn[] = [
-    { key: 'id', label: 'ID', formatter: (val) => `#${val}` },
-    { key: 'name', label: 'Nome' },
-    { key: 'description', label: 'Descrição', formatter: (val) => val || '-' }
+    { key: 'id', label: 'ID', formatter: (val) => `#${val}`, sortable: true },
+    { key: 'name', label: 'Nome', sortable: true },
+    { key: 'description', label: 'Descrição', formatter: (val) => val || '-', sortable: true }
   ];
   actions: GenericAction[] = [
     {
@@ -62,10 +79,19 @@ export class RolesListComponent implements OnInit {
   ) {
     this.roles$ = this.store.select(selectAllRoles);
     this.loading$ = this.store.select(selectRolesLoading);
+    this.totalItems$ = this.store.select(selectTotalItems);
+    this.currentPage$ = this.store.select(selectCurrentPage);
+    this.totalPages$ = this.store.select(selectTotalPages);
+    this.currentPageStart$ = this.store.select(selectCurrentPageStart);
+    this.currentPageEnd$ = this.store.select(selectCurrentPageEnd);
   }
 
   ngOnInit(): void {
-    this.store.dispatch(RolesActions.loadRoles({}));
+    this.store.dispatch(RolesActions.loadRoles({ params: { page: 1, pageSize: 10 } }));
+  }
+
+  onPaginationChange(params: PaginationParams): void {
+    this.store.dispatch(RolesActions.loadRoles({ params }));
   }
 
   onDelete(item: Role): void {

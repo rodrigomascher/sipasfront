@@ -19,55 +19,52 @@ import * as EmployeesActions from '../../../store/employees/employees.actions';
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
         <div class="form-group">
-          <label for="name">Nome *</label>
+          <label for="employeeId">Matrícula *</label>
           <input
             type="text"
-            id="name"
-            formControlName="name"
+            id="employeeId"
+            formControlName="employeeId"
+            class="form-input"
+            placeholder="Digite a matrícula do funcionário"
+          />
+          <span *ngIf="form.get('employeeId')?.hasError('required') && form.get('employeeId')?.touched" class="error-text">
+            Matrícula é obrigatória
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="fullName">Nome *</label>
+          <input
+            type="text"
+            id="fullName"
+            formControlName="fullName"
             class="form-input"
             placeholder="Digite o nome do funcionário"
           />
-          <span *ngIf="form.get('name')?.hasError('required') && form.get('name')?.touched" class="error-text">
+          <span *ngIf="form.get('fullName')?.hasError('required') && form.get('fullName')?.touched" class="error-text">
             Nome é obrigatório
           </span>
         </div>
 
         <div class="form-group">
-          <label for="email">Email *</label>
+          <label for="unitId">Unidade</label>
           <input
-            type="email"
-            id="email"
-            formControlName="email"
+            type="number"
+            id="unitId"
+            formControlName="unitId"
             class="form-input"
-            placeholder="Digite o email do funcionário"
-          />
-          <span *ngIf="form.get('email')?.hasError('required') && form.get('email')?.touched" class="error-text">
-            Email é obrigatório
-          </span>
-          <span *ngIf="form.get('email')?.hasError('email') && form.get('email')?.touched" class="error-text">
-            Email inválido
-          </span>
-        </div>
-
-        <div class="form-group">
-          <label for="phone">Telefone</label>
-          <input
-            type="tel"
-            id="phone"
-            formControlName="phone"
-            class="form-input"
-            placeholder="Digite o telefone"
+            placeholder="ID da unidade"
           />
         </div>
 
         <div class="form-group">
-          <label for="position">Cargo</label>
+          <label for="departmentId">Departamento</label>
           <input
-            type="text"
-            id="position"
-            formControlName="position"
+            type="number"
+            id="departmentId"
+            formControlName="departmentId"
             class="form-input"
-            placeholder="Digite o cargo"
+            placeholder="ID do departamento"
           />
         </div>
 
@@ -191,10 +188,12 @@ export class EmployeesFormComponent implements OnInit {
     private store: Store<{ employees: any }>
   ) {
     this.form = this.fb.group({
-      name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      phone: [''],
-      position: ['']
+      employeeId: ['', Validators.required],
+      fullName: ['', Validators.required],
+      unitId: [''],
+      departmentId: [''],
+      roleId: [''],
+      isTechnician: [false]
     });
   }
 
@@ -207,10 +206,10 @@ export class EmployeesFormComponent implements OnInit {
         this.store.select(selectEmployeeById(this.employeeId)).subscribe(employee => {
           if (employee) {
             this.form.patchValue({
-              name: employee.name,
-              email: employee.email,
-              phone: employee.phone || '',
-              position: employee.position || ''
+              employeeId: employee.employeeId,
+              fullName: employee.fullName,
+              unitId: employee.unitId,
+              departmentId: employee.departmentId
             });
           } else {
             this.store.dispatch(EmployeesActions.loadEmployeeById({ id: this.employeeId! }));

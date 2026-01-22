@@ -10,16 +10,19 @@ export class FamilyCompositionEffects {
   loadFamilyCompositions$ = createEffect(() =>
     this.actions$.pipe(
       ofType(FamilyCompositionActions.loadFamilyCompositions),
-      switchMap(({ params }) =>
-        this.service.getAll(params).pipe(
-          map((response) =>
-            FamilyCompositionActions.loadFamilyCompositionsSuccess({ response }),
-          ),
-          catchError((error) =>
-            of(FamilyCompositionActions.loadFamilyCompositionsFailure({ error: error.message })),
-          ),
-        ),
-      ),
+      switchMap(({ params }) => {
+        console.log('[FamilyCompositionEffects] loadFamilyCompositions with params:', params);
+        return this.service.getAll(params).pipe(
+          map((response) => {
+            console.log('[FamilyCompositionEffects] loadFamilyCompositionsSuccess response:', response);
+            return FamilyCompositionActions.loadFamilyCompositionsSuccess({ response });
+          }),
+          catchError((error) => {
+            console.error('[FamilyCompositionEffects] loadFamilyCompositionsFailure error:', error);
+            return of(FamilyCompositionActions.loadFamilyCompositionsFailure({ error: error.message }));
+          }),
+        );
+      }),
     ),
   );
 

@@ -4,11 +4,16 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Employee } from '../../../core/services/employees.service';
-import { GenericListComponent, ListColumn } from '../../../shared/components/generic-list/generic-list.component';
+import { GenericListComponent, ListColumn, PaginationParams } from '../../../shared/components/generic-list/generic-list.component';
 import { GenericAction } from '../../../shared/components/generic-actions/generic-actions.component';
 import { 
   selectAllEmployees, 
-  selectEmployeesLoading
+  selectEmployeesLoading,
+  selectTotalItems,
+  selectCurrentPage,
+  selectTotalPages,
+  selectCurrentPageStart,
+  selectCurrentPageEnd
 } from '../../../store/employees/employees.selectors';
 import * as EmployeesActions from '../../../store/employees/employees.actions';
 
@@ -20,6 +25,11 @@ import * as EmployeesActions from '../../../store/employees/employees.actions';
     <app-generic-list
       [items$]="employees$"
       [loading$]="loading$"
+      [totalItems$]="totalItems$"
+      [currentPage$]="currentPage$"
+      [totalPages$]="totalPages$"
+      [currentPageStart$]="currentPageStart$"
+      [currentPageEnd$]="currentPageEnd$"
       [columns]="columns"
       [actions]="actions"
       title="Cadastro de Funcionários"
@@ -27,7 +37,8 @@ import * as EmployeesActions from '../../../store/employees/employees.actions';
       createRoute="/employees/create"
       searchPlaceholder="Buscar por nome ou email..."
       emptyMessage="Nenhum funcionário encontrado"
-      [searchFields]="['name', 'email']"
+      [searchFields]="['fullName', 'employeeId']"
+      (paginationChange)="onPaginationChange($event)"
       (delete)="onDelete($event)"
     ></app-generic-list>
   `
@@ -35,12 +46,18 @@ import * as EmployeesActions from '../../../store/employees/employees.actions';
 export class EmployeesListComponent implements OnInit {
   employees$: Observable<Employee[]>;
   loading$: Observable<boolean>;
+  totalItems$: Observable<number>;
+  currentPage$: Observable<number>;
+  totalPages$: Observable<number>;
+  currentPageStart$: Observable<number>;
+  currentPageEnd$: Observable<number>;
+
   columns: ListColumn[] = [
-    { key: 'id', label: 'ID', formatter: (val) => `#${val}` },
-    { key: 'name', label: 'Nome' },
-    { key: 'email', label: 'Email' },
-    { key: 'phone', label: 'Telefone', formatter: (val) => val || '-' },
-    { key: 'position', label: 'Cargo', formatter: (val) => val || '-' }
+    { key: 'id', label: 'ID', formatter: (val) => `#${val}`, sortable: true },
+    { key: 'employeeId', label: 'Matrícula', sortable: true },
+    { key: 'fullName', label: 'Nome', sortable: true },
+    { key: 'departmentId', label: 'Departamento', formatter: (val) => val || '-', sortable: true },
+    { key: 'isTechnician', label: 'Técnico', formatter: (val) => val ? 'Sim' : 'Não', sortable: true }
   ];
   actions: GenericAction[] = [
     {
@@ -64,10 +81,19 @@ export class EmployeesListComponent implements OnInit {
   ) {
     this.employees$ = this.store.select(selectAllEmployees);
     this.loading$ = this.store.select(selectEmployeesLoading);
+    this.totalItems$ = this.store.select(selectTotalItems);
+    this.currentPage$ = this.store.select(selectCurrentPage);
+    this.totalPages$ = this.store.select(selectTotalPages);
+    this.currentPageStart$ = this.store.select(selectCurrentPageStart);
+    this.currentPageEnd$ = this.store.select(selectCurrentPageEnd);
   }
 
   ngOnInit(): void {
-    this.store.dispatch(EmployeesActions.loadEmployees({}));
+    this.store.dispatch(EmployeesActions.loadEmployees({ params: { page: 1, pageSize: 10 } }));
+  }
+
+  onPaginationChange(params: PaginationParams): void {
+    this.store.dispatch(EmployeesActions.loadEmployees({ params }));
   }
 
   onDelete(item: Employee): void {

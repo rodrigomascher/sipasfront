@@ -4,11 +4,16 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Department } from '../../../core/services/departments.service';
-import { GenericListComponent, ListColumn } from '../../../shared/components/generic-list/generic-list.component';
+import { GenericListComponent, ListColumn, PaginationParams } from '../../../shared/components/generic-list/generic-list.component';
 import { GenericAction } from '../../../shared/components/generic-actions/generic-actions.component';
 import { 
   selectAllDepartments, 
-  selectDepartmentsLoading
+  selectDepartmentsLoading,
+  selectTotalItems,
+  selectCurrentPage,
+  selectTotalPages,
+  selectCurrentPageStart,
+  selectCurrentPageEnd
 } from '../../../store/departments/departments.selectors';
 import * as DepartmentsActions from '../../../store/departments/departments.actions';
 
@@ -20,6 +25,11 @@ import * as DepartmentsActions from '../../../store/departments/departments.acti
     <app-generic-list
       [items$]="departments$"
       [loading$]="loading$"
+      [totalItems$]="totalItems$"
+      [currentPage$]="currentPage$"
+      [totalPages$]="totalPages$"
+      [currentPageStart$]="currentPageStart$"
+      [currentPageEnd$]="currentPageEnd$"
       [columns]="columns"
       [actions]="actions"
       title="Cadastro de Departamentos"
@@ -28,6 +38,7 @@ import * as DepartmentsActions from '../../../store/departments/departments.acti
       searchPlaceholder="Buscar por nome..."
       emptyMessage="Nenhum departamento encontrado"
       [searchFields]="['name']"
+      (paginationChange)="onPaginationChange($event)"
       (delete)="onDelete($event)"
     ></app-generic-list>
   `
@@ -35,10 +46,16 @@ import * as DepartmentsActions from '../../../store/departments/departments.acti
 export class DepartmentsListComponent implements OnInit {
   departments$: Observable<Department[]>;
   loading$: Observable<boolean>;
+  totalItems$: Observable<number>;
+  currentPage$: Observable<number>;
+  totalPages$: Observable<number>;
+  currentPageStart$: Observable<number>;
+  currentPageEnd$: Observable<number>;
+
   columns: ListColumn[] = [
-    { key: 'id', label: 'ID', formatter: (val) => `#${val}` },
-    { key: 'name', label: 'Nome' },
-    { key: 'description', label: 'Descrição', formatter: (val) => val || '-' }
+    { key: 'id', label: 'ID', formatter: (val) => `#${val}`, sortable: true },
+    { key: 'name', label: 'Nome', sortable: true },
+    { key: 'description', label: 'Descrição', formatter: (val) => val || '-', sortable: true }
   ];
   actions: GenericAction[] = [
     {
@@ -62,10 +79,19 @@ export class DepartmentsListComponent implements OnInit {
   ) {
     this.departments$ = this.store.select(selectAllDepartments);
     this.loading$ = this.store.select(selectDepartmentsLoading);
+    this.totalItems$ = this.store.select(selectTotalItems);
+    this.currentPage$ = this.store.select(selectCurrentPage);
+    this.totalPages$ = this.store.select(selectTotalPages);
+    this.currentPageStart$ = this.store.select(selectCurrentPageStart);
+    this.currentPageEnd$ = this.store.select(selectCurrentPageEnd);
   }
 
   ngOnInit(): void {
-    this.store.dispatch(DepartmentsActions.loadDepartments({}));
+    this.store.dispatch(DepartmentsActions.loadDepartments({ params: { page: 1, pageSize: 10 } }));
+  }
+
+  onPaginationChange(params: PaginationParams): void {
+    this.store.dispatch(DepartmentsActions.loadDepartments({ params }));
   }
 
   onDelete(item: Department): void {
