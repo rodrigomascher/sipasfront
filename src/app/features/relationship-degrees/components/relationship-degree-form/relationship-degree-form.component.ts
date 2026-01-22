@@ -1,184 +1,69 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { RelationshipDegree } from '../../../../core/services/relationship-degree.service';
+import { Observable } from 'rxjs';
+import { GenericFormComponent } from '../../../../shared/components/generic-form/generic-form.component';
+import { FormFieldConfig } from '../../../../shared/components/generic-form/form-field-config';
 import * as RelationshipDegreeActions from '../../../../store/relationship-degree/relationship-degree.actions';
 
 @Component({
   selector: 'app-relationship-degree-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, GenericFormComponent],
   template: `
-    <div class="form-container">
-      <div class="form-header">
-        <h1>{{ isEdit ? 'Editar' : 'Novo' }} Grau de Parentesco</h1>
-        <button class="btn btn-secondary" (click)="goBack()">← Voltar</button>
-      </div>
-
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="form-group">
-          <label for="description">Descrição *</label>
-          <input 
-            type="text" 
-            id="description" 
-            formControlName="description"
-            placeholder="Ex: Pai/Mãe, Cônjuge, Filho(a)..."
-          />
-        </div>
-
-        <div class="form-group checkbox">
-          <input 
-            type="checkbox" 
-            id="active" 
-            formControlName="active"
-          />
-          <label for="active">Ativo</label>
-        </div>
-
-        <div class="form-group">
-          <label for="createdBy">Criado Por</label>
-          <input 
-            type="text" 
-            id="createdBy" 
-            formControlName="createdBy"
-            placeholder="Usuário que criou o registro"
-          />
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary" [disabled]="!form.valid">
-            {{ isEdit ? 'Atualizar' : 'Criar' }}
-          </button>
-          <button type="button" class="btn btn-secondary" (click)="goBack()">
-            Cancelar
-          </button>
-        </div>
-      </form>
-    </div>
-  `,
-  styles: [`
-    .form-container {
-      max-width: 600px;
-      margin: 2rem auto;
-      background: white;
-      border-radius: 0.55rem;
-      padding: 2rem;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-    }
-
-    .form-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2rem;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 1.75rem;
-      color: #32325d;
-    }
-
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-      color: #525f7f;
-      font-size: 0.9rem;
-    }
-
-    input:not([type="checkbox"]) {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #ddd;
-      border-radius: 0.55rem;
-      font-size: 0.95rem;
-      transition: all 0.3s;
-
-      &:focus {
-        outline: none;
-        border-color: #5e72e4;
-        box-shadow: 0 0 0 3px rgba(94, 114, 228, 0.1);
-      }
-    }
-
-    .checkbox {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-
-      input {
-        width: auto;
-        margin: 0;
-      }
-
-      label {
-        margin: 0;
-      }
-    }
-
-    .form-actions {
-      display: flex;
-      gap: 1rem;
-      margin-top: 2rem;
-    }
-
-    .btn {
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 0.55rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      flex: 1;
-
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #5e72e4 0%, #825ee4 100%);
-      color: white;
-
-      &:not(:disabled):hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(94, 114, 228, 0.3);
-      }
-    }
-
-    .btn-secondary {
-      background: #e3e6f0;
-      color: #525f7f;
-
-      &:hover {
-        background: #d3d6e0;
-      }
-    }
-  `]
+    <app-generic-form
+      [title]="title"
+      [fields]="fields"
+      [form]="form"
+      backRoute="/relationship-degrees"
+      [submitLabel]="isEdit ? 'Atualizar' : 'Salvar'"
+      [loading$]="loading$"
+      [error$]="error$"
+      (submit)="onSubmit($event)"
+    ></app-generic-form>
+  `
 })
 export class RelationshipDegreeFormComponent implements OnInit {
-  form: FormGroup;
   isEdit = false;
-  relationshipDegree: RelationshipDegree | null = null;
+  title = 'Novo Grau de Parentesco';
+  form!: FormGroup;
+  loading$: Observable<boolean>;
+  error$: Observable<string | null>;
+
+  fields: FormFieldConfig[] = [
+    {
+      name: 'description',
+      label: 'Descrição',
+      type: 'text',
+      placeholder: 'Ex: Pai/Mãe, Cônjuge, Filho(a)',
+      required: true
+    },
+    {
+      name: 'active',
+      label: 'Ativo',
+      type: 'checkbox'
+    }
+  ];
+
+  private itemId: number | null = null;
 
   constructor(
-    private fb: FormBuilder,
+    private store: Store<{ relationshipDegrees: any }>,
     private router: Router,
     private route: ActivatedRoute,
-    private store: Store<{ relationshipDegree: any }>
+    private fb: FormBuilder
   ) {
-    this.form = this.fb.group({
-      description: ['', Validators.required],
-      active: [true],
-      createdBy: [''],
+    this.loading$ = this.store.select(state => state.relationshipDegrees?.loading || false);
+    this.error$ = this.store.select(state => state.relationshipDegrees?.error || null);
+    this.form = this.createForm();
+  }
+
+  private createForm(): FormGroup {
+    return this.fb.group({
+      description: ['', [Validators.required, Validators.minLength(2)]],
+      active: [true]
     });
   }
 
@@ -187,31 +72,34 @@ export class RelationshipDegreeFormComponent implements OnInit {
 
     if (id) {
       this.isEdit = true;
-      this.form.patchValue({ id });
+      this.title = 'Editar Grau de Parentesco';
+      this.itemId = +id;
+      this.store.dispatch(RelationshipDegreeActions.loadRelationshipDegreeById({ id: this.itemId }));
+      this.store.select(state => state.relationshipDegrees?.selectedItem).subscribe(item => {
+        if (item) {
+          this.form.patchValue({
+            description: item.description,
+            active: item.active
+          });
+        }
+      });
     }
   }
 
-  onSubmit(): void {
-    if (!this.form.valid) return;
-
-    const payload = this.form.value;
-
-    if (this.isEdit) {
-      const id = parseInt(this.route.snapshot.paramMap.get('id') || '0');
+  onSubmit(formValue: any): void {
+    if (this.isEdit && this.itemId) {
       this.store.dispatch(RelationshipDegreeActions.updateRelationshipDegree({
-        id,
-        relationshipDegree: payload,
+        id: this.itemId,
+        relationshipDegree: formValue
       }));
     } else {
       this.store.dispatch(RelationshipDegreeActions.createRelationshipDegree({
-        relationshipDegree: payload,
+        relationshipDegree: formValue
       }));
     }
 
-    setTimeout(() => this.goBack(), 1000);
-  }
-
-  goBack(): void {
-    this.router.navigate(['/relationship-degrees']);
+    setTimeout(() => {
+      this.router.navigate(['/relationship-degrees']);
+    }, 1000);
   }
 }

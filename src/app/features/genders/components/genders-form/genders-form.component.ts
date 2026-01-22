@@ -4,218 +4,92 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { Router, ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { GenericFormComponent } from '../../../../shared/components/generic-form/generic-form.component';
+import { FormFieldConfig } from '../../../../shared/components/generic-form/form-field-config';
 import * as Actions from '../../store/genders.actions';
 import * as Selectors from '../../store/genders.selectors';
 
 @Component({
   selector: 'app-genders-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, GenericFormComponent],
   template: `
-    <div class="container">
-      <div class="form-header">
-        <h1>{{ isEditMode ? 'Editar Gênero' : 'Novo Gênero' }}</h1>
-      </div>
-
-      <form [formGroup]="form" (ngSubmit)="submit()" class="form-container">
-        <div class="form-group">
-          <label for="description">Descrição *</label>
-          <input
-            type="text"
-            id="description"
-            formControlName="description"
-            class="form-input"
-            placeholder="Ex: Masculino, Feminino"
-          />
-          <span *ngIf="form.get('description')?.hasError('required') && form.get('description')?.touched" class="error-text">
-            Descrição é obrigatória
-          </span>
-        </div>
-
-        <div class="form-group">
-          <label for="active">
-            <input
-              type="checkbox"
-              id="active"
-              formControlName="active"
-              class="form-checkbox"
-            />
-            Ativo
-          </label>
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary" [disabled]="!form.valid || (loading$ | async)">
-            {{ (loading$ | async) ? 'Salvando...' : (isEditMode ? 'Atualizar' : 'Salvar') }}
-          </button>
-          <button type="button" class="btn btn-secondary" (click)="onCancel()">
-            Cancelar
-          </button>
-        </div>
-
-        <div *ngIf="error$ | async as error" class="alert alert-danger">
-          {{ error }}
-        </div>
-      </form>
-    </div>
-  `,
-  styles: [`
-    .container {
-      padding: 2rem;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .form-header {
-      margin-bottom: 2rem;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 1.8rem;
-      color: #333;
-    }
-
-    .form-container {
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    .form-group {
-      margin-bottom: 1.5rem;
-      display: flex;
-      flex-direction: column;
-    }
-
-    label {
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: #333;
-    }
-
-    .form-input {
-      padding: 0.75rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
-      font-family: inherit;
-    }
-
-    .form-input:focus {
-      outline: none;
-      border-color: #1976d2;
-      box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
-    }
-
-    .form-checkbox {
-      margin-right: 0.5rem;
-      cursor: pointer;
-    }
-
-    .error-text {
-      color: #dc3545;
-      font-size: 12px;
-      margin-top: 0.25rem;
-    }
-
-    .form-actions {
-      display: flex;
-      gap: 1rem;
-      margin-top: 2rem;
-    }
-
-    .btn {
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 4px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .btn-primary {
-      background-color: #1976d2;
-      color: white;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background-color: #1565c0;
-    }
-
-    .btn-primary:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-
-    .btn-secondary {
-      background-color: #6c757d;
-      color: white;
-    }
-
-    .btn-secondary:hover {
-      background-color: #5a6268;
-    }
-
-    .alert {
-      margin-top: 1rem;
-      padding: 0.75rem;
-      border-radius: 4px;
-      font-size: 14px;
-    }
-
-    .alert-danger {
-      background-color: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
-  `]
+    <app-generic-form
+      [title]="title"
+      [fields]="fields"
+      [form]="form"
+      backRoute="/genders"
+      [submitLabel]="isEditMode ? 'Atualizar' : 'Salvar'"
+      [loading$]="loading$"
+      [error$]="error$"
+      (submit)="onSubmit($event)"
+    ></app-generic-form>
+  `
 })
 export class GendersFormComponent implements OnInit {
-  form: FormGroup;
+  isEditMode = false;
+  title = 'Novo Gênero';
+  form!: FormGroup;
   loading$: Observable<boolean>;
   error$: Observable<string | null>;
-  isEditMode = false;
-  itemId: number | null = null;
+
+  fields: FormFieldConfig[] = [
+    {
+      name: 'description',
+      label: 'Descrição',
+      type: 'text',
+      placeholder: 'Ex: Masculino, Feminino',
+      required: true
+    },
+    {
+      name: 'active',
+      label: 'Ativo',
+      type: 'checkbox'
+    }
+  ];
+
+  private itemId: number | null = null;
 
   constructor(
-    private formBuilder: FormBuilder,
     private store: Store<{ genders: any }>,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private fb: FormBuilder
   ) {
-    this.form = this.formBuilder.group({
-      description: ['', [Validators.required]],
-      active: [true],
-    });
     this.loading$ = this.store.select(Selectors.selectGendersLoading);
     this.error$ = this.store.select(Selectors.selectGendersError);
+    this.form = this.createForm();
   }
 
-  ngOnInit() {
-    this.route.params.subscribe((params) => {
+  private createForm(): FormGroup {
+    return this.fb.group({
+      description: ['', [Validators.required, Validators.minLength(2)]],
+      active: [true]
+    });
+  }
+
+  ngOnInit(): void {
+    this.route.params.subscribe(params => {
       if (params['id']) {
-        this.itemId = +params['id'];
         this.isEditMode = true;
+        this.title = 'Editar Gênero';
+        this.itemId = +params['id'];
+        this.store.dispatch(Actions.loadGenderById({ id: this.itemId }));
+        this.store.select(Selectors.selectSelectedGender).subscribe(gender => {
+          if (gender) {
+            this.form.patchValue({
+              description: gender.description,
+              active: gender.active
+            });
+          }
+        });
       }
     });
   }
 
-  submit() {
-    if (!this.form.valid) return;
-
-    const formValue = this.form.value;
-    formValue.createdBy = 1;
-
+  onSubmit(formValue: any): void {
     if (this.isEditMode && this.itemId) {
-      this.store.dispatch(
-        Actions.updateGender({
-          id: this.itemId,
-          gender: formValue,
-        })
-      );
+      this.store.dispatch(Actions.updateGender({ id: this.itemId, gender: formValue }));
     } else {
       this.store.dispatch(Actions.createGender({ gender: formValue }));
     }
@@ -223,9 +97,5 @@ export class GendersFormComponent implements OnInit {
     setTimeout(() => {
       this.router.navigate(['/genders']);
     }, 1000);
-  }
-
-  onCancel() {
-    this.router.navigate(['/genders']);
   }
 }
