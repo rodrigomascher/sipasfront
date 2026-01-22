@@ -74,12 +74,12 @@ export class GenderIdentitiesFormComponent implements OnInit {
         this.isEditMode = true;
         this.title = 'Editar Identidade de Gênero';
         this.itemId = +params['id'];
-        this.store.dispatch(Actions.loadGenderIdentityById({ id: this.itemId }));
-        this.store.select(Selectors.selectSelectedGenderIdentity).subscribe(genderIdentity => {
-          if (genderIdentity) {
+        this.store.select(Selectors.selectAllGenderIdentities).subscribe(items => {
+          const item = items.find((x: any) => x.id === this.itemId);
+          if (item) {
             this.form.patchValue({
-              description: genderIdentity.description,
-              active: genderIdentity.active
+              description: item.description,
+              active: item.active
             });
           }
         });

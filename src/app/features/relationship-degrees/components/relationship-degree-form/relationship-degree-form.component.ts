@@ -74,8 +74,8 @@ export class RelationshipDegreeFormComponent implements OnInit {
       this.isEdit = true;
       this.title = 'Editar Grau de Parentesco';
       this.itemId = +id;
-      this.store.dispatch(RelationshipDegreeActions.loadRelationshipDegreeById({ id: this.itemId }));
-      this.store.select(state => state.relationshipDegrees?.selectedItem).subscribe(item => {
+      this.store.select(state => state.relationshipDegrees?.relationshipDegrees || []).subscribe(items => {
+        const item = items.find((x: any) => x.id === +id!);
         if (item) {
           this.form.patchValue({
             description: item.description,

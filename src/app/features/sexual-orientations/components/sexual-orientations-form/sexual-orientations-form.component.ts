@@ -74,12 +74,12 @@ export class SexualOrientationsFormComponent implements OnInit {
         this.isEditMode = true;
         this.title = 'Editar Orientação Sexual';
         this.itemId = +params['id'];
-        this.store.dispatch(Actions.loadSexualOrientationById({ id: this.itemId }));
-        this.store.select(Selectors.selectSelectedSexualOrientation).subscribe(sexualOrientation => {
-          if (sexualOrientation) {
+        this.store.select(Selectors.selectAllSexualOrientations).subscribe(items => {
+          const item = items.find((x: any) => x.id === this.itemId);
+          if (item) {
             this.form.patchValue({
-              description: sexualOrientation.description,
-              active: sexualOrientation.active
+              description: item.description,
+              active: item.active
             });
           }
         });
