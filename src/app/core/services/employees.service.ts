@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@environment/environment';
 
@@ -26,6 +26,22 @@ export interface CreateEmployeeDto {
 
 export interface UpdateEmployeeDto extends Partial<CreateEmployeeDto> {}
 
+export interface PaginationParams {
+  page?: number;
+  pageSize?: number;
+  sortBy?: string;
+  sortDirection?: 'asc' | 'desc';
+  search?: string;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -34,8 +50,20 @@ export class EmployeesService {
 
   constructor(private http: HttpClient) {}
 
-  getEmployees(): Observable<Employee[]> {
-    return this.http.get<Employee[]>(this.apiUrl);
+  getEmployees(params?: PaginationParams): Observable<PaginatedResponse<Employee>> {
+    let httpParams = new HttpParams();
+    if (params) {
+      if (params.page) httpParams = httpParams.set('page', params.page.toString());
+      if (params.pageSize) httpParams = httpParams.set('pageSize', params.pageSize.toString());
+      if (params.sortBy) httpParams = httpParams.set('sortBy', params.sortBy);
+      if (params.sortDirection) httpParams = httpParams.set('sortDirection', params.sortDirection);
+      if (params.search) httpParams = httpParams.set('search', params.search);
+    }
+    return this.http.get<PaginatedResponse<Employee>>(this.apiUrl, { params: httpParams });
+  }
+
+  getAll(params?: PaginationParams): Observable<PaginatedResponse<Employee>> {
+    return this.getEmployees(params);
   }
 
   getEmployeeById(id: number): Observable<Employee> {

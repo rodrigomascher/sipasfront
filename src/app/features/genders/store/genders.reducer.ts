@@ -5,6 +5,10 @@ import * as GendersActions from './genders.actions';
 export interface GendersState {
   genders: Gender[];
   selectedGender: Gender | null;
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
   loading: boolean;
   error: any;
 }
@@ -12,6 +16,10 @@ export interface GendersState {
 const initialState: GendersState = {
   genders: [],
   selectedGender: null,
+  total: 0,
+  page: 1,
+  pageSize: 10,
+  totalPages: 0,
   loading: false,
   error: null,
 };
@@ -19,9 +27,13 @@ const initialState: GendersState = {
 export const gendersReducer = createReducer(
   initialState,
   on(GendersActions.loadGenders, (state) => ({ ...state, loading: true, error: null })),
-  on(GendersActions.loadGendersSuccess, (state, { genders }) => ({
+  on(GendersActions.loadGendersSuccess, (state, { response }) => ({
     ...state,
-    genders,
+    genders: response.data,
+    total: response.total,
+    page: response.page,
+    pageSize: response.pageSize,
+    totalPages: response.totalPages,
     loading: false,
   })),
   on(GendersActions.loadGendersFailure, (state, { error }) => ({

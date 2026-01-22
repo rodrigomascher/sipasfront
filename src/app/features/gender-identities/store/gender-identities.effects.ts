@@ -10,9 +10,9 @@ export class GenderIdentitiesEffects {
   loadGenderIdentities$ = createEffect(() =>
     this.actions$.pipe(
       ofType(Actions.loadGenderIdentities),
-      switchMap(() =>
-        this.service.getAll().pipe(
-          map((genderIdentities) => Actions.loadGenderIdentitiesSuccess({ genderIdentities })),
+      switchMap(({ params }) =>
+        this.service.getAll(params).pipe(
+          map((response) => Actions.loadGenderIdentitiesSuccess({ response })),
           catchError((error) => of(Actions.loadGenderIdentitiesFailure({ error })))
         )
       )

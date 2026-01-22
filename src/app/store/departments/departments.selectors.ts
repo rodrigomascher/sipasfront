@@ -32,3 +32,28 @@ export const selectDepartmentCount = createSelector(
   selectAllDepartments,
   (departments) => departments.length
 );
+
+export const selectTotalItems = createSelector(
+  selectDepartmentsState,
+  (state: DepartmentsState) => state.total,
+);
+
+export const selectCurrentPage = createSelector(
+  selectDepartmentsState,
+  (state: DepartmentsState) => state.page,
+);
+
+export const selectTotalPages = createSelector(
+  selectDepartmentsState,
+  (state: DepartmentsState) => state.totalPages,
+);
+
+export const selectCurrentPageStart = createSelector(
+  selectDepartmentsState,
+  (state: DepartmentsState) => (state.page - 1) * state.pageSize + 1,
+);
+
+export const selectCurrentPageEnd = createSelector(
+  selectDepartmentsState,
+  (state: DepartmentsState) => Math.min(state.page * state.pageSize, state.total),
+);

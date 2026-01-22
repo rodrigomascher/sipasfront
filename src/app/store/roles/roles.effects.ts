@@ -10,9 +10,9 @@ export class RolesEffects {
   loadRoles$ = createEffect(() =>
     this.actions$.pipe(
       ofType(RolesActions.loadRoles),
-      switchMap(() =>
-        this.rolesService.getRoles().pipe(
-          map((roles: Role[]) => RolesActions.loadRolesSuccess({ roles })),
+      switchMap(({ params }) =>
+        this.rolesService.getRoles(params).pipe(
+          map((response) => RolesActions.loadRolesSuccess({ response })),
           catchError(error => of(RolesActions.loadRolesFailure({ error: error.message })))
         )
       )

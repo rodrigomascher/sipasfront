@@ -5,6 +5,10 @@ import * as DepartmentsActions from './departments.actions';
 export interface DepartmentsState {
   departments: Department[];
   selectedDepartment: Department | null;
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
   loading: boolean;
   error: string | null;
 }
@@ -12,6 +16,10 @@ export interface DepartmentsState {
 export const initialState: DepartmentsState = {
   departments: [],
   selectedDepartment: null,
+  total: 0,
+  page: 1,
+  pageSize: 10,
+  totalPages: 0,
   loading: false,
   error: null
 };
@@ -25,9 +33,13 @@ export const departmentsReducer = createReducer(
     loading: true,
     error: null
   })),
-  on(DepartmentsActions.loadDepartmentsSuccess, (state, { departments }) => ({
+  on(DepartmentsActions.loadDepartmentsSuccess, (state, { response }) => ({
     ...state,
-    departments,
+    departments: response.data,
+    total: response.total,
+    page: response.page,
+    pageSize: response.pageSize,
+    totalPages: response.totalPages,
     loading: false
   })),
   on(DepartmentsActions.loadDepartmentsFailure, (state, { error }) => ({

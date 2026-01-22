@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
@@ -13,6 +13,22 @@ export interface GenderIdentity {
   updatedAt?: Date;
 }
 
+export interface PaginationParams {
+  page?: number;
+  pageSize?: number;
+  sortBy?: string;
+  sortDirection?: 'asc' | 'desc';
+  search?: string;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -21,8 +37,16 @@ export class GenderIdentitiesService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<GenderIdentity[]> {
-    return this.http.get<GenderIdentity[]>(this.apiUrl);
+  getAll(params?: PaginationParams): Observable<PaginatedResponse<GenderIdentity>> {
+    let httpParams = new HttpParams();
+    if (params) {
+      if (params.page) httpParams = httpParams.set('page', params.page.toString());
+      if (params.pageSize) httpParams = httpParams.set('pageSize', params.pageSize.toString());
+      if (params.sortBy) httpParams = httpParams.set('sortBy', params.sortBy);
+      if (params.sortDirection) httpParams = httpParams.set('sortDirection', params.sortDirection);
+      if (params.search) httpParams = httpParams.set('search', params.search);
+    }
+    return this.http.get<PaginatedResponse<GenderIdentity>>(this.apiUrl, { params: httpParams });
   }
 
   getById(id: number): Observable<GenderIdentity> {

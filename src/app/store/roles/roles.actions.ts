@@ -1,11 +1,19 @@
 import { createAction, props } from '@ngrx/store';
-import { Role, CreateRoleDto, UpdateRoleDto } from '../../core/services/roles.service';
+import { Role, CreateRoleDto, UpdateRoleDto, PaginationParams } from '../../core/services/roles.service';
 
-export const loadRoles = createAction('[Roles] Load Roles');
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export const loadRoles = createAction('[Roles] Load Roles', props<{ params?: PaginationParams }>());
 
 export const loadRolesSuccess = createAction(
   '[Roles] Load Roles Success',
-  props<{ roles: Role[] }>()
+  props<{ response: PaginatedResponse<Role> }>()
 );
 
 export const loadRolesFailure = createAction(

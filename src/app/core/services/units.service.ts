@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@environment/environment';
 
@@ -26,6 +26,22 @@ export interface CreateUnitDto {
 
 export interface UpdateUnitDto extends Partial<CreateUnitDto> {}
 
+export interface PaginationParams {
+  page?: number;
+  pageSize?: number;
+  sortBy?: string;
+  sortDirection?: 'asc' | 'desc';
+  search?: string;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -34,8 +50,20 @@ export class UnitsService {
 
   constructor(private http: HttpClient) {}
 
-  getUnits(): Observable<Unit[]> {
-    return this.http.get<Unit[]>(this.apiUrl);
+  getUnits(params?: PaginationParams): Observable<PaginatedResponse<Unit>> {
+    let httpParams = new HttpParams();
+    if (params) {
+      if (params.page) httpParams = httpParams.set('page', params.page.toString());
+      if (params.pageSize) httpParams = httpParams.set('pageSize', params.pageSize.toString());
+      if (params.sortBy) httpParams = httpParams.set('sortBy', params.sortBy);
+      if (params.sortDirection) httpParams = httpParams.set('sortDirection', params.sortDirection);
+      if (params.search) httpParams = httpParams.set('search', params.search);
+    }
+    return this.http.get<PaginatedResponse<Unit>>(this.apiUrl, { params: httpParams });
+  }
+
+  getAll(params?: PaginationParams): Observable<PaginatedResponse<Unit>> {
+    return this.getUnits(params);
   }
 
   getUnitById(id: number): Observable<Unit> {

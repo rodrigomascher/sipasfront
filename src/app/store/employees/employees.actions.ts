@@ -1,11 +1,19 @@
 import { createAction, props } from '@ngrx/store';
-import { Employee, CreateEmployeeDto, UpdateEmployeeDto } from '../../core/services/employees.service';
+import { Employee, CreateEmployeeDto, UpdateEmployeeDto, PaginationParams } from '../../core/services/employees.service';
 
-export const loadEmployees = createAction('[Employees] Load Employees');
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export const loadEmployees = createAction('[Employees] Load Employees', props<{ params?: PaginationParams }>());
 
 export const loadEmployeesSuccess = createAction(
   '[Employees] Load Employees Success',
-  props<{ employees: Employee[] }>()
+  props<{ response: PaginatedResponse<Employee> }>()
 );
 
 export const loadEmployeesFailure = createAction(

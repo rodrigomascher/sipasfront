@@ -10,9 +10,9 @@ export class SexualOrientationsEffects {
   loadSexualOrientations$ = createEffect(() =>
     this.actions$.pipe(
       ofType(Actions.loadSexualOrientations),
-      switchMap(() =>
-        this.service.getAll().pipe(
-          map((sexualOrientations) => Actions.loadSexualOrientationsSuccess({ sexualOrientations })),
+      switchMap(({ params }) =>
+        this.service.getAll(params).pipe(
+          map((response) => Actions.loadSexualOrientationsSuccess({ response })),
           catchError((error) => of(Actions.loadSexualOrientationsFailure({ error })))
         )
       )

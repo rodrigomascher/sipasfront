@@ -10,9 +10,9 @@ export class UnitsEffects {
   loadUnits$ = createEffect(() =>
     this.actions$.pipe(
       ofType(UnitsActions.loadUnits),
-      mergeMap(() =>
-        this.unitsService.getUnits().pipe(
-          map(units => UnitsActions.loadUnitsSuccess({ units })),
+      mergeMap(({ params }) =>
+        this.unitsService.getUnits(params).pipe(
+          map(response => UnitsActions.loadUnitsSuccess({ response })),
           catchError(error => of(UnitsActions.loadUnitsFailure({ error: error.message })))
         )
       )

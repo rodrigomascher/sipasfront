@@ -4,12 +4,20 @@ import * as Actions from './gender-identities.actions';
 
 export interface GenderIdentitiesState {
   genderIdentities: GenderIdentity[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
   loading: boolean;
   error: any;
 }
 
 const initialState: GenderIdentitiesState = {
   genderIdentities: [],
+  total: 0,
+  page: 1,
+  pageSize: 10,
+  totalPages: 0,
   loading: false,
   error: null,
 };
@@ -17,9 +25,13 @@ const initialState: GenderIdentitiesState = {
 export const genderIdentitiesReducer = createReducer(
   initialState,
   on(Actions.loadGenderIdentities, (state) => ({ ...state, loading: true, error: null })),
-  on(Actions.loadGenderIdentitiesSuccess, (state, { genderIdentities }) => ({
+  on(Actions.loadGenderIdentitiesSuccess, (state, { response }) => ({
     ...state,
-    genderIdentities,
+    genderIdentities: response.data,
+    total: response.total,
+    page: response.page,
+    pageSize: response.pageSize,
+    totalPages: response.totalPages,
     loading: false,
   })),
   on(Actions.createGenderIdentitySuccess, (state, { genderIdentity }) => ({

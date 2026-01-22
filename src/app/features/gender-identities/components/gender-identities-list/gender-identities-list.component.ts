@@ -62,7 +62,7 @@ export class GenderIdentitiesListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.store.dispatch(Actions.loadGenderIdentities());
+    this.store.dispatch(Actions.loadGenderIdentities({}));
   }
 
   onDelete(item: GenderIdentity) {

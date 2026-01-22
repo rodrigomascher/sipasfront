@@ -68,7 +68,7 @@ export class UnitsListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(UnitsActions.loadUnits());
+    this.store.dispatch(UnitsActions.loadUnits({}));
   }
 
   onDelete(item: Unit): void {

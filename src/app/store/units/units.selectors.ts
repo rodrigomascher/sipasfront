@@ -33,6 +33,31 @@ export const selectUnitCount = createSelector(
   (units) => units.length
 );
 
+export const selectTotalItems = createSelector(
+  selectUnitsState,
+  (state: UnitsState) => state.total,
+);
+
+export const selectCurrentPage = createSelector(
+  selectUnitsState,
+  (state: UnitsState) => state.page,
+);
+
+export const selectTotalPages = createSelector(
+  selectUnitsState,
+  (state: UnitsState) => state.totalPages,
+);
+
+export const selectCurrentPageStart = createSelector(
+  selectUnitsState,
+  (state: UnitsState) => (state.page - 1) * state.pageSize + 1,
+);
+
+export const selectCurrentPageEnd = createSelector(
+  selectUnitsState,
+  (state: UnitsState) => Math.min(state.page * state.pageSize, state.total),
+);
+
 export const selectUnitsByCity = (city: string) => createSelector(
   selectAllUnits,
   (units) => units.filter(unit => unit.city === city)

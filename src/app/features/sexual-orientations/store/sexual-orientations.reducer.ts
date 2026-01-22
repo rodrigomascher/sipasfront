@@ -4,12 +4,20 @@ import * as Actions from './sexual-orientations.actions';
 
 export interface SexualOrientationsState {
   sexualOrientations: SexualOrientation[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
   loading: boolean;
   error: any;
 }
 
 const initialState: SexualOrientationsState = {
   sexualOrientations: [],
+  total: 0,
+  page: 1,
+  pageSize: 10,
+  totalPages: 0,
   loading: false,
   error: null,
 };
@@ -17,9 +25,13 @@ const initialState: SexualOrientationsState = {
 export const sexualOrientationsReducer = createReducer(
   initialState,
   on(Actions.loadSexualOrientations, (state) => ({ ...state, loading: true, error: null })),
-  on(Actions.loadSexualOrientationsSuccess, (state, { sexualOrientations }) => ({
+  on(Actions.loadSexualOrientationsSuccess, (state, { response }) => ({
     ...state,
-    sexualOrientations,
+    sexualOrientations: response.data,
+    total: response.total,
+    page: response.page,
+    pageSize: response.pageSize,
+    totalPages: response.totalPages,
     loading: false,
   })),
   on(Actions.createSexualOrientationSuccess, (state, { sexualOrientation }) => ({

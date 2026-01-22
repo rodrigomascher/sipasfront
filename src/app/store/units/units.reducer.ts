@@ -5,6 +5,10 @@ import * as UnitsActions from './units.actions';
 export interface UnitsState {
   units: Unit[];
   selectedUnit: Unit | null;
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
   loading: boolean;
   error: string | null;
 }
@@ -12,6 +16,10 @@ export interface UnitsState {
 export const initialState: UnitsState = {
   units: [],
   selectedUnit: null,
+  total: 0,
+  page: 1,
+  pageSize: 10,
+  totalPages: 0,
   loading: false,
   error: null
 };
@@ -26,9 +34,13 @@ export const unitsReducer = createReducer(
     error: null
   })),
 
-  on(UnitsActions.loadUnitsSuccess, (state, { units }) => ({
+  on(UnitsActions.loadUnitsSuccess, (state, { response }) => ({
     ...state,
-    units,
+    units: response.data,
+    total: response.total,
+    page: response.page,
+    pageSize: response.pageSize,
+    totalPages: response.totalPages,
     loading: false
   })),
 

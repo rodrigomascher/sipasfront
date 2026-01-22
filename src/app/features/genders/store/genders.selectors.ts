@@ -28,5 +28,30 @@ export const selectGenderCount = createSelector(
   (genders) => genders.length
 );
 
+export const selectTotalItems = createSelector(
+  selectGendersState,
+  (state) => state.total,
+);
+
+export const selectCurrentPage = createSelector(
+  selectGendersState,
+  (state) => state.page,
+);
+
+export const selectTotalPages = createSelector(
+  selectGendersState,
+  (state) => state.totalPages,
+);
+
+export const selectCurrentPageStart = createSelector(
+  selectGendersState,
+  (state) => (state.page - 1) * state.pageSize + 1,
+);
+
+export const selectCurrentPageEnd = createSelector(
+  selectGendersState,
+  (state) => Math.min(state.page * state.pageSize, state.total),
+);
+
 export const selectGenderById = (id: number) =>
   createSelector(selectAllGenders, (genders) => genders.find((g) => g.id === id));

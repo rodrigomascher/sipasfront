@@ -64,7 +64,7 @@ export class UsersListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(UsersActions.loadUsers());
+    this.store.dispatch(UsersActions.loadUsers({}));
   }
 
   onDelete(item: User): void {

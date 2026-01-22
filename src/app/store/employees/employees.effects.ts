@@ -10,9 +10,9 @@ export class EmployeesEffects {
   loadEmployees$ = createEffect(() =>
     this.actions$.pipe(
       ofType(EmployeesActions.loadEmployees),
-      switchMap(() =>
-        this.employeesService.getEmployees().pipe(
-          map((employees: Employee[]) => EmployeesActions.loadEmployeesSuccess({ employees })),
+      switchMap(({ params }) =>
+        this.employeesService.getEmployees(params).pipe(
+          map((response) => EmployeesActions.loadEmployeesSuccess({ response })),
           catchError(error => of(EmployeesActions.loadEmployeesFailure({ error: error.message })))
         )
       )

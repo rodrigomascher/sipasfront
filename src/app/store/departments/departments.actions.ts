@@ -1,14 +1,23 @@
 import { createAction, props } from '@ngrx/store';
-import { Department, CreateDepartmentDto, UpdateDepartmentDto } from '../../core/services/departments.service';
+import { Department, CreateDepartmentDto, UpdateDepartmentDto, PaginationParams } from '../../core/services/departments.service';
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
 
 // Load Departments
 export const loadDepartments = createAction(
-  '[Departments] Load Departments'
+  '[Departments] Load Departments',
+  props<{ params?: PaginationParams }>()
 );
 
 export const loadDepartmentsSuccess = createAction(
   '[Departments] Load Departments Success',
-  props<{ departments: Department[] }>()
+  props<{ response: PaginatedResponse<Department> }>()
 );
 
 export const loadDepartmentsFailure = createAction(

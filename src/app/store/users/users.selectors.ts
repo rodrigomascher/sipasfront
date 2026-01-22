@@ -34,6 +34,31 @@ export const selectUserCount = createSelector(
   (users) => users.length
 );
 
+export const selectTotalItems = createSelector(
+  selectUsersState,
+  (state) => state.total,
+);
+
+export const selectCurrentPage = createSelector(
+  selectUsersState,
+  (state) => state.page,
+);
+
+export const selectTotalPages = createSelector(
+  selectUsersState,
+  (state) => state.totalPages,
+);
+
+export const selectCurrentPageStart = createSelector(
+  selectUsersState,
+  (state) => (state.page - 1) * state.pageSize + 1,
+);
+
+export const selectCurrentPageEnd = createSelector(
+  selectUsersState,
+  (state) => Math.min(state.page * state.pageSize, state.total),
+);
+
 export const selectActiveUsers = createSelector(
   selectAllUsers,
   (users) => users.filter(u => u.isActive)

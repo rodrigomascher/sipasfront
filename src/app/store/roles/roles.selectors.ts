@@ -32,3 +32,28 @@ export const selectRoleCount = createSelector(
   selectAllRoles,
   (roles) => roles.length
 );
+
+export const selectTotalItems = createSelector(
+  selectRolesState,
+  (state: RolesState) => state.total,
+);
+
+export const selectCurrentPage = createSelector(
+  selectRolesState,
+  (state: RolesState) => state.page,
+);
+
+export const selectTotalPages = createSelector(
+  selectRolesState,
+  (state: RolesState) => state.totalPages,
+);
+
+export const selectCurrentPageStart = createSelector(
+  selectRolesState,
+  (state: RolesState) => (state.page - 1) * state.pageSize + 1,
+);
+
+export const selectCurrentPageEnd = createSelector(
+  selectRolesState,
+  (state: RolesState) => Math.min(state.page * state.pageSize, state.total),
+);

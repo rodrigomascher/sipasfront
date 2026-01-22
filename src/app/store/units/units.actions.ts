@@ -1,14 +1,23 @@
 import { createAction, props } from '@ngrx/store';
-import { Unit, CreateUnitDto } from '../../core/services/units.service';
+import { Unit, CreateUnitDto, PaginationParams } from '../../core/services/units.service';
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
 
 // Load Actions
 export const loadUnits = createAction(
-  '[Units] Load Units'
+  '[Units] Load Units',
+  props<{ params?: PaginationParams }>()
 );
 
 export const loadUnitsSuccess = createAction(
   '[Units] Load Units Success',
-  props<{ units: Unit[] }>()
+  props<{ response: PaginatedResponse<Unit> }>()
 );
 
 export const loadUnitsFailure = createAction(

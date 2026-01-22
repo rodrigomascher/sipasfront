@@ -10,9 +10,9 @@ export class DepartmentsEffects {
   loadDepartments$ = createEffect(() =>
     this.actions$.pipe(
       ofType(DepartmentsActions.loadDepartments),
-      switchMap(() =>
-        this.departmentsService.getDepartments().pipe(
-          map((departments: Department[]) => DepartmentsActions.loadDepartmentsSuccess({ departments })),
+      switchMap(({ params }) =>
+        this.departmentsService.getDepartments(params).pipe(
+          map((response) => DepartmentsActions.loadDepartmentsSuccess({ response })),
           catchError(error => of(DepartmentsActions.loadDepartmentsFailure({ error: error.message })))
         )
       )

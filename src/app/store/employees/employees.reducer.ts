@@ -5,6 +5,10 @@ import * as EmployeesActions from './employees.actions';
 export interface EmployeesState {
   employees: Employee[];
   selectedEmployee: Employee | null;
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
   loading: boolean;
   error: string | null;
 }
@@ -12,6 +16,10 @@ export interface EmployeesState {
 export const initialState: EmployeesState = {
   employees: [],
   selectedEmployee: null,
+  total: 0,
+  page: 1,
+  pageSize: 10,
+  totalPages: 0,
   loading: false,
   error: null
 };
@@ -24,9 +32,13 @@ export const employeesReducer = createReducer(
     loading: true,
     error: null
   })),
-  on(EmployeesActions.loadEmployeesSuccess, (state, { employees }) => ({
+  on(EmployeesActions.loadEmployeesSuccess, (state, { response }) => ({
     ...state,
-    employees,
+    employees: response.data,
+    total: response.total,
+    page: response.page,
+    pageSize: response.pageSize,
+    totalPages: response.totalPages,
     loading: false
   })),
   on(EmployeesActions.loadEmployeesFailure, (state, { error }) => ({

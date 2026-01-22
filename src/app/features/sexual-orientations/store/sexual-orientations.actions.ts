@@ -1,8 +1,17 @@
 import { createAction, props } from '@ngrx/store';
 import { SexualOrientation } from '../../../core/services/sexual-orientations.service';
+import { PaginationParams } from '../../../core/services/sexual-orientations.service';
 
-export const loadSexualOrientations = createAction('[Sexual Orientations] Load');
-export const loadSexualOrientationsSuccess = createAction('[Sexual Orientations] Load Success', props<{ sexualOrientations: SexualOrientation[] }>());
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export const loadSexualOrientations = createAction('[Sexual Orientations] Load', props<{ params?: PaginationParams }>());
+export const loadSexualOrientationsSuccess = createAction('[Sexual Orientations] Load Success', props<{ response: PaginatedResponse<SexualOrientation> }>());
 export const loadSexualOrientationsFailure = createAction('[Sexual Orientations] Load Failure', props<{ error: any }>());
 
 export const createSexualOrientation = createAction('[Sexual Orientations] Create', props<{ sexualOrientation: Omit<SexualOrientation, 'id'> }>());

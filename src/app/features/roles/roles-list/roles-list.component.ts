@@ -65,7 +65,7 @@ export class RolesListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(RolesActions.loadRoles());
+    this.store.dispatch(RolesActions.loadRoles({}));
   }
 
   onDelete(item: Role): void {

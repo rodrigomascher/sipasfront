@@ -67,7 +67,7 @@ export class EmployeesListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(EmployeesActions.loadEmployees());
+    this.store.dispatch(EmployeesActions.loadEmployees({}));
   }
 
   onDelete(item: Employee): void {

@@ -65,7 +65,7 @@ export class DepartmentsListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(DepartmentsActions.loadDepartments());
+    this.store.dispatch(DepartmentsActions.loadDepartments({}));
   }
 
   onDelete(item: Department): void {

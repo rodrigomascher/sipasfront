@@ -32,3 +32,28 @@ export const selectEmployeeCount = createSelector(
   selectAllEmployees,
   (employees) => employees.length
 );
+
+export const selectTotalItems = createSelector(
+  selectEmployeesState,
+  (state: EmployeesState) => state.total,
+);
+
+export const selectCurrentPage = createSelector(
+  selectEmployeesState,
+  (state: EmployeesState) => state.page,
+);
+
+export const selectTotalPages = createSelector(
+  selectEmployeesState,
+  (state: EmployeesState) => state.totalPages,
+);
+
+export const selectCurrentPageStart = createSelector(
+  selectEmployeesState,
+  (state: EmployeesState) => (state.page - 1) * state.pageSize + 1,
+);
+
+export const selectCurrentPageEnd = createSelector(
+  selectEmployeesState,
+  (state: EmployeesState) => Math.min(state.page * state.pageSize, state.total),
+);

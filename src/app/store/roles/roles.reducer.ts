@@ -5,6 +5,10 @@ import * as RolesActions from './roles.actions';
 export interface RolesState {
   roles: Role[];
   selectedRole: Role | null;
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
   loading: boolean;
   error: string | null;
 }
@@ -12,6 +16,10 @@ export interface RolesState {
 export const initialState: RolesState = {
   roles: [],
   selectedRole: null,
+  total: 0,
+  page: 1,
+  pageSize: 10,
+  totalPages: 0,
   loading: false,
   error: null
 };
@@ -24,9 +32,13 @@ export const rolesReducer = createReducer(
     loading: true,
     error: null
   })),
-  on(RolesActions.loadRolesSuccess, (state, { roles }) => ({
+  on(RolesActions.loadRolesSuccess, (state, { response }) => ({
     ...state,
-    roles,
+    roles: response.data,
+    total: response.total,
+    page: response.page,
+    pageSize: response.pageSize,
+    totalPages: response.totalPages,
     loading: false
   })),
   on(RolesActions.loadRolesFailure, (state, { error }) => ({

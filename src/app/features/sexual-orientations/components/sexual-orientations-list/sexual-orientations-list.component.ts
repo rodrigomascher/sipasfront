@@ -62,7 +62,7 @@ export class SexualOrientationsListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.store.dispatch(Actions.loadSexualOrientations());
+    this.store.dispatch(Actions.loadSexualOrientations({}));
   }
 
   onDelete(item: SexualOrientation) {

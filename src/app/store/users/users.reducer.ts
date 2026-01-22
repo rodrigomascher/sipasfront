@@ -5,6 +5,10 @@ import * as UsersActions from './users.actions';
 export interface UsersState {
   users: User[];
   selectedUser: User | null;
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
   loading: boolean;
   error: string | null;
 }
@@ -12,6 +16,10 @@ export interface UsersState {
 export const initialState: UsersState = {
   users: [],
   selectedUser: null,
+  total: 0,
+  page: 1,
+  pageSize: 10,
+  totalPages: 0,
   loading: false,
   error: null,
 };
@@ -25,9 +33,13 @@ export const usersReducer = createReducer(
     loading: true,
     error: null,
   })),
-  on(UsersActions.loadUsersSuccess, (state, { users }) => ({
+  on(UsersActions.loadUsersSuccess, (state, { response }) => ({
     ...state,
-    users,
+    users: response.data,
+    total: response.total,
+    page: response.page,
+    pageSize: response.pageSize,
+    totalPages: response.totalPages,
     loading: false,
   })),
   on(UsersActions.loadUsersFailure, (state, { error }) => ({

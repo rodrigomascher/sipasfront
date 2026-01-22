@@ -1,8 +1,17 @@
 import { createAction, props } from '@ngrx/store';
 import { GenderIdentity } from '../../../core/services/gender-identities.service';
+import { PaginationParams } from '../../../core/services/gender-identities.service';
 
-export const loadGenderIdentities = createAction('[Gender Identities] Load Gender Identities');
-export const loadGenderIdentitiesSuccess = createAction('[Gender Identities] Load Gender Identities Success', props<{ genderIdentities: GenderIdentity[] }>());
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export const loadGenderIdentities = createAction('[Gender Identities] Load Gender Identities', props<{ params?: PaginationParams }>());
+export const loadGenderIdentitiesSuccess = createAction('[Gender Identities] Load Gender Identities Success', props<{ response: PaginatedResponse<GenderIdentity> }>());
 export const loadGenderIdentitiesFailure = createAction('[Gender Identities] Load Gender Identities Failure', props<{ error: any }>());
 
 export const createGenderIdentity = createAction('[Gender Identities] Create', props<{ genderIdentity: Omit<GenderIdentity, 'id'> }>());
