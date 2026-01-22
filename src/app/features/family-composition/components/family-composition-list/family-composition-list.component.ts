@@ -91,3 +91,6 @@ export class FamilyCompositionListComponent implements OnInit {
     this.store.dispatch(FamilyCompositionActions.deleteFamilyComposition({ 
       idFamilyComposition: item.idFamilyComposition, 
       idPerson: item.idPerson 
+    }));
+  }
+}
