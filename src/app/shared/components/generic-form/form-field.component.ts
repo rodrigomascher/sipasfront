@@ -96,24 +96,6 @@ import { FormFieldConfig } from './form-field-config';
         </select>
       </ng-container>
 
-      <ng-container *ngSwitchCase="'multiselect'">
-        <label [for]="field.name">
-          {{ field.label }}
-          <span *ngIf="field.required" class="required">*</span>
-        </label>
-        <select
-          [id]="field.name"
-          [formControl]="control"
-          [disabled]="field.disabled || false"
-          class="form-control"
-          multiple
-        >
-          <option *ngFor="let option of (field.options$ | async) || field.options" [value]="option.value || option.id">
-            {{ option.label || option.name }}
-          </option>
-        </select>
-      </ng-container>
-
       <ng-container *ngSwitchCase="'checkbox'">
         <label class="checkbox-label">
           <input

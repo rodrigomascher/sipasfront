@@ -1,32 +1,160 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { CreateUserDto, UpdateUserDto } from '../../../core/services/users.service';
-import { GenericFormComponent } from '../../../shared/components/generic-form/generic-form.component';
+import { FormFieldComponent } from '../../../shared/components/generic-form/form-field.component';
 import { FormFieldConfig } from '../../../shared/components/generic-form/form-field-config';
 import * as UsersActions from '../../../store/users/users.actions';
 import * as UsersSelectors from '../../../store/users/users.selectors';
-import { UnitsService } from '../../../core/services/units.service';
+import { UserUnitsComponent } from '../user-units/user-units.component';
 
 @Component({
   selector: 'app-users-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, GenericFormComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormFieldComponent, UserUnitsComponent, RouterLink],
   template: `
-    <app-generic-form
-      [title]="title"
-      [fields]="fields"
-      [form]="form"
-      backRoute="/users"
-      [submitLabel]="isEdit ? 'Atualizar' : 'Salvar'"
-      [loading$]="loading$"
-      [error$]="error$"
-      (submit)="onSubmit($event)"
-    ></app-generic-form>
-  `
+    <div class="form-container">
+      <div class="form-header">
+        <h2>{{ title }}</h2>
+        <a [routerLink]="'/users'" class="btn btn-secondary">Voltar</a>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit($event)" class="form-content">
+        <!-- Campos do usuário -->
+        <div class="form-fields">
+          <app-form-field
+            *ngFor="let field of fields"
+            [field]="field"
+            [form]="form"
+          ></app-form-field>
+        </div>
+
+        <!-- Grid de unidades -->
+        <app-user-units
+          [selectedUnits]="selectedUnits"
+          (unitsChanged)="onUnitsChanged($event)"
+        ></app-user-units>
+
+        <!-- Botões de ação -->
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
+            {{ isEdit ? 'Atualizar' : 'Salvar' }}
+          </button>
+          <a [routerLink]="'/users'" class="btn btn-secondary">Cancelar</a>
+        </div>
+      </form>
+
+      <!-- Erros -->
+      <div *ngIf="error$ | async as error" class="alert alert-danger mt-3">
+        {{ error }}
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="loading$ | async" class="spinner">
+        Carregando...
+      </div>
+    </div>
+  `,
+  styles: [`
+    .form-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .form-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .form-header h2 {
+      margin: 0;
+      color: #333;
+    }
+
+    .form-content {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .form-fields app-form-field:last-child {
+      grid-column: 1 / -1;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.3s;
+    }
+
+    .btn-primary {
+      background: #007bff;
+      color: white;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: #0056b3;
+    }
+
+    .btn-primary:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #545b62;
+    }
+
+    .alert {
+      padding: 12px 20px;
+      border-radius: 4px;
+      margin-top: 20px;
+    }
+
+    .alert-danger {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .spinner {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+    }
+  `]
 })
 export class UsersFormComponent implements OnInit {
   isEdit = false;
@@ -34,8 +162,8 @@ export class UsersFormComponent implements OnInit {
   form!: FormGroup;
   loading$: Observable<boolean>;
   error$: Observable<string | null>;
-  units$: Observable<any[]>;
 
+  selectedUnits: any[] = [];
   fields: FormFieldConfig[] = [];
 
   private userId: number | null = null;
@@ -44,12 +172,10 @@ export class UsersFormComponent implements OnInit {
     private store: Store<{ users: any }>,
     private route: ActivatedRoute,
     private router: Router,
-    private fb: FormBuilder,
-    private unitsService: UnitsService
+    private fb: FormBuilder
   ) {
     this.loading$ = this.store.select(UsersSelectors.selectUsersLoading);
     this.error$ = this.store.select(UsersSelectors.selectUsersError);
-    this.units$ = this.unitsService.getUnits();
     this.form = this.createForm(false);
   }
 
@@ -57,8 +183,7 @@ export class UsersFormComponent implements OnInit {
     return this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       name: ['', [Validators.required, Validators.minLength(3)]],
-      password: !isEdit ? ['', [Validators.required, Validators.minLength(6)]] : [''],
-      unitIds: [[], Validators.required]
+      password: !isEdit ? ['', [Validators.required, Validators.minLength(6)]] : ['']
     });
   }
 
@@ -89,15 +214,7 @@ export class UsersFormComponent implements OnInit {
               required: true
             }
           ]
-        : []),
-      {
-        name: 'unitIds' as const,
-        label: 'Unidades',
-        type: 'multiselect' as const,
-        placeholder: 'Selecione as unidades',
-        required: true,
-        options$: this.units$
-      }
+        : [])
     ];
   }
 
@@ -115,9 +232,9 @@ export class UsersFormComponent implements OnInit {
           if (user) {
             this.form.patchValue({
               email: user.email,
-              name: user.name,
-              unitIds: user.units?.map((u: any) => u.id) || []
+              name: user.name
             });
+            this.selectedUnits = user.units || [];
           }
         });
       } else {
@@ -126,18 +243,27 @@ export class UsersFormComponent implements OnInit {
     });
   }
 
-  onSubmit(formValue: any): void {
+  onUnitsChanged(units: any[]): void {
+    this.selectedUnits = units;
+  }
+
+  onSubmit(event: any): void {
     // Ignore if it's a SubmitEvent instead of form data
-    if (formValue instanceof SubmitEvent) {
-      console.warn('[UsersFormComponent] Received SubmitEvent instead of form data, ignoring');
+    if (event instanceof SubmitEvent) {
+      event.preventDefault();
+    }
+    
+    if (!this.form.valid) {
       return;
     }
+
+    const formValue = this.form.value;
     
     if (this.isEdit && this.userId) {
       const updateDto: UpdateUserDto = {
         email: formValue.email,
         name: formValue.name,
-        unitIds: formValue.unitIds
+        unitIds: this.selectedUnits.map(u => u.id)
       };
       this.store.dispatch(UsersActions.updateUser({ id: this.userId, user: updateDto }));
     } else {
@@ -145,7 +271,7 @@ export class UsersFormComponent implements OnInit {
         email: formValue.email,
         name: formValue.name,
         password: formValue.password,
-        unitIds: formValue.unitIds
+        unitIds: this.selectedUnits.map(u => u.id)
       };
       this.store.dispatch(UsersActions.createUser({ user: createDto }));
     }
@@ -155,4 +281,5 @@ export class UsersFormComponent implements OnInit {
     }, 1000);
   }
 }
+
 

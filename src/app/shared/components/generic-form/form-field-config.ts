@@ -11,8 +11,8 @@ export interface FormFieldConfig {
   /** Display label for the field */
   label: string;
 
-  /** Input type (text, number, email, select, checkbox, textarea, date, multiselect) */
-  type: 'text' | 'number' | 'email' | 'select' | 'checkbox' | 'textarea' | 'date' | 'tel' | 'multiselect';
+  /** Input type (text, number, email, select, checkbox, textarea, date, tel) */
+  type: 'text' | 'number' | 'email' | 'select' | 'checkbox' | 'textarea' | 'date' | 'tel';
 
   /** Placeholder text (optional) */
   placeholder?: string;
@@ -26,7 +26,7 @@ export interface FormFieldConfig {
   /** Options for select fields */
   options?: { label: string; value: any }[];
 
-  /** Options observable for dynamic options (select/multiselect) */
+  /** Options observable for dynamic options (select) */
   options$?: Observable<any[]>;
 
   /** Max length for text inputs */
