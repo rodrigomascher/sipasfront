@@ -1,573 +1,43 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
 import { Person } from '../../../../core/services/persons.service';
 import * as PersonsActions from '../../store/persons.actions';
 import * as PersonsSelectors from '../../store/persons.selectors';
-import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
+import { TabbedFormComponent, TabConfig } from '../../../../shared/components/tabbed-form/tabbed-form.component';
+import { FormFieldConfig } from '../../../../shared/components/generic-form/form-field-config';
 
 @Component({
   selector: 'app-persons-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, LoadingSpinnerComponent],
+  imports: [ReactiveFormsModule, TabbedFormComponent],
   template: `
-    <div class="container">
-      <div class="header">
-        <h2>{{ isEditMode ? 'Editar' : 'Novo' }} Munícipe</h2>
-      </div>
-
-      <app-loading-spinner
-        *ngIf="loading$ | async"
-        message="Carregando..."
-      ></app-loading-spinner>
-
-      <div *ngIf="error$ | async as error" class="alert alert-error">
-        Erro: {{ error }}
-      </div>
-
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!(loading$ | async)">
-        <!-- Tab Navigation -->
-        <div class="tabs">
-          <button
-            *ngFor="let tab of tabs; let i = index"
-            type="button"
-            [class.active]="selectedTab === i"
-            (click)="selectedTab = i"
-            class="tab-button"
-          >
-            {{ tab }}
-          </button>
-        </div>
-
-        <!-- Tab 1: Dados Básicos -->
-        <div class="tab-content" *ngIf="selectedTab === 0">
-          <div class="form-group">
-            <label>Nome *</label>
-            <input type="text" formControlName="firstName" placeholder="Nome" />
-            <span class="error" *ngIf="form.get('firstName')?.invalid && form.get('firstName')?.touched">
-              Nome é obrigatório (mín. 3 caracteres)
-            </span>
-          </div>
-
-          <div class="form-group">
-            <label>Sobrenome *</label>
-            <input type="text" formControlName="lastName" placeholder="Sobrenome" />
-            <span class="error" *ngIf="form.get('lastName')?.invalid && form.get('lastName')?.touched">
-              Sobrenome é obrigatório (mín. 3 caracteres)
-            </span>
-          </div>
-
-          <div class="form-group">
-            <label>Data de Nascimento *</label>
-            <input type="date" formControlName="birthDate" />
-            <span class="error" *ngIf="form.get('birthDate')?.invalid && form.get('birthDate')?.touched">
-              Data de nascimento é obrigatória
-            </span>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Sexo</label>
-              <select formControlName="sex">
-                <option value="">Selecione...</option>
-                <option value="1">Masculino</option>
-                <option value="2">Feminino</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label>Gênero</label>
-              <select formControlName="genderId">
-                <option value="">Selecione...</option>
-                <option *ngFor="let gender of (genders$ | async)" [value]="gender.id">
-                  {{ gender.description }}
-                </option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label>Identidade de Gênero</label>
-              <select formControlName="genderIdentityId">
-                <option value="">Selecione...</option>
-                <option *ngFor="let identity of (genderIdentities$ | async)" [value]="identity.id">
-                  {{ identity.description }}
-                </option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label>Orientação Sexual</label>
-              <select formControlName="sexualOrientation">
-                <option value="">Selecione...</option>
-                <option *ngFor="let orientation of (sexualOrientations$ | async)" [value]="orientation.id">
-                  {{ orientation.description }}
-                </option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Mãe (Munícipe)</label>
-              <select formControlName="motherPersonId">
-                <option value="">Vincular a outro munícipe...</option>
-                <option *ngFor="let person of (persons$ | async)" [value]="person.id">
-                  {{ person.firstName }} {{ person.lastName }}
-                </option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label>Pai (Munícipe)</label>
-              <select formControlName="fatherPersonId">
-                <option value="">Vincular a outro munícipe...</option>
-                <option *ngFor="let person of (persons$ | async)" [value]="person.id">
-                  {{ person.firstName }} {{ person.lastName }}
-                </option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tab 2: Documentação -->
-        <div class="tab-content" *ngIf="selectedTab === 1">
-          <div class="form-group">
-            <label>CPF</label>
-            <input type="text" formControlName="cpf" placeholder="999.999.999-99" />
-            <span class="error" *ngIf="form.get('cpf')?.invalid && form.get('cpf')?.touched">
-              CPF inválido
-            </span>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>NIS</label>
-              <input type="number" formControlName="nis" placeholder="NIS" />
-            </div>
-
-            <div class="form-group">
-              <label>NISN</label>
-              <input type="text" formControlName="nisn" placeholder="NISN" />
-            </div>
-
-            <div class="form-group">
-              <label>Nº SUS</label>
-              <input type="number" formControlName="susNumber" placeholder="Número SUS" />
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>RG</label>
-              <input type="text" formControlName="rg" placeholder="RG" />
-            </div>
-
-            <div class="form-group">
-              <label>Data de Expedição RG</label>
-              <input type="date" formControlName="rgIssuanceDate" />
-            </div>
-
-            <div class="form-group">
-              <label>UF RG</label>
-              <input type="text" formControlName="rgStateAbbr" placeholder="UF" maxlength="2" />
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Tab 3: Certidão -->
-        <div class="tab-content" *ngIf="selectedTab === 2">
-          <div class="form-row">
-            <div class="form-group">
-              <label>Nº Termo</label>
-              <input type="text" formControlName="certTermNumber" placeholder="Número do Termo" />
-            </div>
-
-            <div class="form-group">
-              <label>Livro</label>
-              <input type="text" formControlName="certBook" placeholder="Livro" />
-            </div>
-
-            <div class="form-group">
-              <label>Folha</label>
-              <input type="text" formControlName="certPage" placeholder="Folha" />
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Data de Emissão</label>
-              <input type="date" formControlName="certIssuanceDate" />
-            </div>
-
-            <div class="form-group">
-              <label>UF Certidão</label>
-              <input type="text" formControlName="certStateAbbr" placeholder="UF" maxlength="2" />
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Cidade Nascimento</label>
-              <input type="text" formControlName="birthCity" placeholder="Cidade" />
-            </div>
-
-            <div class="form-group">
-              <label>Subdistrito</label>
-              <input type="text" formControlName="birthSubdistrict" placeholder="Subdistrito" />
-            </div>
-          </div>
-        </div>
-
-        <!-- Tab 4: Títulos -->
-        <div class="tab-content" *ngIf="selectedTab === 3">
-          <h3>Título Eleitor</h3>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Número</label>
-              <input type="text" formControlName="voterIdNumber" placeholder="Número Título" />
-            </div>
-
-            <div class="form-group">
-              <label>Zona</label>
-              <input type="text" formControlName="voterIdZone" placeholder="Zona" />
-            </div>
-
-            <div class="form-group">
-              <label>Seção</label>
-              <input type="text" formControlName="voterIdSection" placeholder="Seção" />
-            </div>
-          </div>
-
-          <h3>Carteira Profissional</h3>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Número</label>
-              <input type="text" formControlName="profCardNumber" placeholder="Número Carteira" />
-            </div>
-
-            <div class="form-group">
-              <label>Série</label>
-              <input type="text" formControlName="profCardSeries" placeholder="Série" />
-            </div>
-
-            <div class="form-group">
-              <label>Data Expedição</label>
-              <input type="date" formControlName="profCardIssuanceDate" />
-            </div>
-          </div>
-
-          <h3>Documento Militar</h3>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Alistamento Militar</label>
-              <input type="text" formControlName="militaryRegistration" placeholder="Nº Alistamento" />
-            </div>
-
-            <div class="form-group">
-              <label>Nº Certificado Reservista</label>
-              <input type="text" formControlName="militaryReserveNumber" placeholder="Nº Reservista" />
-            </div>
-          </div>
-        </div>
-
-        <!-- Tab 5: Complementar -->
-        <div class="tab-content" *ngIf="selectedTab === 4">
-          <div class="form-row">
-            <div class="form-group">
-              <label>Raça/Cor</label>
-              <input type="text" formControlName="raceId" placeholder="ID Raça/Cor" />
-            </div>
-
-            <div class="form-group">
-              <label>Etnia</label>
-              <input type="text" formControlName="ethnicityId" placeholder="ID Etnia" />
-            </div>
-
-            <div class="form-group">
-              <label>Estado Civil</label>
-              <input type="text" formControlName="maritalStatusId" placeholder="ID Estado Civil" />
-            </div>
-
-            <div class="form-group">
-              <label>Nacionalidade</label>
-              <input type="text" formControlName="nationality" placeholder="ID Nacionalidade" />
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Falecido</label>
-              <select formControlName="deceased">
-                <option value="">Selecione...</option>
-                <option value="0">Não</option>
-                <option value="1">Sim</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label>Cidade Óbito</label>
-              <input type="text" formControlName="deathCity" placeholder="Cidade" />
-            </div>
-
-            <div class="form-group">
-              <label>Cemitério</label>
-              <input type="text" formControlName="cemetery" placeholder="Cemitério" />
-            </div>
-          </div>
-        </div>
-
-        <!-- Tab 6: Renda -->
-        <div class="tab-content" *ngIf="selectedTab === 5">
-          <div class="form-row">
-            <div class="form-group">
-              <label>Tipo de Renda</label>
-              <input type="text" formControlName="incomeTypeId" placeholder="ID Tipo Renda" />
-            </div>
-
-            <div class="form-group">
-              <label>Renda Mensal</label>
-              <input type="number" formControlName="monthlyIncome" placeholder="Renda Mensal" />
-            </div>
-
-            <div class="form-group">
-              <label>Renda Anual</label>
-              <input type="number" formControlName="annualIncome" placeholder="Renda Anual" />
-            </div>
-          </div>
-        </div>
-
-        <!-- Tab 7: Escolaridade -->
-        <div class="tab-content" *ngIf="selectedTab === 6">
-          <div class="form-row">
-            <div class="form-group">
-              <label>Nível de Educação</label>
-              <input type="text" formControlName="educationLevelId" placeholder="ID Nível Educação" />
-            </div>
-
-            <div class="form-group">
-              <label>Escola</label>
-              <input type="text" formControlName="schoolName" placeholder="Nome da Escola" />
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Ano de Conclusão</label>
-              <input type="number" formControlName="completionYear" placeholder="Ano" min="1900" max="2099" />
-            </div>
-
-            <div class="form-group">
-              <label>Estudando Atualmente</label>
-              <select formControlName="currentlyStudying">
-                <option value="">Selecione...</option>
-                <option value="0">Não</option>
-                <option value="1">Sim</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tab 8: Programas Sociais -->
-        <div class="tab-content" *ngIf="selectedTab === 7">
-          <p style="color: #666; margin-bottom: 20px;">
-            Aba de Programas Sociais será disponibilizada após criação do munícipe.
-          </p>
-          <div class="form-group">
-            <label>Observações</label>
-            <textarea formControlName="notes" placeholder="Observações gerais" rows="6"></textarea>
-          </div>
-        </div>
-
-        <!-- Form Actions -->
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
-            {{ isEditMode ? 'Atualizar' : 'Criar' }}
-          </button>
-          <a routerLink="/persons" class="btn btn-outline">Cancelar</a>
-        </div>
-      </form>
-    </div>
-  `,
-  styles: [`
-    .container {
-      padding: 20px;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .header {
-      margin-bottom: 20px;
-    }
-
-    .tabs {
-      display: flex;
-      gap: 5px;
-      border-bottom: 2px solid #ddd;
-      margin-bottom: 20px;
-      overflow-x: auto;
-    }
-
-    .tab-button {
-      padding: 12px 16px;
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      font-size: 14px;
-      white-space: nowrap;
-      border-bottom: 3px solid transparent;
-      color: #666;
-      transition: all 0.3s ease;
-    }
-
-    .tab-button:hover {
-      color: #1976d2;
-    }
-
-    .tab-button.active {
-      color: #1976d2;
-      border-bottom-color: #1976d2;
-    }
-
-    .tab-content {
-      background: white;
-      padding: 20px;
-      border-radius: 4px;
-      margin-bottom: 20px;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: 600;
-      font-size: 14px;
-      color: #333;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      padding: 8px 12px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
-      font-family: inherit;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-      outline: none;
-      border-color: #1976d2;
-      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 15px;
-    }
-
-    .error {
-      color: #d32f2f;
-      font-size: 12px;
-      display: block;
-      margin-top: 5px;
-    }
-
-    .alert {
-      padding: 12px;
-      border-radius: 4px;
-      margin-bottom: 20px;
-    }
-
-    .alert-error {
-      background-color: #ffebee;
-      color: #c62828;
-      border: 1px solid #ef5350;
-    }
-
-    h3 {
-      margin-top: 20px;
-      margin-bottom: 15px;
-      color: #333;
-      font-size: 16px;
-    }
-
-    .form-actions {
-      display: flex;
-      gap: 10px;
-      justify-content: flex-start;
-      margin-top: 30px;
-    }
-
-    .btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      text-decoration: none;
-      display: inline-block;
-      transition: background-color 0.3s ease;
-    }
-
-    .btn-primary {
-      background-color: #1976d2;
-      color: white;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background-color: #1565c0;
-    }
-
-    .btn-primary:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-
-    .btn-outline {
-      background-color: transparent;
-      color: #1976d2;
-      border: 1px solid #1976d2;
-    }
-
-    .btn-outline:hover {
-      background-color: #f0f0f0;
-    }
-  `]
+    <app-tabbed-form
+      [title]="isEditMode ? 'Editar Munícipe' : 'Novo Munícipe'"
+      [tabs]="tabs"
+      [form]="form"
+      backRoute="/persons"
+      [loading$]="loading$"
+      [error$]="error$"
+      [isEditMode]="isEditMode"
+      (submit)="onSubmit($event)"
+    ></app-tabbed-form>
+  `
 })
 export class PersonsFormComponent implements OnInit {
   form: FormGroup;
   isEditMode = false;
-  selectedTab = 0;
   personId: number | null = null;
-  persons$: Observable<Person[]>;
   loading$: Observable<boolean>;
   error$: Observable<any>;
   genders$: Observable<any[]>;
   genderIdentities$: Observable<any[]>;
   sexualOrientations$: Observable<any[]>;
 
-  tabs = [
-    'Dados Básicos',
-    'Documentação',
-    'Certidão',
-    'Títulos',
-    'Complementar',
-    'Renda',
-    'Escolaridade',
-    'Programas Sociais'
-  ];
+  tabs: TabConfig[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -575,7 +45,16 @@ export class PersonsFormComponent implements OnInit {
     private router: Router,
     private store: Store
   ) {
-    this.form = this.fb.group({
+    this.form = this.createForm();
+    this.loading$ = this.store.select(state => (state as any).persons?.loading || false);
+    this.error$ = this.store.select(state => (state as any).persons?.error || null);
+    this.genders$ = this.store.select(state => (state as any).genders?.genders || []);
+    this.genderIdentities$ = this.store.select(state => (state as any).genderIdentities?.genderIdentities || []);
+    this.sexualOrientations$ = this.store.select(state => (state as any).sexualOrientations?.sexualOrientations || []);
+  }
+
+  private createForm(): FormGroup {
+    return this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(3)]],
       lastName: ['', [Validators.required, Validators.minLength(3)]],
       birthDate: ['', Validators.required],
@@ -642,18 +121,11 @@ export class PersonsFormComponent implements OnInit {
       createdUnitId: [''],
       referredUnitId: [''],
     });
-
-    this.persons$ = this.store.select(state => (state as any).persons?.persons || []);
-    this.loading$ = this.store.select(state => (state as any).persons?.loading || false);
-    this.error$ = this.store.select(state => (state as any).persons?.error || null);
-    this.genders$ = this.store.select(state => (state as any).genders?.genders || []);
-    this.genderIdentities$ = this.store.select(state => (state as any).genderIdentities?.genderIdentities || []);
-    this.sexualOrientations$ = this.store.select(state => (state as any).sexualOrientations?.sexualOrientations || []);
   }
 
   ngOnInit(): void {
+    this.initializeTabs();
     this.store.dispatch(PersonsActions.loadPersons({}));
-    // Load dropdown data
     this.store.dispatch({type: '[Genders] Load'});
     this.store.dispatch({type: '[Gender Identities] Load'});
     this.store.dispatch({type: '[Sexual Orientations] Load'});
@@ -673,17 +145,397 @@ export class PersonsFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  private initializeTabs(): void {
+    this.tabs = [
+      {
+        title: 'Dados Básicos',
+        fields: [
+          {
+            name: 'firstName',
+            label: 'Nome',
+            type: 'text',
+            placeholder: 'Nome',
+            required: true,
+            colSpan: 1
+          },
+          {
+            name: 'lastName',
+            label: 'Sobrenome',
+            type: 'text',
+            placeholder: 'Sobrenome',
+            required: true,
+            colSpan: 1
+          },
+          {
+            name: 'birthDate',
+            label: 'Data de Nascimento',
+            type: 'date',
+            required: true,
+            colSpan: 1
+          },
+          {
+            name: 'sex',
+            label: 'Sexo',
+            type: 'select',
+            options: [
+              { label: 'Selecione...', value: '' },
+              { label: 'Masculino', value: '1' },
+              { label: 'Feminino', value: '2' }
+            ],
+            colSpan: 1
+          },
+          {
+            name: 'genderId',
+            label: 'Gênero',
+            type: 'select',
+            options: [],
+            colSpan: 1
+          },
+          {
+            name: 'genderIdentityId',
+            label: 'Identidade de Gênero',
+            type: 'select',
+            options: [],
+            colSpan: 1
+          },
+          {
+            name: 'sexualOrientation',
+            label: 'Orientação Sexual',
+            type: 'select',
+            options: [],
+            colSpan: 1
+          },
+          {
+            name: 'motherPersonId',
+            label: 'Mãe (Munícipe)',
+            type: 'select',
+            options: [],
+            colSpan: 2
+          },
+          {
+            name: 'fatherPersonId',
+            label: 'Pai (Munícipe)',
+            type: 'select',
+            options: [],
+            colSpan: 2
+          }
+        ]
+      },
+      {
+        title: 'Documentação',
+        fields: [
+          {
+            name: 'cpf',
+            label: 'CPF',
+            type: 'text',
+            placeholder: '999.999.999-99',
+            colSpan: 1
+          },
+          {
+            name: 'nis',
+            label: 'NIS',
+            type: 'number',
+            placeholder: 'NIS',
+            colSpan: 1
+          },
+          {
+            name: 'nisn',
+            label: 'NISN',
+            type: 'text',
+            placeholder: 'NISN',
+            colSpan: 1
+          },
+          {
+            name: 'susNumber',
+            label: 'Nº SUS',
+            type: 'number',
+            placeholder: 'Número SUS',
+            colSpan: 1
+          },
+          {
+            name: 'rg',
+            label: 'RG',
+            type: 'text',
+            placeholder: 'RG',
+            colSpan: 1
+          },
+          {
+            name: 'rgIssuanceDate',
+            label: 'Data de Expedição RG',
+            type: 'date',
+            colSpan: 1
+          },
+          {
+            name: 'rgStateAbbr',
+            label: 'UF RG',
+            type: 'text',
+            placeholder: 'UF',
+            maxLength: 2,
+            colSpan: 1
+          }
+        ]
+      },
+      {
+        title: 'Certidão',
+        fields: [
+          {
+            name: 'certTermNumber',
+            label: 'Nº Termo',
+            type: 'text',
+            placeholder: 'Número do Termo',
+            colSpan: 1
+          },
+          {
+            name: 'certBook',
+            label: 'Livro',
+            type: 'text',
+            placeholder: 'Livro',
+            colSpan: 1
+          },
+          {
+            name: 'certPage',
+            label: 'Folha',
+            type: 'text',
+            placeholder: 'Folha',
+            colSpan: 1
+          },
+          {
+            name: 'certIssuanceDate',
+            label: 'Data de Emissão',
+            type: 'date',
+            colSpan: 1
+          },
+          {
+            name: 'certStateAbbr',
+            label: 'UF Certidão',
+            type: 'text',
+            placeholder: 'UF',
+            maxLength: 2,
+            colSpan: 1
+          },
+          {
+            name: 'birthCity',
+            label: 'Cidade Nascimento',
+            type: 'text',
+            placeholder: 'Cidade',
+            colSpan: 2
+          },
+          {
+            name: 'birthSubdistrict',
+            label: 'Subdistrito',
+            type: 'text',
+            placeholder: 'Subdistrito',
+            colSpan: 2
+          }
+        ]
+      },
+      {
+        title: 'Títulos',
+        fields: [
+          {
+            name: 'voterIdNumber',
+            label: 'Título Eleitor - Número',
+            type: 'text',
+            placeholder: 'Número Título',
+            colSpan: 1
+          },
+          {
+            name: 'voterIdZone',
+            label: 'Zona',
+            type: 'text',
+            placeholder: 'Zona',
+            colSpan: 1
+          },
+          {
+            name: 'voterIdSection',
+            label: 'Seção',
+            type: 'text',
+            placeholder: 'Seção',
+            colSpan: 1
+          },
+          {
+            name: 'profCardNumber',
+            label: 'Carteira Prof. - Número',
+            type: 'text',
+            placeholder: 'Número Carteira',
+            colSpan: 1
+          },
+          {
+            name: 'profCardSeries',
+            label: 'Série',
+            type: 'text',
+            placeholder: 'Série',
+            colSpan: 1
+          },
+          {
+            name: 'profCardIssuanceDate',
+            label: 'Data Expedição',
+            type: 'date',
+            colSpan: 1
+          },
+          {
+            name: 'militaryRegistration',
+            label: 'Alistamento Militar',
+            type: 'text',
+            placeholder: 'Nº Alistamento',
+            colSpan: 2
+          },
+          {
+            name: 'militaryReserveNumber',
+            label: 'Nº Certificado Reservista',
+            type: 'text',
+            placeholder: 'Nº Reservista',
+            colSpan: 2
+          }
+        ]
+      },
+      {
+        title: 'Complementar',
+        fields: [
+          {
+            name: 'raceId',
+            label: 'Raça/Cor',
+            type: 'text',
+            placeholder: 'ID Raça/Cor',
+            colSpan: 1
+          },
+          {
+            name: 'ethnicityId',
+            label: 'Etnia',
+            type: 'text',
+            placeholder: 'ID Etnia',
+            colSpan: 1
+          },
+          {
+            name: 'maritalStatusId',
+            label: 'Estado Civil',
+            type: 'text',
+            placeholder: 'ID Estado Civil',
+            colSpan: 1
+          },
+          {
+            name: 'nationality',
+            label: 'Nacionalidade',
+            type: 'text',
+            placeholder: 'ID Nacionalidade',
+            colSpan: 1
+          },
+          {
+            name: 'deceased',
+            label: 'Falecido',
+            type: 'select',
+            options: [
+              { label: 'Selecione...', value: '' },
+              { label: 'Não', value: '0' },
+              { label: 'Sim', value: '1' }
+            ],
+            colSpan: 1
+          },
+          {
+            name: 'deathCity',
+            label: 'Cidade Óbito',
+            type: 'text',
+            placeholder: 'Cidade',
+            colSpan: 1
+          },
+          {
+            name: 'cemetery',
+            label: 'Cemitério',
+            type: 'text',
+            placeholder: 'Cemitério',
+            colSpan: 2
+          }
+        ]
+      },
+      {
+        title: 'Renda',
+        fields: [
+          {
+            name: 'incomeTypeId',
+            label: 'Tipo de Renda',
+            type: 'text',
+            placeholder: 'ID Tipo Renda',
+            colSpan: 1
+          },
+          {
+            name: 'monthlyIncome',
+            label: 'Renda Mensal',
+            type: 'number',
+            placeholder: 'Renda Mensal',
+            colSpan: 1
+          },
+          {
+            name: 'annualIncome',
+            label: 'Renda Anual',
+            type: 'number',
+            placeholder: 'Renda Anual',
+            colSpan: 1
+          }
+        ]
+      },
+      {
+        title: 'Escolaridade',
+        fields: [
+          {
+            name: 'educationLevelId',
+            label: 'Nível de Educação',
+            type: 'text',
+            placeholder: 'ID Nível Educação',
+            colSpan: 1
+          },
+          {
+            name: 'schoolName',
+            label: 'Escola',
+            type: 'text',
+            placeholder: 'Nome da Escola',
+            colSpan: 2
+          },
+          {
+            name: 'completionYear',
+            label: 'Ano de Conclusão',
+            type: 'number',
+            placeholder: 'Ano',
+            min: 1900,
+            max: 2099,
+            colSpan: 1
+          },
+          {
+            name: 'currentlyStudying',
+            label: 'Estudando Atualmente',
+            type: 'select',
+            options: [
+              { label: 'Selecione...', value: '' },
+              { label: 'Não', value: '0' },
+              { label: 'Sim', value: '1' }
+            ],
+            colSpan: 1
+          }
+        ]
+      },
+      {
+        title: 'Obs. Gerais',
+        fields: [
+          {
+            name: 'notes',
+            label: 'Observações',
+            type: 'textarea',
+            placeholder: 'Observações gerais',
+            colSpan: 4
+          }
+        ]
+      }
+    ];
+  }
+
+  onSubmit(formValue: any): void {
     if (this.form.invalid) {
       return;
     }
 
-    const formData = this.form.value;
-
     if (this.isEditMode && this.personId) {
-      this.store.dispatch(PersonsActions.updatePerson({ id: this.personId, person: formData }));
+      this.store.dispatch(PersonsActions.updatePerson({ id: this.personId, person: formValue }));
     } else {
-      this.store.dispatch(PersonsActions.createPerson({ person: formData }));
+      this.store.dispatch(PersonsActions.createPerson({ person: formValue }));
     }
 
     setTimeout(() => {
