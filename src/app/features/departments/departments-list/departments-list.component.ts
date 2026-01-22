@@ -54,7 +54,6 @@ export class DepartmentsListComponent implements OnInit {
 
   columns: ListColumn[] = [
     { key: 'id', label: 'ID', formatter: (val) => `#${val}`, sortable: true },
-    { key: 'name', label: 'Nome', sortable: true },
     { key: 'description', label: 'Descrição', formatter: (val) => val || '-', sortable: true }
   ];
   actions: GenericAction[] = [

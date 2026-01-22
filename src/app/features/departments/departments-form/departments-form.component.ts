@@ -41,13 +41,6 @@ export class DepartmentsFormComponent implements OnInit {
       type: 'text',
       placeholder: 'Digite a descrição do departamento',
       required: true
-    },
-    {
-      name: 'unitId',
-      label: 'Unidade',
-      type: 'select',
-      required: true,
-      options: []
     }
   ];
 
@@ -66,8 +59,7 @@ export class DepartmentsFormComponent implements OnInit {
 
   private createForm(): FormGroup {
     return this.fb.group({
-      description: ['', [Validators.required, Validators.minLength(2)]],
-      unitId: ['', Validators.required]
+      description: ['', [Validators.required, Validators.minLength(2)]]
     });
   }
 
@@ -81,8 +73,7 @@ export class DepartmentsFormComponent implements OnInit {
         this.store.select(selectDepartmentById(this.departmentId)).subscribe(department => {
           if (department) {
             this.form.patchValue({
-              description: department.description,
-              unitId: department.unitId
+              description: department.description
             });
           } else {
             this.store.dispatch(DepartmentsActions.loadDepartmentById({ id: this.departmentId! }));

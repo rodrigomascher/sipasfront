@@ -6,7 +6,6 @@ import { environment } from '@environment/environment';
 export interface Department {
   id: number;
   description: string;
-  unitId: number;
   createdBy?: number;
   updatedBy?: number;
   createdAt?: string;
@@ -15,7 +14,6 @@ export interface Department {
 
 export interface CreateDepartmentDto {
   description: string;
-  unitId: number;
 }
 
 export interface UpdateDepartmentDto extends Partial<CreateDepartmentDto> {}
