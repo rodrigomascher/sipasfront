@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
+import { SelectedUnitService } from '@core/services/selected-unit.service';
 import { UnitsService } from '@core/services/units.service';
 import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
 
@@ -260,6 +261,7 @@ export class UnitSelectorComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
+    private selectedUnitService: SelectedUnitService,
     private unitsService: UnitsService,
     private router: Router
   ) {}
@@ -294,8 +296,8 @@ export class UnitSelectorComponent implements OnInit {
   }
 
   selectUnit(unit: any): void {
-    // Armazenar unidade selecionada no localStorage
-    localStorage.setItem('selectedUnit', JSON.stringify(unit));
+    // Armazenar unidade selecionada usando o serviço
+    this.selectedUnitService.setSelectedUnit(unit);
     
     // Redirecionar para dashboard
     this.router.navigate(['/dashboard']);

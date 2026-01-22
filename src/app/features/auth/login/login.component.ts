@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
+import { SelectedUnitService } from '@core/services/selected-unit.service';
 
 @Component({
   selector: 'app-login',
@@ -143,7 +144,11 @@ export class LoginComponent implements OnInit {
   loading: boolean = false;
   error: string = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private selectedUnitService: SelectedUnitService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     // Redirect if already logged in
@@ -177,7 +182,7 @@ export class LoginComponent implements OnInit {
 
         // Se tem apenas 1 unidade, seleciona automaticamente
         if (units.length === 1) {
-          localStorage.setItem('selectedUnit', JSON.stringify(units[0]));
+          this.selectedUnitService.setSelectedUnit(units[0]);
           this.router.navigate(['/dashboard']);
         } else {
           // Se tem múltiplas unidades, redireciona para seleção
