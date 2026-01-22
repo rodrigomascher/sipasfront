@@ -166,7 +166,23 @@ export class LoginComponent implements OnInit {
         this.loading = false;
         this.authService.setToken(response.access_token);
         this.authService.setUser(response.user);
-        this.router.navigate(['/dashboard']);
+
+        // Verificar quantidade de unidades do usuário
+        const units = response.user?.['units'] || [];
+        
+        if (units.length === 0) {
+          this.error = 'Nenhuma unidade associada ao seu usuário.';
+          return;
+        }
+
+        // Se tem apenas 1 unidade, seleciona automaticamente
+        if (units.length === 1) {
+          localStorage.setItem('selectedUnit', JSON.stringify(units[0]));
+          this.router.navigate(['/dashboard']);
+        } else {
+          // Se tem múltiplas unidades, redireciona para seleção
+          this.router.navigate(['/auth/unit-selector']);
+        }
       },
       error: (err) => {
         this.loading = false;

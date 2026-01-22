@@ -35,6 +35,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('selectedUnit');
   }
 
   setToken(token: string): void {
@@ -52,6 +53,20 @@ export class AuthService {
   getUser(): any {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
+  }
+
+  // Gerenciar unidade selecionada
+  setSelectedUnit(unit: any): void {
+    localStorage.setItem('selectedUnit', JSON.stringify(unit));
+  }
+
+  getSelectedUnit(): any {
+    const unit = localStorage.getItem('selectedUnit');
+    return unit ? JSON.parse(unit) : null;
+  }
+
+  clearSelectedUnit(): void {
+    localStorage.removeItem('selectedUnit');
   }
 
   isAuthenticated(): boolean {
