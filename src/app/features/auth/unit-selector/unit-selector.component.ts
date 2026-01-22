@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { SelectedUnitService } from '@core/services/selected-unit.service';
@@ -9,7 +10,7 @@ import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/load
 @Component({
   selector: 'app-unit-selector',
   standalone: true,
-  imports: [CommonModule, LoadingSpinnerComponent],
+  imports: [CommonModule, FormsModule, LoadingSpinnerComponent],
   template: `
     <div class="unit-selector-container">
       <div class="unit-selector-box">
@@ -23,28 +24,35 @@ import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/load
           <app-loading-spinner mode="overlay" message="Carregando unidades..."></app-loading-spinner>
         </div>
 
-        <div *ngIf="!loading && units.length > 0" class="units-grid">
-          <button
-            *ngFor="let unit of units"
-            type="button"
-            class="unit-card"
-            (click)="selectUnit(unit)"
-            (keyup.enter)="selectUnit(unit)"
-            tabindex="0"
+        <form (ngSubmit)="handleSelectUnit()" *ngIf="!loading && units.length > 0" class="unit-form">
+          <div class="form-group">
+            <label for="unitSelect">Unidade</label>
+            <select
+              id="unitSelect"
+              [(ngModel)]="selectedUnit"
+              name="selectedUnit"
+              class="unit-select"
+              required
+              [disabled]="isSelecting"
+            >
+              <option value="" disabled>-- Selecione uma unidade --</option>
+              <option 
+                *ngFor="let unit of units"
+                [value]="unit"
+              >
+                {{ unit.name }} ({{ unit.type }}) - {{ unit.city }}, {{ unit.state }}
+              </option>
+            </select>
+          </div>
+
+          <button 
+            type="submit" 
+            class="btn btn-primary"
+            [disabled]="!selectedUnit || isSelecting"
           >
-            <div class="unit-icon">🏢</div>
-            <div class="unit-details">
-              <h3 class="unit-name">{{ unit.name }}</h3>
-              <div class="unit-info-row">
-                <span class="unit-badge">{{ unit.type }}</span>
-              </div>
-              <p class="unit-location">📍 {{ unit.city }}, {{ unit.state }}</p>
-            </div>
-            <div class="unit-arrow">
-              <span>→</span>
-            </div>
+            {{ isSelecting ? 'Acessando...' : 'Acessar' }}
           </button>
-        </div>
+        </form>
 
         <div *ngIf="!loading && units.length === 0" class="no-units">
           <p>Nenhuma unidade associada ao seu usuário.</p>
@@ -78,7 +86,7 @@ import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/load
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
       padding: 40px;
       width: 100%;
-      max-width: 700px;
+      max-width: 500px;
     }
 
     .unit-selector-header {
@@ -106,93 +114,42 @@ import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/load
       margin: 0;
     }
 
-    .units-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
-      margin-bottom: 30px;
+    .unit-form {
+      margin-bottom: 20px;
     }
 
-    .unit-card {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding: 16px;
-      background: #f8f9fa;
-      border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      text-align: left;
+    .form-group {
+      margin-bottom: 20px;
     }
 
-    .unit-card:hover {
-      background: #e7f3ff;
-      border-color: #007bff;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
-    }
-
-    .unit-card:focus {
-      outline: 2px solid #007bff;
-      outline-offset: 2px;
-    }
-
-    .unit-card:active {
-      transform: translateY(0);
-    }
-
-    .unit-icon {
-      font-size: 28px;
-      text-align: center;
-    }
-
-    .unit-details {
-      flex: 1;
-    }
-
-    .unit-name {
-      margin: 0 0 8px;
-      font-size: 16px;
-      font-weight: 600;
-      color: #333;
-      word-break: break-word;
-      line-height: 1.4;
-    }
-
-    .unit-info-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    label {
+      display: block;
       margin-bottom: 8px;
+      font-weight: 500;
+      color: #333;
     }
 
-    .unit-badge {
-      display: inline-block;
-      padding: 4px 8px;
-      background: #e3f2fd;
-      color: #1976d2;
+    .unit-select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
       border-radius: 4px;
-      font-size: 12px;
-      font-weight: 600;
+      font-size: 14px;
+      background: white;
+      cursor: pointer;
+      transition: border-color 0.3s;
     }
 
-    .unit-location {
-      margin: 0;
-      font-size: 12px;
-      color: #666;
+    .unit-select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
 
-    .unit-arrow {
-      text-align: center;
-      font-size: 18px;
-      color: #007bff;
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    .unit-card:hover .unit-arrow {
-      opacity: 1;
+    .unit-select:disabled {
+      background: #f5f5f5;
+      cursor: not-allowed;
+      opacity: 0.6;
     }
 
     .no-units {
@@ -218,7 +175,7 @@ import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/load
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 300px;
+      min-height: 250px;
     }
 
     .unit-selector-footer {
@@ -230,33 +187,52 @@ import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/load
     }
 
     .btn {
-      padding: 10px 24px;
+      padding: 12px;
       border: none;
-      border-radius: 6px;
+      border-radius: 4px;
       cursor: pointer;
       font-size: 14px;
       transition: all 0.3s;
-      font-weight: 500;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: #5568d3;
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
 
     .btn-secondary {
       background: #6c757d;
       color: white;
+      padding: 10px 24px;
     }
 
     .btn-secondary:hover {
       background: #545b62;
     }
 
-    .btn-secondary:active {
-      transform: scale(0.98);
+    .btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
     }
   `]
 })
 export class UnitSelectorComponent implements OnInit {
   units: any[] = [];
   user: any = null;
+  selectedUnit: any = null;
   loading = true;
+  isSelecting = false;
   error = '';
 
   constructor(
@@ -301,6 +277,16 @@ export class UnitSelectorComponent implements OnInit {
     
     // Redirecionar para dashboard
     this.router.navigate(['/dashboard']);
+  }
+
+  handleSelectUnit(): void {
+    if (this.selectedUnit) {
+      this.isSelecting = true;
+      // Simular um pequeno delay para feedback visual
+      setTimeout(() => {
+        this.selectUnit(this.selectedUnit);
+      }, 300);
+    }
   }
 
   logout(): void {
