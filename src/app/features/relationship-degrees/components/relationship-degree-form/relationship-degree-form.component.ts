@@ -86,8 +86,12 @@ export class RelationshipDegreeFormComponent implements OnInit {
     }
   }
 
-  onSubmit(formValue: any): void {
-    if (this.isEdit && this.itemId) {
+  onSubmit(formValue: any): void {    // Ignore if it's a SubmitEvent instead of form data
+    if (formValue instanceof SubmitEvent) {
+      console.warn('[RelationshipDegreeFormComponent] Received SubmitEvent instead of form data, ignoring');
+      return;
+    }
+        if (this.isEdit && this.itemId) {
       this.store.dispatch(RelationshipDegreeActions.updateRelationshipDegree({
         id: this.itemId,
         relationshipDegree: formValue

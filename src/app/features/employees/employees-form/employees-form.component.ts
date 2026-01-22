@@ -124,6 +124,12 @@ export class EmployeesFormComponent implements OnInit {
   }
 
   onSubmit(formValue: any): void {
+    // Ignore if it's a SubmitEvent instead of form data
+    if (formValue instanceof SubmitEvent) {
+      console.warn('[EmployeesFormComponent] Received SubmitEvent instead of form data, ignoring');
+      return;
+    }
+    
     if (this.isEdit && this.employeeId) {
       const updateDto: UpdateEmployeeDto = formValue;
       this.store.dispatch(EmployeesActions.updateEmployee({

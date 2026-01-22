@@ -92,6 +92,12 @@ export class RolesFormComponent implements OnInit {
   }
 
   onSubmit(formValue: any): void {
+    // Ignore if it's a SubmitEvent instead of form data
+    if (formValue instanceof SubmitEvent) {
+      console.warn('[RolesFormComponent] Received SubmitEvent instead of form data, ignoring');
+      return;
+    }
+    
     if (this.isEdit && this.roleId) {
       const updateDto: UpdateRoleDto = formValue;
       this.store.dispatch(RolesActions.updateRole({

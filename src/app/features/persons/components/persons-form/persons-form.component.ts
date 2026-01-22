@@ -528,6 +528,12 @@ export class PersonsFormComponent implements OnInit {
   }
 
   onSubmit(formValue: any): void {
+    // Ignore if it's a SubmitEvent instead of form data
+    if (formValue instanceof SubmitEvent) {
+      console.warn('[PersonsFormComponent] Received SubmitEvent instead of form data, ignoring');
+      return;
+    }
+    
     if (this.form.invalid) {
       return;
     }

@@ -88,6 +88,12 @@ export class SexualOrientationsFormComponent implements OnInit {
   }
 
   onSubmit(formValue: any): void {
+    // Ignore if it's a SubmitEvent instead of form data
+    if (formValue instanceof SubmitEvent) {
+      console.warn('[SexualOrientationsFormComponent] Received SubmitEvent instead of form data, ignoring');
+      return;
+    }
+    
     if (this.isEditMode && this.itemId) {
       this.store.dispatch(Actions.updateSexualOrientation({ id: this.itemId, sexualOrientation: formValue }));
     } else {

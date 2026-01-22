@@ -120,6 +120,12 @@ export class UsersFormComponent implements OnInit {
   }
 
   onSubmit(formValue: any): void {
+    // Ignore if it's a SubmitEvent instead of form data
+    if (formValue instanceof SubmitEvent) {
+      console.warn('[UsersFormComponent] Received SubmitEvent instead of form data, ignoring');
+      return;
+    }
+    
     if (this.isEdit && this.userId) {
       const updateDto: UpdateUserDto = {
         email: formValue.email,

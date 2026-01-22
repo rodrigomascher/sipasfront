@@ -88,6 +88,12 @@ export class GendersFormComponent implements OnInit {
   }
 
   onSubmit(formValue: any): void {
+    // Ignore if it's a SubmitEvent instead of form data
+    if (formValue instanceof SubmitEvent) {
+      console.warn('[GendersFormComponent] Received SubmitEvent instead of form data, ignoring');
+      return;
+    }
+    
     if (this.isEditMode && this.itemId) {
       this.store.dispatch(Actions.updateGender({ id: this.itemId, gender: formValue }));
     } else {

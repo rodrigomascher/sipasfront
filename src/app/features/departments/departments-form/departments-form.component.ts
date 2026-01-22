@@ -92,6 +92,12 @@ export class DepartmentsFormComponent implements OnInit {
   }
 
   onSubmit(formValue: any): void {
+    // Ignore if it's a SubmitEvent instead of form data
+    if (formValue instanceof SubmitEvent) {
+      console.warn('[DepartmentsFormComponent] Received SubmitEvent instead of form data, ignoring');
+      return;
+    }
+    
     if (this.isEdit && this.departmentId) {
       const updateDto: UpdateDepartmentDto = formValue;
       this.store.dispatch(DepartmentsActions.updateDepartment({

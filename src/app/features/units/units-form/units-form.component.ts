@@ -124,6 +124,16 @@ export class UnitsFormComponent implements OnInit {
   }
 
   onSubmit(formValue: any): void {
+    console.log('[UnitsFormComponent] onSubmit called with:', formValue);
+    
+    // Ignore if it's a SubmitEvent instead of form data
+    if (formValue instanceof SubmitEvent) {
+      console.warn('[UnitsFormComponent] Received SubmitEvent instead of form data, ignoring');
+      return;
+    }
+    
+    console.log('[UnitsFormComponent] formValue keys:', Object.keys(formValue));
+    
     if (this.isEdit && this.unitId) {
       const updateDto: UpdateUnitDto = formValue;
       this.store.dispatch(UnitsActions.updateUnit({ id: this.unitId, unit: updateDto }));

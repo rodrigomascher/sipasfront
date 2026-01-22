@@ -25,7 +25,7 @@ import { FormFieldComponent } from './form-field.component';
       </div>
 
       <div class="form-card">
-        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <form [formGroup]="form" (ngSubmit)="onSubmit($event)">
           <!-- Grid para campos -->
           <div class="form-grid">
             <app-form-field
@@ -163,9 +163,23 @@ export class GenericFormComponent {
   @Input() error$!: Observable<string | null>;
   @Output() submit = new EventEmitter<any>();
 
-  onSubmit(): void {
-    if (this.form.valid) {
+  private isSubmitting = false;
+
+  onSubmit(event?: Event): void {
+    // Prevent default form submission to avoid double submit
+    if (event) {
+      event.preventDefault();
+    }
+    
+    if (this.form.valid && !this.isSubmitting) {
+      this.isSubmitting = true;
+      console.log('[GenericFormComponent] Emitting form value:', this.form.value);
       this.submit.emit(this.form.value);
+      
+      // Reset the flag after a short delay to allow for the submit to be processed
+      setTimeout(() => {
+        this.isSubmitting = false;
+      }, 100);
     }
   }
 }
