@@ -2,6 +2,8 @@
  * Configuration interface for form fields
  * Used by GenericFormComponent and FormFieldComponent to render dynamic form fields
  */
+import { Observable } from 'rxjs';
+
 export interface FormFieldConfig {
   /** Unique field identifier and form control name */
   name: string;
@@ -9,8 +11,8 @@ export interface FormFieldConfig {
   /** Display label for the field */
   label: string;
 
-  /** Input type (text, number, email, select, checkbox, textarea, date) */
-  type: 'text' | 'number' | 'email' | 'select' | 'checkbox' | 'textarea' | 'date' | 'tel';
+  /** Input type (text, number, email, select, checkbox, textarea, date, multiselect) */
+  type: 'text' | 'number' | 'email' | 'select' | 'checkbox' | 'textarea' | 'date' | 'tel' | 'multiselect';
 
   /** Placeholder text (optional) */
   placeholder?: string;
@@ -23,6 +25,9 @@ export interface FormFieldConfig {
 
   /** Options for select fields */
   options?: { label: string; value: any }[];
+
+  /** Options observable for dynamic options (select/multiselect) */
+  options$?: Observable<any[]>;
 
   /** Max length for text inputs */
   maxLength?: number;

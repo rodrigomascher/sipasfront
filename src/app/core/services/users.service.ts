@@ -12,18 +12,22 @@ export interface User {
   lastLogin?: string;
   createdAt: string;
   updatedAt?: string;
+  units?: any[];
 }
 
 export interface CreateUserDto {
   email: string;
   name: string;
   password: string;
+  unitIds?: number[];
 }
 
 export interface UpdateUserDto {
   email?: string;
   name?: string;
+  password?: string;
   isActive?: boolean;
+  unitIds?: number[];
 }
 
 export interface PaginationParams {

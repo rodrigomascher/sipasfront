@@ -9,6 +9,7 @@ import { GenericFormComponent } from '../../../shared/components/generic-form/ge
 import { FormFieldConfig } from '../../../shared/components/generic-form/form-field-config';
 import * as UsersActions from '../../../store/users/users.actions';
 import * as UsersSelectors from '../../../store/users/users.selectors';
+import { UnitsService } from '../../../core/services/units.service';
 
 @Component({
   selector: 'app-users-form',
@@ -33,6 +34,7 @@ export class UsersFormComponent implements OnInit {
   form!: FormGroup;
   loading$: Observable<boolean>;
   error$: Observable<string | null>;
+  units$: Observable<any[]>;
 
   fields: FormFieldConfig[] = [];
 
@@ -42,10 +44,12 @@ export class UsersFormComponent implements OnInit {
     private store: Store<{ users: any }>,
     private route: ActivatedRoute,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private unitsService: UnitsService
   ) {
     this.loading$ = this.store.select(UsersSelectors.selectUsersLoading);
     this.error$ = this.store.select(UsersSelectors.selectUsersError);
+    this.units$ = this.unitsService.getUnits();
     this.form = this.createForm(false);
   }
 
@@ -54,7 +58,7 @@ export class UsersFormComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       name: ['', [Validators.required, Validators.minLength(3)]],
       password: !isEdit ? ['', [Validators.required, Validators.minLength(6)]] : [''],
-      isActive: [true]
+      unitIds: [[], Validators.required]
     });
   }
 
@@ -87,9 +91,12 @@ export class UsersFormComponent implements OnInit {
           ]
         : []),
       {
-        name: 'isActive' as const,
-        label: 'Usuário Ativo',
-        type: 'checkbox' as const
+        name: 'unitIds' as const,
+        label: 'Unidades',
+        type: 'multiselect' as const,
+        placeholder: 'Selecione as unidades',
+        required: true,
+        options$: this.units$
       }
     ];
   }
@@ -109,7 +116,7 @@ export class UsersFormComponent implements OnInit {
             this.form.patchValue({
               email: user.email,
               name: user.name,
-              isActive: user.isActive
+              unitIds: user.units?.map((u: any) => u.id) || []
             });
           }
         });
@@ -130,14 +137,15 @@ export class UsersFormComponent implements OnInit {
       const updateDto: UpdateUserDto = {
         email: formValue.email,
         name: formValue.name,
-        isActive: formValue.isActive
+        unitIds: formValue.unitIds
       };
       this.store.dispatch(UsersActions.updateUser({ id: this.userId, user: updateDto }));
     } else {
       const createDto: CreateUserDto = {
         email: formValue.email,
         name: formValue.name,
-        password: formValue.password
+        password: formValue.password,
+        unitIds: formValue.unitIds
       };
       this.store.dispatch(UsersActions.createUser({ user: createDto }));
     }
@@ -147,3 +155,4 @@ export class UsersFormComponent implements OnInit {
     }, 1000);
   }
 }
+
