@@ -1,198 +1,99 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import { CreateEmployeeDto, UpdateEmployeeDto } from '../../../core/services/employees.service';
+import { GenericFormComponent } from '../../../shared/components/generic-form/generic-form.component';
+import { FormFieldConfig } from '../../../shared/components/generic-form/form-field-config';
 import { selectEmployeeById } from '../../../store/employees/employees.selectors';
 import * as EmployeesActions from '../../../store/employees/employees.actions';
 
 @Component({
   selector: 'app-employees-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, GenericFormComponent],
   template: `
-    <div class="container">
-      <div class="form-header">
-        <h1>{{ isEdit ? 'Editar' : 'Criar' }} Funcionário</h1>
-      </div>
-
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
-        <div class="form-group">
-          <label for="employeeId">Matrícula *</label>
-          <input
-            type="text"
-            id="employeeId"
-            formControlName="employeeId"
-            class="form-input"
-            placeholder="Digite a matrícula do funcionário"
-          />
-          <span *ngIf="form.get('employeeId')?.hasError('required') && form.get('employeeId')?.touched" class="error-text">
-            Matrícula é obrigatória
-          </span>
-        </div>
-
-        <div class="form-group">
-          <label for="fullName">Nome *</label>
-          <input
-            type="text"
-            id="fullName"
-            formControlName="fullName"
-            class="form-input"
-            placeholder="Digite o nome do funcionário"
-          />
-          <span *ngIf="form.get('fullName')?.hasError('required') && form.get('fullName')?.touched" class="error-text">
-            Nome é obrigatório
-          </span>
-        </div>
-
-        <div class="form-group">
-          <label for="unitId">Unidade</label>
-          <input
-            type="number"
-            id="unitId"
-            formControlName="unitId"
-            class="form-input"
-            placeholder="ID da unidade"
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="departmentId">Departamento</label>
-          <input
-            type="number"
-            id="departmentId"
-            formControlName="departmentId"
-            class="form-input"
-            placeholder="ID do departamento"
-          />
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary" [disabled]="!form.valid || isSubmitting">
-            {{ isSubmitting ? 'Salvando...' : 'Salvar' }}
-          </button>
-          <button type="button" class="btn btn-secondary" (click)="onCancel()">
-            Cancelar
-          </button>
-        </div>
-      </form>
-    </div>
-  `,
-  styles: [`
-    .container {
-      padding: 2rem;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .form-header {
-      margin-bottom: 2rem;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 1.8rem;
-      color: #333;
-    }
-
-    .form-container {
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    .form-group {
-      margin-bottom: 1.5rem;
-      display: flex;
-      flex-direction: column;
-    }
-
-    label {
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: #333;
-    }
-
-    .form-input {
-      padding: 0.75rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
-      font-family: inherit;
-    }
-
-    .form-input:focus {
-      outline: none;
-      border-color: #1976d2;
-      box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
-    }
-
-    .error-text {
-      color: #dc3545;
-      font-size: 12px;
-      margin-top: 0.25rem;
-    }
-
-    .form-actions {
-      display: flex;
-      gap: 1rem;
-      margin-top: 2rem;
-    }
-
-    .btn {
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 4px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .btn-primary {
-      background-color: #1976d2;
-      color: white;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background-color: #1565c0;
-    }
-
-    .btn-primary:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-
-    .btn-secondary {
-      background-color: #6c757d;
-      color: white;
-    }
-
-    .btn-secondary:hover {
-      background-color: #5a6268;
-    }
-  `]
+    <app-generic-form
+      [title]="title"
+      [fields]="fields"
+      [form]="form"
+      backRoute="/employees"
+      [submitLabel]="isEdit ? 'Atualizar' : 'Salvar'"
+      [loading$]="loading$"
+      [error$]="error$"
+      (submit)="onSubmit($event)"
+    ></app-generic-form>
+  `
 })
 export class EmployeesFormComponent implements OnInit {
-  form: FormGroup;
   isEdit = false;
-  isSubmitting = false;
-  employeeId: number | null = null;
+  title = 'Novo Funcionário';
+  form!: FormGroup;
+  loading$: Observable<boolean>;
+  error$: Observable<string | null>;
+
+  fields: FormFieldConfig[] = [
+    {
+      name: 'employeeId',
+      label: 'Matrícula',
+      type: 'text',
+      placeholder: 'Digite a matrícula do funcionário',
+      required: true
+    },
+    {
+      name: 'fullName',
+      label: 'Nome',
+      type: 'text',
+      placeholder: 'Digite o nome do funcionário',
+      required: true
+    },
+    {
+      name: 'unitId',
+      label: 'Unidade',
+      type: 'number',
+      placeholder: 'ID da unidade'
+    },
+    {
+      name: 'departmentId',
+      label: 'Departamento',
+      type: 'number',
+      placeholder: 'ID do departamento'
+    },
+    {
+      name: 'roleId',
+      label: 'Cargo',
+      type: 'number',
+      placeholder: 'ID do cargo'
+    },
+    {
+      name: 'isTechnician',
+      label: 'É Técnico',
+      type: 'checkbox'
+    }
+  ];
+
+  private employeeId: number | null = null;
 
   constructor(
-    private fb: FormBuilder,
-    private router: Router,
+    private store: Store<{ employees: any }>,
     private route: ActivatedRoute,
-    private store: Store<{ employees: any }>
+    private router: Router,
+    private fb: FormBuilder
   ) {
-    this.form = this.fb.group({
-      employeeId: ['', Validators.required],
-      fullName: ['', Validators.required],
-      unitId: [''],
-      departmentId: [''],
-      roleId: [''],
+    this.loading$ = this.store.select(state => state.employees?.loading || false);
+    this.error$ = this.store.select(state => state.employees?.error || null);
+    this.form = this.createForm();
+  }
+
+  private createForm(): FormGroup {
+    return this.fb.group({
+      employeeId: ['', [Validators.required, Validators.minLength(2)]],
+      fullName: ['', [Validators.required, Validators.minLength(3)]],
+      unitId: [null],
+      departmentId: [null],
+      roleId: [null],
       isTechnician: [false]
     });
   }
@@ -201,15 +102,18 @@ export class EmployeesFormComponent implements OnInit {
     this.route.params.subscribe(params => {
       if (params['id']) {
         this.isEdit = true;
+        this.title = 'Editar Funcionário';
         this.employeeId = +params['id'];
-        
+
         this.store.select(selectEmployeeById(this.employeeId)).subscribe(employee => {
           if (employee) {
             this.form.patchValue({
               employeeId: employee.employeeId,
               fullName: employee.fullName,
               unitId: employee.unitId,
-              departmentId: employee.departmentId
+              departmentId: employee.departmentId,
+              roleId: employee.roleId,
+              isTechnician: employee.isTechnician
             });
           } else {
             this.store.dispatch(EmployeesActions.loadEmployeeById({ id: this.employeeId! }));
@@ -219,17 +123,12 @@ export class EmployeesFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
-    if (!this.form.valid) return;
-
-    this.isSubmitting = true;
-    const formValue = this.form.value;
-
+  onSubmit(formValue: any): void {
     if (this.isEdit && this.employeeId) {
       const updateDto: UpdateEmployeeDto = formValue;
-      this.store.dispatch(EmployeesActions.updateEmployee({ 
-        id: this.employeeId, 
-        employee: updateDto 
+      this.store.dispatch(EmployeesActions.updateEmployee({
+        id: this.employeeId,
+        employee: updateDto
       }));
     } else {
       const createDto: CreateEmployeeDto = formValue;
@@ -239,9 +138,5 @@ export class EmployeesFormComponent implements OnInit {
     setTimeout(() => {
       this.router.navigate(['/employees']);
     }, 1000);
-  }
-
-  onCancel(): void {
-    this.router.navigate(['/employees']);
   }
 }
