@@ -182,8 +182,18 @@ export class LoginComponent implements OnInit {
 
         // Se tem apenas 1 unidade, seleciona automaticamente
         if (units.length === 1) {
-          this.selectedUnitService.setSelectedUnit(units[0]);
-          this.router.navigate(['/dashboard']);
+          this.selectedUnitService.selectUnitViaBackend(units[0].id).subscribe({
+            next: (selectResponse) => {
+              this.authService.setToken(selectResponse.access_token);
+              this.authService.setUser(selectResponse.user);
+              this.selectedUnitService.setSelectedUnit(units[0]);
+              this.router.navigate(['/dashboard']);
+            },
+            error: () => {
+              // Se falhar na seleção, ir para unit-selector
+              this.router.navigate(['/auth/unit-selector']);
+            }
+          });
         } else {
           // Se tem múltiplas unidades, redireciona para seleção
           this.router.navigate(['/auth/unit-selector']);

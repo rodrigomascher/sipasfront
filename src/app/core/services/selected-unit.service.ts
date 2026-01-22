@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { AuthService } from './auth.service';
 
 export interface Unit {
   id: number;
@@ -13,26 +14,38 @@ export interface Unit {
   providedIn: 'root'
 })
 export class SelectedUnitService {
-  private readonly STORAGE_KEY = 'selectedUnit';
-  private selectedUnitSubject = new BehaviorSubject<Unit | null>(
-    this.getSelectedUnitFromStorage()
-  );
+  private selectedUnitSubject = new BehaviorSubject<Unit | null>(null);
   private isSelectingUnitSubject = new BehaviorSubject<boolean>(false);
 
   selectedUnit$: Observable<Unit | null> = this.selectedUnitSubject.asObservable();
   isSelectingUnit$: Observable<boolean> = this.isSelectingUnitSubject.asObservable();
 
-  constructor() {}
+  constructor(private authService: AuthService) {
+    // Inicializar com a unidade do JWT
+    this.refreshFromJWT();
+  }
 
   /**
-   * Set the selected unit
+   * Atualizar unidade a partir do JWT
+   */
+  refreshFromJWT(): void {
+    const unit = this.authService.getSelectedUnitFromToken();
+    this.selectedUnitSubject.next(unit);
+  }
+
+  /**
+   * Seleção de unidade via backend (atualiza token)
+   */
+  selectUnitViaBackend(unitId: number): Observable<any> {
+    return this.authService.selectUnit(unitId);
+  }
+
+  /**
+   * Set the selected unit after backend response
    */
   setSelectedUnit(unit: Unit | null): void {
     if (unit) {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(unit));
       this.isSelectingUnitSubject.next(false);
-    } else {
-      localStorage.removeItem(this.STORAGE_KEY);
     }
     this.selectedUnitSubject.next(unit);
   }
@@ -55,7 +68,6 @@ export class SelectedUnitService {
    * Clear the selected unit
    */
   clearSelectedUnit(): void {
-    localStorage.removeItem(this.STORAGE_KEY);
     this.selectedUnitSubject.next(null);
   }
 
@@ -71,18 +83,6 @@ export class SelectedUnitService {
    */
   isSelectingUnit(): boolean {
     return this.isSelectingUnitSubject.value;
-  }
-
-  /**
-   * Get selected unit from localStorage
-   */
-  private getSelectedUnitFromStorage(): Unit | null {
-    try {
-      const unit = localStorage.getItem(this.STORAGE_KEY);
-      return unit ? JSON.parse(unit) : null;
-    } catch {
-      return null;
-    }
   }
 
   /**

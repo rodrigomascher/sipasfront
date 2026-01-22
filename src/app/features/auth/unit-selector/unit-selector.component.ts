@@ -275,20 +275,30 @@ export class UnitSelectorComponent implements OnInit {
   }
 
   selectUnit(unit: any): void {
-    // Armazenar unidade selecionada usando o serviço
-    this.selectedUnitService.setSelectedUnit(unit);
-    
-    // Redirecionar para dashboard
-    this.router.navigate(['/dashboard']);
+    // Chamar backend para atualizar token com a unidade selecionada
+    this.selectedUnitService.selectUnitViaBackend(unit.id).subscribe({
+      next: (response) => {
+        // Atualizar token
+        this.authService.setToken(response.access_token);
+        this.authService.setUser(response.user);
+        
+        // Atualizar serviço de unidade selecionada
+        this.selectedUnitService.setSelectedUnit(unit);
+        
+        // Redirecionar para dashboard
+        this.router.navigate(['/dashboard']);
+      },
+      error: (err) => {
+        this.error = err.error?.message || 'Erro ao selecionar unidade. Tente novamente.';
+        this.isSelecting = false;
+      }
+    });
   }
 
   handleSelectUnit(): void {
     if (this.selectedUnit) {
       this.isSelecting = true;
-      // Simular um pequeno delay para feedback visual
-      setTimeout(() => {
-        this.selectUnit(this.selectedUnit);
-      }, 300);
+      this.selectUnit(this.selectedUnit);
     }
   }
 

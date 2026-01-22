@@ -17,6 +17,9 @@ import { SessionTimerComponent } from './shared/components/session-timer/session
       <header class="app-header" *ngIf="showHeader$ | async">
         <div class="navbar-brand" (click)="goToDashboard()" [title]="'Sistema Integrado de Prontuário e Assistência Social'">
           <h1 class="logo">SIPAS</h1>
+          <p class="unit-name" *ngIf="selectedUnit$ | async as unit">
+            {{ unit?.name }}
+          </p>
         </div>
         
         <div class="header-right">
@@ -193,6 +196,14 @@ import { SessionTimerComponent } from './shared/components/session-timer/session
       font-weight: 700;
       letter-spacing: -1px;
       text-transform: uppercase;
+    }
+
+    .unit-name {
+      margin: 4px 0 0 0;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.8);
+      letter-spacing: 0.5px;
     }
 
     .tagline {
@@ -500,6 +511,7 @@ export class AppComponent implements OnInit {
   title = 'SIPAS Frontend';
   showHeader$: Observable<boolean>;
   user$: Observable<any>;
+  selectedUnit$: Observable<any>;
   expandedMenus: { [key: string]: boolean } = {
     seguranca: true,
     cadastro: true,
@@ -526,9 +538,14 @@ export class AppComponent implements OnInit {
       const user = this.authService.getUser();
       observer.next(user);
     });
+
+    this.selectedUnit$ = this.selectedUnitService.getSelectedUnit$();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // Sincronizar unidade selecionada com JWT
+    this.selectedUnitService.refreshFromJWT();
+  }
 
   goToDashboard(): void {
     this.router.navigate(['/dashboard']);

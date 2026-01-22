@@ -32,10 +32,16 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials);
   }
 
+  selectUnit(unitId: number): Observable<AuthResponse> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.getToken()}`
+    });
+    return this.http.post<AuthResponse>(`${this.apiUrl}/select-unit`, { unitId }, { headers });
+  }
+
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    localStorage.removeItem('selectedUnit');
   }
 
   setToken(token: string): void {
@@ -55,18 +61,21 @@ export class AuthService {
     return user ? JSON.parse(user) : null;
   }
 
-  // Gerenciar unidade selecionada
-  setSelectedUnit(unit: any): void {
-    localStorage.setItem('selectedUnit', JSON.stringify(unit));
-  }
+  // Gerenciar unidade selecionada (ler do JWT)
+  getSelectedUnitFromToken(): any {
+    const token = this.getToken();
+    if (!token) return null;
 
-  getSelectedUnit(): any {
-    const unit = localStorage.getItem('selectedUnit');
-    return unit ? JSON.parse(unit) : null;
-  }
+    const decoded = this.decodeToken(token);
+    if (!decoded) return null;
 
-  clearSelectedUnit(): void {
-    localStorage.removeItem('selectedUnit');
+    return {
+      id: decoded.unitId,
+      name: decoded.unitName,
+      type: decoded.unitType,
+      city: decoded.city,
+      state: decoded.state,
+    };
   }
 
   isAuthenticated(): boolean {
