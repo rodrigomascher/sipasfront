@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { GenderIdentity } from '../../../../core/services/gender-identities.service';
-import { GenericListComponent, ListColumn } from '../../../../shared/components/generic-list/generic-list.component';
+import { GenericListComponent, ListColumn, PaginationParams } from '../../../../shared/components/generic-list/generic-list.component';
 import { GenericAction } from '../../../../shared/components/generic-actions/generic-actions.component';
 import * as Actions from '../../store/gender-identities.actions';
 import * as Selectors from '../../store/gender-identities.selectors';
@@ -17,6 +17,11 @@ import * as Selectors from '../../store/gender-identities.selectors';
     <app-generic-list
       [items$]="genderIdentities$"
       [loading$]="loading$"
+      [totalItems$]="totalItems$"
+      [currentPage$]="currentPage$"
+      [totalPages$]="totalPages$"
+      [currentPageStart$]="currentPageStart$"
+      [currentPageEnd$]="currentPageEnd$"
       [columns]="columns"
       [actions]="actions"
       title="Identidades de Gênero"
@@ -25,16 +30,21 @@ import * as Selectors from '../../store/gender-identities.selectors';
       searchPlaceholder="Buscar por descrição..."
       emptyMessage="Nenhuma identidade cadastrada"
       [searchFields]="['description']"
-      (delete)="onDelete($event)"
+      (paginationChange)="onPaginationChange($event)"
     ></app-generic-list>
   `
 })
 export class GenderIdentitiesListComponent implements OnInit {
   genderIdentities$: Observable<GenderIdentity[]>;
   loading$: Observable<boolean>;
+  totalItems$: Observable<number>;
+  currentPage$: Observable<number>;
+  totalPages$: Observable<number>;
+  currentPageStart$: Observable<number>;
+  currentPageEnd$: Observable<number>;
   columns: ListColumn[] = [
-    { key: 'id', label: 'ID', formatter: (val) => `#${val}` },
-    { key: 'description', label: 'Descrição' },
+    { key: 'id', label: 'ID', formatter: (val) => `#${val}`, sortable: true },
+    { key: 'description', label: 'Descrição', sortable: true },
     { key: 'active', label: 'Ativo', formatter: (val) => val ? 'Sim' : 'Não' }
   ];
   actions: GenericAction[] = [
@@ -48,7 +58,7 @@ export class GenderIdentitiesListComponent implements OnInit {
       label: 'Deletar',
       icon: '🗑',
       class: 'btn-danger',
-      confirm: 'Tem certeza?',
+      confirm: 'Tem certeza que deseja deletar esta identidade?',
       callback: (item) => this.onDelete(item)
     }
   ];
@@ -59,13 +69,22 @@ export class GenderIdentitiesListComponent implements OnInit {
   ) {
     this.genderIdentities$ = this.store.select(Selectors.selectAllGenderIdentities);
     this.loading$ = this.store.select(Selectors.selectGenderIdentitiesLoading);
+    this.totalItems$ = this.store.select(Selectors.selectTotalItems);
+    this.currentPage$ = this.store.select(Selectors.selectCurrentPage);
+    this.totalPages$ = this.store.select(Selectors.selectTotalPages);
+    this.currentPageStart$ = this.store.select(Selectors.selectCurrentPageStart);
+    this.currentPageEnd$ = this.store.select(Selectors.selectCurrentPageEnd);
   }
 
-  ngOnInit() {
-    this.store.dispatch(Actions.loadGenderIdentities({}));
+  ngOnInit(): void {
+    this.store.dispatch(Actions.loadGenderIdentities({ params: {} }));
   }
 
-  onDelete(item: GenderIdentity) {
+  onPaginationChange(params: PaginationParams): void {
+    this.store.dispatch(Actions.loadGenderIdentities({ params }));
+  }
+
+  onDelete(item: GenderIdentity): void {
     this.store.dispatch(Actions.deleteGenderIdentity({ id: item.id }));
   }
 }
