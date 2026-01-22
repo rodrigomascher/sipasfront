@@ -2,14 +2,14 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UnitsService } from '../../../core/services/units.service';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
-import { SelectedUnitsGridComponent } from '../selected-units-grid/selected-units-grid.component';
+import { GenericSimpleGridComponent, GridColumn, GridAction } from '../../../shared/components/generic-simple-grid/generic-simple-grid.component';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-units',
   standalone: true,
-  imports: [CommonModule, LoadingSpinnerComponent, SelectedUnitsGridComponent],
+  imports: [CommonModule, LoadingSpinnerComponent, GenericSimpleGridComponent],
   template: `
     <div class="user-units-container">
       <div class="user-units-header">
@@ -48,12 +48,13 @@ import { map } from 'rxjs/operators';
       </div>
 
       <!-- Grid de unidades selecionadas -->
-      <app-selected-units-grid
-        [units]="selectedUnits"
+      <app-generic-simple-grid
+        [items]="selectedUnits"
+        [columns]="gridColumns"
+        [actions]="gridActions"
         [isLoading]="isLoading"
-        emptyMessage="Nenhuma unidade selecionada"
-        (unitRemoved)="removeUnit($event)">
-      </app-selected-units-grid>
+        emptyMessage="Nenhuma unidade selecionada">
+      </app-generic-simple-grid>
     </div>
   `,
   styles: [`
@@ -151,6 +152,22 @@ export class UserUnitsComponent implements OnInit {
   showSelector = false;
   isLoading = false;
   availableUnits$: Observable<any[]>;
+
+  gridColumns: GridColumn[] = [
+    { key: 'id', label: 'ID' },
+    { key: 'name', label: 'Nome' },
+    { key: 'type', label: 'Tipo' },
+    { key: 'city', label: 'Cidade' },
+    { key: 'state', label: 'Estado' }
+  ];
+
+  gridActions: GridAction[] = [
+    {
+      label: 'Remover',
+      class: 'btn-danger',
+      callback: (unit: any) => this.removeUnit(unit.id)
+    }
+  ];
 
   constructor(private unitsService: UnitsService) {
     this.availableUnits$ = new Observable();
