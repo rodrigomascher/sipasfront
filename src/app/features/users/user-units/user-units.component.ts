@@ -1,13 +1,14 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UnitsService } from '../../../core/services/units.service';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-units',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LoadingSpinnerComponent],
   template: `
     <div class="user-units-container">
       <div class="user-units-header">
@@ -27,10 +28,7 @@ import { map } from 'rxjs/operators';
         <div class="selector-content">
           <h5>Selecione uma Unidade para Adicionar</h5>
           <div class="unit-list">
-            <div *ngIf="isLoading" class="loading-area">
-              <div class="spinner-small"></div>
-              Adicionando unidade...
-            </div>
+            <app-loading-spinner *ngIf="isLoading" mode="mini" message="Adicionando unidade..."></app-loading-spinner>
             <button
               type="button"
               *ngFor="let unit of (availableUnits$ | async)"
@@ -181,31 +179,6 @@ import { map } from 'rxjs/operators';
 
     .alert {
       margin: 0;
-    }
-
-    .loading-area {
-      padding: 15px;
-      text-align: center;
-      color: #666;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .spinner-small {
-      display: inline-block;
-      width: 14px;
-      height: 14px;
-      border: 2px solid #e0e0e0;
-      border-top-color: #007bff;
-      border-radius: 50%;
-      animation: spin-small 0.8s linear infinite;
-    }
-
-    @keyframes spin-small {
-      to { transform: rotate(360deg); }
     }
 
     button:disabled {

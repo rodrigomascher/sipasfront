@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 import { CreateUserDto, UpdateUserDto } from '../../../core/services/users.service';
 import { FormFieldComponent } from '../../../shared/components/generic-form/form-field.component';
 import { FormFieldConfig } from '../../../shared/components/generic-form/form-field-config';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import * as UsersActions from '../../../store/users/users.actions';
 import * as UsersSelectors from '../../../store/users/users.selectors';
 import { UserUnitsComponent } from '../user-units/user-units.component';
@@ -15,7 +16,7 @@ import { ChangePasswordDialogComponent } from '../change-password-dialog/change-
 @Component({
   selector: 'app-users-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormFieldComponent, UserUnitsComponent, RouterLink, ChangePasswordDialogComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormFieldComponent, UserUnitsComponent, RouterLink, ChangePasswordDialogComponent, LoadingSpinnerComponent],
   template: `
     <app-change-password-dialog
       #passwordDialog
@@ -80,12 +81,11 @@ import { ChangePasswordDialogComponent } from '../change-password-dialog/change-
       </div>
 
       <!-- Loading -->
-      <div *ngIf="loading$ | async" class="loading-overlay">
-        <div class="spinner-box">
-          <div class="spinner"></div>
-          <p>Carregando...</p>
-        </div>
-      </div>
+      <app-loading-spinner
+        *ngIf="loading$ | async"
+        mode="overlay"
+        message="Carregando...">
+      </app-loading-spinner>
     </div>
   `,
   styles: [`
@@ -231,49 +231,6 @@ import { ChangePasswordDialogComponent } from '../change-password-dialog/change-
       background: #f8d7da;
       color: #721c24;
       border: 1px solid #f5c6cb;
-    }
-
-    .loading-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-    }
-
-    .spinner-box {
-      text-align: center;
-      background: white;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    .spinner {
-      width: 40px;
-      height: 40px;
-      margin: 0 auto 15px;
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #007bff;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    .spinner-box p {
-      margin: 0;
-      color: #666;
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
     }
   `]
 })

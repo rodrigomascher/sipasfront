@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-change-password-dialog',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, LoadingSpinnerComponent],
   template: `
     <div class="modal-overlay" (click)="onCancel()" *ngIf="isOpen">
       <div class="modal-content" (click)="$event.stopPropagation()">
@@ -55,10 +56,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
             </button>
             <button type="submit" class="btn btn-primary" [disabled]="form.invalid || isLoading">
               <span *ngIf="!isLoading">Alterar Senha</span>
-              <span *ngIf="isLoading" class="loading-text">
-                <span class="spinner-mini"></span>
-                Alterando...
-              </span>
+              <app-loading-spinner *ngIf="isLoading" mode="inline" message="Alterando..."></app-loading-spinner>
             </button>
           </div>
         </form>
@@ -193,26 +191,6 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 
     .btn-secondary:hover {
       background: #545b62;
-    }
-
-    .loading-text {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .spinner-mini {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      border: 2px solid #ffffff;
-      border-top-color: transparent;
-      border-radius: 50%;
-      animation: spin-mini 0.6s linear infinite;
-    }
-
-    @keyframes spin-mini {
-      to { transform: rotate(360deg); }
     }
 
     .btn:disabled {
