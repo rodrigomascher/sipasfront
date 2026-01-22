@@ -80,8 +80,11 @@ import { ChangePasswordDialogComponent } from '../change-password-dialog/change-
       </div>
 
       <!-- Loading -->
-      <div *ngIf="loading$ | async" class="spinner">
-        Carregando...
+      <div *ngIf="loading$ | async" class="loading-overlay">
+        <div class="spinner-box">
+          <div class="spinner"></div>
+          <p>Carregando...</p>
+        </div>
       </div>
     </div>
   `,
@@ -230,10 +233,47 @@ import { ChangePasswordDialogComponent } from '../change-password-dialog/change-
       border: 1px solid #f5c6cb;
     }
 
-    .spinner {
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .spinner-box {
       text-align: center;
-      padding: 20px;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 15px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #007bff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .spinner-box p {
+      margin: 0;
       color: #666;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   `]
 })

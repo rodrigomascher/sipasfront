@@ -55,7 +55,10 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
             </button>
             <button type="submit" class="btn btn-primary" [disabled]="form.invalid || isLoading">
               <span *ngIf="!isLoading">Alterar Senha</span>
-              <span *ngIf="isLoading" class="loading-text">Alterando...</span>
+              <span *ngIf="isLoading" class="loading-text">
+                <span class="spinner-mini"></span>
+                Alterando...
+              </span>
             </button>
           </div>
         </form>
@@ -196,6 +199,20 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
       display: inline-flex;
       align-items: center;
       gap: 6px;
+    }
+
+    .spinner-mini {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid #ffffff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin-mini 0.6s linear infinite;
+    }
+
+    @keyframes spin-mini {
+      to { transform: rotate(360deg); }
     }
 
     .btn:disabled {
