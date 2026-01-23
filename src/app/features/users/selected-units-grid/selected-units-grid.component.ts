@@ -82,23 +82,6 @@ import { ButtonComponent } from '../../../shared/components/button/button.compon
       background: #fafafa;
     }
 
-    .btn-sm {
-      padding: 4px 8px;
-      font-size: 12px;
-    }
-
-    .btn {
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    .btn:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-
     .alert {
       margin: 0;
       padding: 12px 15px;

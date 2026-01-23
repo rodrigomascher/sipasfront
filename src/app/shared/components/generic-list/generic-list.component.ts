@@ -156,38 +156,6 @@ export type ListAction = GenericAction;
       color: #333;
     }
 
-    .btn {
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 4px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      text-decoration: none;
-      display: inline-block;
-    }
-
-    .btn-sm {
-      padding: 0.5rem 1rem;
-      font-size: 13px;
-    }
-
-    .btn-pagination {
-      background-color: #e3e6f0;
-      color: #525f7f;
-      border: 1px solid #dee2e6;
-    }
-
-    .btn-pagination:hover:not(:disabled) {
-      background-color: #d3d6e0;
-    }
-
-    .btn-pagination:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
     .search-box {
       margin-bottom: 1.5rem;
     }

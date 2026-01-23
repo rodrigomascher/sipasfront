@@ -31,36 +31,6 @@ export interface GenericAction {
       gap: 0.5rem;
       justify-content: center;
     }
-
-    .btn-sm {
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      text-decoration: none;
-      display: inline-block;
-    }
-
-    .btn-info {
-      background-color: #17a2b8;
-      color: white;
-    }
-
-    .btn-info:hover {
-      background-color: #138496;
-    }
-
-    .btn-warning {
-      background-color: #ffc107;
-      color: #333;
-    }
-
-    .btn-warning:hover {
-      background-color: #e0a800;
-    }
   `]
 })
 export class GenericActionsComponent {

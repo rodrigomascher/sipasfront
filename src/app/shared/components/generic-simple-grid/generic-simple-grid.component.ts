@@ -98,39 +98,6 @@ export interface GridAction {
       flex-wrap: wrap;
     }
 
-    .btn {
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      padding: 4px 8px;
-      font-size: 12px;
-      transition: background 0.3s;
-      white-space: nowrap;
-    }
-
-    .btn-warning {
-      background: #ffc107;
-      color: #333;
-    }
-
-    .btn-warning:hover:not(:disabled) {
-      background: #e0a800;
-    }
-
-    .btn-info {
-      background: #17a2b8;
-      color: white;
-    }
-
-    .btn-info:hover:not(:disabled) {
-      background: #138496;
-    }
-
-    .btn:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-
     .alert {
       margin: 0;
       padding: 12px 15px;
