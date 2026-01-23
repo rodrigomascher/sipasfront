@@ -29,7 +29,7 @@ import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/load
             <label for="unitSelect">Unidade</label>
             <select
               id="unitSelect"
-              [(ngModel)]="selectedUnit"
+              [(ngModel)]="selectedUnitId"
               name="selectedUnit"
               class="unit-select"
               required
@@ -38,7 +38,7 @@ import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/load
               <option value="" disabled>-- Selecione uma unidade --</option>
               <option 
                 *ngFor="let unit of units"
-                [value]="unit"
+                [value]="unit.id"
               >
                 {{ unit.name }} ({{ unit.type }}) - {{ unit.city }}, {{ unit.state }}
               </option>
@@ -48,7 +48,7 @@ import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/load
           <button 
             type="submit" 
             class="btn btn-primary"
-            [disabled]="!selectedUnit || isSelecting"
+            [disabled]="!selectedUnitId || isSelecting"
           >
             {{ isSelecting ? 'Acessando...' : 'Acessar' }}
           </button>
@@ -230,7 +230,7 @@ import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/load
 export class UnitSelectorComponent implements OnInit {
   units: any[] = [];
   user: any = null;
-  selectedUnit: any = null;
+  selectedUnitId: number | null = null;
   loading = true;
   isSelecting = false;
   error = '';
@@ -298,9 +298,13 @@ export class UnitSelectorComponent implements OnInit {
   }
 
   handleSelectUnit(): void {
-    if (this.selectedUnit) {
+    if (this.selectedUnitId) {
       this.isSelecting = true;
-      this.selectUnit(this.selectedUnit);
+      // Find the selected unit object to pass to selectUnit
+      const selectedUnit = this.units.find(u => u.id === this.selectedUnitId);
+      if (selectedUnit) {
+        this.selectUnit(selectedUnit);
+      }
     }
   }
 
