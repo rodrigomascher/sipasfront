@@ -103,3 +103,16 @@ export const deactivateUserFailure = createAction(
   '[Users] Deactivate User Failure',
   props<{ error: string }>()
 );
+// Change Password
+export const changePassword = createAction(
+  '[Users] Change Password',
+  props<{ id: number; newPassword: string }>()
+);
+export const changePasswordSuccess = createAction(
+  '[Users] Change Password Success',
+  props<{ message: string }>()
+);
+export const changePasswordFailure = createAction(
+  '[Users] Change Password Failure',
+  props<{ error: string }>()
+);

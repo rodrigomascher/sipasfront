@@ -1,5 +1,6 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'success' | 'warning';
 export type ButtonSize = 'small' | 'medium' | 'large';
@@ -7,7 +8,7 @@ export type ButtonSize = 'small' | 'medium' | 'large';
 @Component({
   selector: 'app-button',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   template: `
     <button
       [type]="type"
@@ -169,7 +170,7 @@ export type ButtonSize = 'small' | 'medium' | 'large';
     }
   `]
 })
-export class ButtonComponent implements OnInit {
+export class ButtonComponent implements OnInit, OnChanges {
   @Input() type: 'button' | 'submit' | 'reset' = 'button';
   @Input() variant: ButtonVariant = 'primary';
   @Input() size: ButtonSize = 'medium';

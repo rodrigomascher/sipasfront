@@ -98,6 +98,18 @@ export class UsersEffects {
     )
   );
 
+  changePassword$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(UsersActions.changePassword),
+      mergeMap(({ id, newPassword }) =>
+        this.usersService.changePassword(id, newPassword).pipe(
+          map(response => UsersActions.changePasswordSuccess({ message: response.message })),
+          catchError(error => of(UsersActions.changePasswordFailure({ error: error.message })))
+        )
+      )
+    )
+  );
+
   constructor(
     private actions$: Actions,
     private usersService: UsersService

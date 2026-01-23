@@ -196,11 +196,9 @@ export class UsersFormComponent implements OnInit {
   onPasswordChanged(newPassword: string | null): void {
     if (newPassword && this.userId) {
       // Dispatch action to change password
-      this.store.dispatch(UsersActions.updateUser({
+      this.store.dispatch(UsersActions.changePassword({
         id: this.userId!,
-        user: {
-          password: newPassword
-        } as UpdateUserDto
+        newPassword: newPassword
       }));
     }
   }

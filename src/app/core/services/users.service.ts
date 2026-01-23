@@ -34,6 +34,10 @@ export interface UpdateUserDto {
   unitIds?: number[];
 }
 
+export interface ChangePasswordDto {
+  password: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -73,5 +77,11 @@ export class UsersService extends GenericHttpService<User> {
 
   deactivateUser(id: number): Observable<User> {
     return this.patch(id, { isActive: false });
+  }
+
+  changePassword(id: number, newPassword: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/${id}/change-password`, {
+      password: newPassword
+    });
   }
 }
