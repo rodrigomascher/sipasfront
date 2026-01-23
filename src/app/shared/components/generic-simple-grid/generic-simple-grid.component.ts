@@ -56,6 +56,8 @@ export interface GridAction {
     </div>
   `,
   styles: [`
+    @import '../../styles/alert-styles.scss';
+
     .generic-grid {
       margin-bottom: 15px;
       border: 1px solid #ddd;
@@ -96,15 +98,6 @@ export interface GridAction {
       display: flex;
       gap: 6px;
       flex-wrap: wrap;
-    }
-
-    .alert {
-      margin: 0;
-      padding: 12px 15px;
-      border-radius: 4px;
-      background: #d1ecf1;
-      color: #0c5460;
-      border: 1px solid #bee5eb;
     }
   `]
 })

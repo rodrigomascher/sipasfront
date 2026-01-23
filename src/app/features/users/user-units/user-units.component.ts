@@ -233,10 +233,6 @@ import { map } from 'rxjs/operators';
       font-size: 12px;
     }
 
-    .alert {
-      margin: 0;
-    }
-
     button:disabled {
       opacity: 0.7;
       cursor: not-allowed;

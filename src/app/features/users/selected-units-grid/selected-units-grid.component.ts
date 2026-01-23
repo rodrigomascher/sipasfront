@@ -49,6 +49,8 @@ import { ButtonComponent } from '../../../shared/components/button/button.compon
     </div>
   `,
   styles: [`
+    @import '../../../../shared/styles/alert-styles.scss';
+
     .user-units-grid {
       margin-bottom: 15px;
       border: 1px solid #ddd;
@@ -80,15 +82,6 @@ import { ButtonComponent } from '../../../shared/components/button/button.compon
 
     .table tbody tr:hover {
       background: #fafafa;
-    }
-
-    .alert {
-      margin: 0;
-      padding: 12px 15px;
-      border-radius: 4px;
-      background: #d1ecf1;
-      color: #0c5460;
-      border: 1px solid #bee5eb;
     }
   `]
 })
