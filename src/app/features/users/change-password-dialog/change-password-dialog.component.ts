@@ -176,29 +176,6 @@ import { ButtonComponent } from '../../../shared/components/button/button.compon
       transition: background 0.3s;
     }
 
-    .btn-primary {
-      background: #007bff;
-      color: white;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background: #0056b3;
-    }
-
-    .btn-primary:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
-
-    .btn-secondary {
-      background: #6c757d;
-      color: white;
-    }
-
-    .btn-secondary:hover {
-      background: #545b62;
-    }
-
     .btn:disabled {
       opacity: 0.7;
       cursor: not-allowed;

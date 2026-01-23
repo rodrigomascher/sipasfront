@@ -162,30 +162,6 @@ export interface TabConfig {
       font-weight: 500;
     }
 
-    .btn-primary {
-      background-color: #1976d2;
-      color: white;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background-color: #1565c0;
-    }
-
-    .btn-primary:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-
-    .btn-outline {
-      background-color: transparent;
-      color: #1976d2;
-      border: 1px solid #1976d2;
-    }
-
-    .btn-outline:hover {
-      background-color: #f0f0f0;
-    }
-
     .alert {
       padding: 12px;
       border-radius: 4px;

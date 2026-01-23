@@ -121,31 +121,6 @@ import { ButtonComponent } from '../button/button.component';
       transition: all 0.3s;
     }
 
-    .btn-primary {
-      background-color: #1976d2;
-      color: white;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background-color: #1565c0;
-      box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .btn-secondary {
-      background-color: #f5f5f5;
-      color: #333;
-      border: 1px solid #ddd;
-    }
-
-    .btn-secondary:hover {
-      background-color: #e8e8e8;
-    }
-
     .alert-danger {
       margin-bottom: 1.5rem;
       padding: 1rem;

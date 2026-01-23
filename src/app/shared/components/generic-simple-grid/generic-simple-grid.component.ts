@@ -108,33 +108,6 @@ export interface GridAction {
       white-space: nowrap;
     }
 
-    .btn-primary {
-      background: #007bff;
-      color: white;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background: #0056b3;
-    }
-
-    .btn-danger {
-      background: #dc3545;
-      color: white;
-    }
-
-    .btn-danger:hover:not(:disabled) {
-      background: #c82333;
-    }
-
-    .btn-success {
-      background: #28a745;
-      color: white;
-    }
-
-    .btn-success:hover:not(:disabled) {
-      background: #218838;
-    }
-
     .btn-warning {
       background: #ffc107;
       color: #333;

@@ -94,15 +94,6 @@ import { ButtonComponent } from '../../../shared/components/button/button.compon
       transition: background 0.3s;
     }
 
-    .btn-danger {
-      background: #dc3545;
-      color: white;
-    }
-
-    .btn-danger:hover:not(:disabled) {
-      background: #c82333;
-    }
-
     .btn:disabled {
       opacity: 0.7;
       cursor: not-allowed;

@@ -168,15 +168,6 @@ export type ListAction = GenericAction;
       display: inline-block;
     }
 
-    .btn-primary {
-      background-color: #1976d2;
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background-color: #1565c0;
-    }
-
     .btn-sm {
       padding: 0.5rem 1rem;
       font-size: 13px;

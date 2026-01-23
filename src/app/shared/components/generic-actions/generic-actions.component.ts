@@ -53,15 +53,6 @@ export interface GenericAction {
       background-color: #138496;
     }
 
-    .btn-danger {
-      background-color: #dc3545;
-      color: white;
-    }
-
-    .btn-danger:hover {
-      background-color: #c82333;
-    }
-
     .btn-warning {
       background-color: #ffc107;
       color: #333;
