@@ -52,7 +52,7 @@ export type ListAction = GenericAction;
         />
       </div>
 
-      <div *ngIf="loading$ | async" style="text-align: center; padding: 20px;">
+      <div *ngIf="loading$ | async" class="loading-message">
         Carregando...
       </div>
 
@@ -173,6 +173,11 @@ export type ListAction = GenericAction;
       outline: none;
       border-color: #1976d2;
       box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+    }
+
+    .loading-message {
+      text-align: center;
+      padding: 20px;
     }
 
     .data-table {
