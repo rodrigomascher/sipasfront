@@ -1,75 +1,69 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { ModalComponent } from '../../../shared/components/modal/modal.component';
 
 @Component({
   selector: 'app-change-password-dialog',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LoadingSpinnerComponent, ButtonComponent],
+  imports: [CommonModule, ReactiveFormsModule, LoadingSpinnerComponent, ButtonComponent, ModalComponent],
   template: `
-    <div class="modal-overlay" (click)="onCancel()" *ngIf="isOpen">
-      <div class="modal-content" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-          <h2>Alterar Senha</h2>
-          <button class="close-btn" (click)="onCancel()">✕</button>
+    <app-modal [isOpen]="isOpen" title="Alterar Senha" (closed)="onCancel()">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="newPassword">Nova Senha</label>
+          <input
+            id="newPassword"
+            type="password"
+            class="form-input"
+            formControlName="newPassword"
+            placeholder="Digite a nova senha"
+          />
+          <span class="error" *ngIf="form.get('newPassword')?.hasError('required')">
+            Senha é obrigatória
+          </span>
+          <span class="error" *ngIf="form.get('newPassword')?.hasError('minlength')">
+            Mínimo 6 caracteres
+          </span>
         </div>
-        
-        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="modal-body">
-          <div class="form-group">
-            <label for="newPassword">Nova Senha</label>
-            <input
-              id="newPassword"
-              type="password"
-              class="form-input"
-              formControlName="newPassword"
-              placeholder="Digite a nova senha"
-            />
-            <span class="error" *ngIf="form.get('newPassword')?.hasError('required')">
-              Senha é obrigatória
-            </span>
-            <span class="error" *ngIf="form.get('newPassword')?.hasError('minlength')">
-              Mínimo 6 caracteres
-            </span>
-          </div>
 
-          <div class="form-group">
-            <label for="confirmPassword">Confirmar Senha</label>
-            <input
-              id="confirmPassword"
-              type="password"
-              class="form-input"
-              formControlName="confirmPassword"
-              placeholder="Confirme a senha"
-            />
-            <span class="error" *ngIf="form.get('confirmPassword')?.hasError('required')">
-              Confirme a senha
-            </span>
-            <span class="error" *ngIf="form.hasError('passwordMismatch') && form.get('confirmPassword')?.touched">
-              As senhas não coincidem
-            </span>
-          </div>
+        <div class="form-group">
+          <label for="confirmPassword">Confirmar Senha</label>
+          <input
+            id="confirmPassword"
+            type="password"
+            class="form-input"
+            formControlName="confirmPassword"
+            placeholder="Confirme a senha"
+          />
+          <span class="error" *ngIf="form.get('confirmPassword')?.hasError('required')">
+            Confirme a senha
+          </span>
+          <span class="error" *ngIf="form.hasError('passwordMismatch') && form.get('confirmPassword')?.touched">
+            As senhas não coincidem
+          </span>
+        </div>
 
-          <div class="modal-actions">
-            <app-button type="button" variant="secondary" (click)="onCancel()" [disabled]="isLoading">
-              Cancelar
-            </app-button>
-            <app-button 
-              type="submit" 
-              variant="primary" 
-              [loading]="isLoading"
-              [disabled]="form.invalid"
-              loadingText="Alterando..."
-            >
-              Alterar Senha
-            </app-button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <div modal-actions>
+          <app-button type="button" variant="secondary" (click)="onCancel()" [disabled]="isLoading">
+            Cancelar
+          </app-button>
+          <app-button 
+            type="submit" 
+            variant="primary" 
+            [loading]="isLoading"
+            [disabled]="form.invalid"
+            loadingText="Alterando..."
+          >
+            Alterar Senha
+          </app-button>
+        </div>
+      </form>
+    </app-modal>
   `,
-  styles: [],
+  styles: []
 })
 export class ChangePasswordDialogComponent {
   @Output() passwordChanged = new EventEmitter<string | null>();
