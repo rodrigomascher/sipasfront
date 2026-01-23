@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { SelectedUnitService } from '@core/services/selected-unit.service';
+import { ButtonComponent } from '@shared/components/button/button.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ButtonComponent],
   template: `
     <div class="login-container">
       <div class="login-box">
@@ -40,9 +41,15 @@ import { SelectedUnitService } from '@core/services/selected-unit.service';
             />
           </div>
 
-          <button type="submit" class="btn btn-primary" [disabled]="loading">
-            {{ loading ? 'Entrando...' : 'Entrar' }}
-          </button>
+          <app-button 
+            type="submit" 
+            variant="primary"
+            size="large"
+            [loading]="loading"
+            loadingText="Entrando..."
+          >
+            Entrar
+          </app-button>
         </form>
 
         <div *ngIf="error" class="alert alert-danger">

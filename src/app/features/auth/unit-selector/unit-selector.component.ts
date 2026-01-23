@@ -6,11 +6,12 @@ import { AuthService } from '@core/services/auth.service';
 import { SelectedUnitService } from '@core/services/selected-unit.service';
 import { UnitsService } from '@core/services/units.service';
 import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
+import { ButtonComponent } from '@shared/components/button/button.component';
 
 @Component({
   selector: 'app-unit-selector',
   standalone: true,
-  imports: [CommonModule, FormsModule, LoadingSpinnerComponent],
+  imports: [CommonModule, FormsModule, LoadingSpinnerComponent, ButtonComponent],
   template: `
     <div class="unit-selector-container">
       <div class="unit-selector-box">
@@ -45,13 +46,16 @@ import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/load
             </select>
           </div>
 
-          <button 
+          <app-button 
             type="submit" 
-            class="btn btn-primary"
-            [disabled]="!selectedUnitId || isSelecting"
+            variant="primary"
+            size="large"
+            [disabled]="!selectedUnitId"
+            [loading]="isSelecting"
+            loadingText="Acessando..."
           >
-            {{ isSelecting ? 'Acessando...' : 'Acessar' }}
-          </button>
+            Acessar
+          </app-button>
         </form>
 
         <div *ngIf="!loading && units.length === 0" class="no-units">
@@ -63,9 +67,9 @@ import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/load
         </div>
 
         <div class="unit-selector-footer">
-          <button type="button" class="btn btn-secondary" (click)="logout()">
+          <app-button type="button" variant="secondary" (click)="logout()">
             Sair
-          </button>
+          </app-button>
         </div>
       </div>
     </div>
@@ -184,46 +188,6 @@ import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/load
       gap: 10px;
       padding-top: 20px;
       border-top: 1px solid #eee;
-    }
-
-    .btn {
-      padding: 12px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: all 0.3s;
-      font-weight: 600;
-    }
-
-    .btn-primary {
-      width: 100%;
-      background: #667eea;
-      color: white;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background: #5568d3;
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .btn-secondary {
-      background: #6c757d;
-      color: white;
-      padding: 10px 24px;
-    }
-
-    .btn-secondary:hover {
-      background: #545b62;
-    }
-
-    .btn:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
     }
   `]
 })

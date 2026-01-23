@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { SessionTimerComponent } from '../session-timer/session-timer.component';
+import { ButtonComponent } from '../button/button.component';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, SessionTimerComponent],
+  imports: [CommonModule, SessionTimerComponent, ButtonComponent],
   template: `
     <header class="app-header" *ngIf="showHeader">
       <div class="navbar-brand" (click)="goToDashboard()" [title]="'Sistema Integrado de Prontuário e Assistência Social'">
@@ -25,9 +26,9 @@ import { AuthService } from '../../../core/services/auth.service';
             <p class="user-name">{{ (user$ | async)?.name || 'Usuário' }}</p>
             <span class="user-email">{{ (user$ | async)?.email }}</span>
           </div>
-          <button class="logout-btn" (click)="onLogout()">
-            <span>Sair</span>
-          </button>
+          <app-button size="medium" (click)="onLogout()">
+            Sair
+          </app-button>
         </div>
       </div>
     </header>
@@ -106,30 +107,6 @@ import { AuthService } from '../../../core/services/auth.service';
     .user-email {
       font-size: 0.8rem;
       opacity: 0.85;
-    }
-
-    .logout-btn {
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      padding: 0.625rem 1.25rem;
-      border-radius: 0.55rem;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: 600;
-      transition: all 0.15s ease;
-      backdrop-filter: blur(10px);
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.3);
-        border-color: rgba(255, 255, 255, 0.5);
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-      }
-
-      &:active {
-        transform: translateY(0);
-      }
     }
 
     /* Responsive */
