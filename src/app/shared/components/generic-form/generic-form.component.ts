@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
 import { FormFieldConfig } from './form-field-config';
 import { FormFieldComponent } from './form-field.component';
+import { ButtonComponent } from '../button/button.component';
 
 /**
  * Generic form component
@@ -14,14 +15,14 @@ import { FormFieldComponent } from './form-field.component';
 @Component({
   selector: 'app-generic-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, FormFieldComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, FormFieldComponent, ButtonComponent],
   template: `
     <div class="container">
       <div class="form-header">
         <h1>{{ title }}</h1>
-        <button type="button" class="btn btn-secondary" [routerLink]="backRoute">
+        <app-button type="button" variant="secondary" [routerLink]="backRoute">
           ← Voltar
-        </button>
+        </app-button>
       </div>
 
       <div class="form-card">
@@ -47,16 +48,18 @@ import { FormFieldComponent } from './form-field.component';
 
           <!-- Botões de ação -->
           <div class="form-actions">
-            <button
+            <app-button
               type="submit"
-              class="btn btn-primary"
-              [disabled]="form.invalid || (loading$ | async)"
+              variant="primary"
+              [loading]="(loading$ | async) || false"
+              [disabled]="form.invalid"
+              loadingText="Salvando..."
             >
-              {{ (loading$ | async) ? 'Salvando...' : (submitLabel || 'Salvar') }}
-            </button>
-            <button type="button" class="btn btn-secondary" [routerLink]="backRoute">
+              {{ submitLabel || 'Salvar' }}
+            </app-button>
+            <app-button type="button" variant="secondary" [routerLink]="backRoute">
               Cancelar
-            </button>
+            </app-button>
           </div>
         </form>
       </div>

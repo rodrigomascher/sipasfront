@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil, debounceTime } from 'rxjs/operators';
 import { GenericActionsComponent, GenericAction } from '../generic-actions/generic-actions.component';
+import { ButtonComponent } from '../button/button.component';
 
 export interface ListColumn {
   key: string;
@@ -31,12 +32,14 @@ export type ListAction = GenericAction;
 @Component({
   selector: 'app-generic-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, GenericActionsComponent],
+  imports: [CommonModule, FormsModule, RouterLink, GenericActionsComponent, ButtonComponent],
   template: `
     <div class="container">
       <div class="header">
         <h1>{{ title }}</h1>
-        <button class="btn btn-primary" [routerLink]="createRoute">+ {{ createButtonLabel }}</button>
+        <app-button variant="primary" [routerLink]="createRoute">
+          + {{ createButtonLabel }}
+        </app-button>
       </div>
 
       <div class="search-box">
@@ -105,25 +108,29 @@ export type ListAction = GenericAction;
           </select>
 
           <div class="pagination-buttons">
-            <button 
-              class="btn btn-sm btn-pagination"
+            <app-button 
+              type="button"
+              variant="secondary"
+              size="small"
               (click)="previousPage()"
               [disabled]="(currentPage$ | async) === 1"
             >
               ← Anterior
-            </button>
+            </app-button>
 
             <span class="page-info">
               Página {{ (currentPage$ | async) }} de {{ (totalPages$ | async) }}
             </span>
 
-            <button 
-              class="btn btn-sm btn-pagination"
+            <app-button 
+              type="button"
+              variant="secondary"
+              size="small"
               (click)="nextPage()"
               [disabled]="(currentPage$ | async) === (totalPages$ | async)"
             >
               Próxima →
-            </button>
+            </app-button>
           </div>
         </div>
       </div>

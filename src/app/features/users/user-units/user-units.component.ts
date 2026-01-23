@@ -4,25 +4,27 @@ import { FormsModule } from '@angular/forms';
 import { UnitsService } from '../../../core/services/units.service';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { GenericSimpleGridComponent, GridColumn, GridAction } from '../../../shared/components/generic-simple-grid/generic-simple-grid.component';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-units',
   standalone: true,
-  imports: [CommonModule, FormsModule, LoadingSpinnerComponent, GenericSimpleGridComponent],
+  imports: [CommonModule, FormsModule, LoadingSpinnerComponent, GenericSimpleGridComponent, ButtonComponent],
   template: `
     <div class="user-units-container">
       <div class="user-units-header">
         <h3>Unidades</h3>
-        <button 
+        <app-button 
           type="button" 
-          class="btn btn-primary btn-sm"
+          variant="primary"
+          size="small"
           (click)="toggleAddUnit()"
           [disabled]="isLoading"
         >
           {{ showSelector ? '- Cancelar' : '+ Adicionar Unidade' }}
-        </button>
+        </app-button>
       </div>
 
       <!-- Seletor de unidades com autocomplete -->
@@ -38,14 +40,14 @@ import { map } from 'rxjs/operators';
               (keyup.enter)="addSelectedUnit()"
               [disabled]="isLoading"
             />
-            <button 
+            <app-button 
               type="button"
-              class="btn btn-success"
+              variant="success"
               (click)="addSelectedUnit()"
               [disabled]="!selectedUnit || isLoading"
             >
               Adicionar
-            </button>
+            </app-button>
           </div>
 
           <!-- Dropdown de sugestões -->
@@ -266,7 +268,7 @@ export class UserUnitsComponent implements OnInit {
   gridActions: GridAction[] = [
     {
       label: 'Remover',
-      class: 'btn-danger',
+      variant: 'danger',
       callback: (unit: any) => this.removeUnit(unit.id)
     }
   ];

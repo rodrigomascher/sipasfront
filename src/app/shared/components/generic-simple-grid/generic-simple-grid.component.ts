@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ButtonComponent } from '../button/button.component';
 
 export interface GridColumn {
   key: string;
@@ -10,13 +11,13 @@ export interface GridColumn {
 export interface GridAction {
   label: string;
   callback: (item: any) => void;
-  class?: string;
+  variant?: 'primary' | 'secondary' | 'danger' | 'success' | 'warning';
 }
 
 @Component({
   selector: 'app-generic-simple-grid',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ButtonComponent],
   template: `
     <!-- Grid com dados -->
     <div class="generic-grid" *ngIf="items && items.length > 0">
@@ -33,15 +34,16 @@ export interface GridAction {
               {{ col.formatter ? col.formatter(item[col.key], item) : item[col.key] }}
             </td>
             <td *ngIf="actions && actions.length > 0" class="actions-cell">
-              <button 
+              <app-button 
                 type="button"
                 *ngFor="let action of actions"
-                [class]="'btn btn-sm ' + (action.class || 'btn-primary')"
+                size="small"
+                [variant]="action.variant || 'primary'"
                 (click)="onAction(action, item)"
                 [disabled]="isLoading"
               >
                 {{ action.label }}
-              </button>
+              </app-button>
             </td>
           </tr>
         </tbody>

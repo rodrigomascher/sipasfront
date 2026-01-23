@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { GenericFormComponent } from '../generic-form/generic-form.component';
 import { FormFieldComponent } from '../generic-form/form-field.component';
 import { FormFieldConfig } from '../generic-form/form-field-config';
+import { ButtonComponent } from '../button/button.component';
 
 export interface TabConfig {
   title: string;
@@ -15,7 +16,7 @@ export interface TabConfig {
 @Component({
   selector: 'app-tabbed-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, FormFieldComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, FormFieldComponent, ButtonComponent],
   template: `
     <div class="container">
       <div class="header">
@@ -53,10 +54,18 @@ export interface TabConfig {
 
         <!-- Form Actions -->
         <div class="form-actions">
-          <button type="submit" class="btn btn-primary" [disabled]="form.invalid || (loading$ | async)">
-            {{ (loading$ | async) ? 'Salvando...' : (isEditMode ? 'Atualizar' : 'Criar') }}
-          </button>
-          <a [routerLink]="backRoute" class="btn btn-outline">Cancelar</a>
+          <app-button 
+            type="submit" 
+            variant="primary"
+            [loading]="(loading$ | async) || false"
+            [disabled]="form.invalid"
+            loadingText="Salvando..."
+          >
+            {{ isEditMode ? 'Atualizar' : 'Criar' }}
+          </app-button>
+          <app-button type="button" variant="secondary" [routerLink]="backRoute">
+            Cancelar
+          </app-button>
         </div>
       </form>
     </div>

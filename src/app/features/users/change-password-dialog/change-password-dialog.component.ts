@@ -2,11 +2,12 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
 
 @Component({
   selector: 'app-change-password-dialog',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LoadingSpinnerComponent],
+  imports: [CommonModule, ReactiveFormsModule, LoadingSpinnerComponent, ButtonComponent],
   template: `
     <div class="modal-overlay" (click)="onCancel()" *ngIf="isOpen">
       <div class="modal-content" (click)="$event.stopPropagation()">
@@ -51,13 +52,18 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
           </div>
 
           <div class="modal-actions">
-            <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isLoading">
+            <app-button type="button" variant="secondary" (click)="onCancel()" [disabled]="isLoading">
               Cancelar
-            </button>
-            <button type="submit" class="btn btn-primary" [disabled]="form.invalid || isLoading">
-              <span *ngIf="!isLoading">Alterar Senha</span>
-              <app-loading-spinner *ngIf="isLoading" mode="inline" message="Alterando..."></app-loading-spinner>
-            </button>
+            </app-button>
+            <app-button 
+              type="submit" 
+              variant="primary" 
+              [loading]="isLoading"
+              [disabled]="form.invalid"
+              loadingText="Alterando..."
+            >
+              Alterar Senha
+            </app-button>
           </div>
         </form>
       </div>

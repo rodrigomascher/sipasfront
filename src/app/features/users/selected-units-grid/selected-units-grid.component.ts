@@ -1,10 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
 
 @Component({
   selector: 'app-selected-units-grid',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ButtonComponent],
   template: `
     <!-- Grid de unidades selecionadas -->
     <div class="user-units-grid" *ngIf="units && units.length > 0">
@@ -27,14 +28,15 @@ import { CommonModule } from '@angular/common';
             <td>{{ unit.city }}</td>
             <td>{{ unit.state }}</td>
             <td>
-              <button 
+              <app-button 
                 type="button"
-                class="btn btn-danger btn-sm"
+                variant="danger"
+                size="small"
                 (click)="onRemove(unit.id)"
                 [disabled]="isLoading"
               >
                 Remover
-              </button>
+              </app-button>
             </td>
           </tr>
         </tbody>
