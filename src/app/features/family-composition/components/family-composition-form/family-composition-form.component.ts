@@ -80,7 +80,45 @@ import * as FamilyCompositionActions from '../../../../store/family-composition/
       </form>
     </div>
   `,
-  styles: []
+  styles: [`
+    @import '../../../../shared/styles/form-styles.scss';
+
+    .form-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .form-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .form-header h1 {
+      margin: 0;
+      font-size: 24px;
+      color: #333;
+    }
+
+    .checkbox {
+      flex-direction: row;
+      align-items: center;
+
+      input[type="checkbox"] {
+        margin: 0;
+        width: auto;
+        padding: 0;
+      }
+
+      label {
+        margin: 0;
+        margin-left: 8px;
+        font-weight: 500;
+      }
+    }
+  `]
 })
 export class FamilyCompositionFormComponent implements OnInit {
   form: FormGroup;

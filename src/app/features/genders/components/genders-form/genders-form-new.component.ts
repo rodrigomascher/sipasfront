@@ -59,7 +59,25 @@ import * as Selectors from '../../store/genders.selectors';
       </form>
     </div>
   `,
-  styles: []
+  styles: [`
+    @import '../../../../shared/styles/form-styles.scss';
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .form-header {
+      margin-bottom: 30px;
+    }
+
+    .form-header h1 {
+      margin: 0;
+      color: #333;
+      font-size: 24px;
+    }
+  `]
 })
 export class GendersFormComponent implements OnInit {
   form: FormGroup;

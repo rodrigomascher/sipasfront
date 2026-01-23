@@ -61,37 +61,74 @@ import * as UnitsActions from '../../../store/units/units.actions';
     </div>
   `,
   styles: [`
+    @import '../../../shared/styles/form-styles.scss';
+
     .detail-container {
-      padding: 1rem;
+      padding: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
     }
 
     .grid-2 {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
+      gap: 24px;
+      margin-bottom: 30px;
 
       > div {
         strong {
           display: block;
           color: #666;
-          font-size: 0.875rem;
-          margin-bottom: 0.5rem;
+          font-size: 12px;
+          margin-bottom: 8px;
           text-transform: uppercase;
+          font-weight: 600;
         }
 
         p {
-          font-size: 1rem;
+          font-size: 16px;
           color: #333;
+          margin: 0;
         }
       }
     }
 
     .actions {
       display: flex;
-      gap: 1rem;
+      gap: 12px;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
 
       button {
-        margin-top: 1rem;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        border: none;
+        transition: all 0.2s;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #5e72e4 0%, #825ee4 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #4c63d2 0%, #6d46d3 100%);
+        box-shadow: 0 5px 15px rgba(94, 114, 228, 0.3);
+      }
+
+      .btn-secondary {
+        background: #f7fafc;
+        color: #525f7f;
+        border: 2px solid #e3e6f0;
+      }
+
+      .btn-secondary:hover {
+        background: #f0f4ff;
+        border-color: #5e72e4;
+        color: #5e72e4;
       }
     }
   `]
