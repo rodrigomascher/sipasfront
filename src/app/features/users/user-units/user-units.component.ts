@@ -4,27 +4,25 @@ import { FormsModule } from '@angular/forms';
 import { UnitsService } from '../../../core/services/units.service';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 import { GenericSimpleGridComponent, GridColumn, GridAction } from '../../../shared/components/generic-simple-grid/generic-simple-grid.component';
-import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-units',
   standalone: true,
-  imports: [CommonModule, FormsModule, LoadingSpinnerComponent, GenericSimpleGridComponent, ButtonComponent],
+  imports: [CommonModule, FormsModule, LoadingSpinnerComponent, GenericSimpleGridComponent],
   template: `
     <div class="user-units-container">
       <div class="user-units-header">
         <h3>Unidades</h3>
-        <app-button 
+        <button 
           type="button" 
-          variant="primary"
-          size="small"
+          class="btn btn-primary"
           (click)="toggleAddUnit()"
           [disabled]="isLoading"
         >
           {{ showSelector ? '- Cancelar' : '+ Adicionar Unidade' }}
-        </app-button>
+        </button>
       </div>
 
       <!-- Seletor de unidades com autocomplete -->
@@ -40,14 +38,14 @@ import { map } from 'rxjs/operators';
               (keyup.enter)="addSelectedUnit()"
               [disabled]="isLoading"
             />
-            <app-button 
+            <button
               type="button"
-              variant="success"
+              class="btn btn-success"
               (click)="addSelectedUnit()"
               [disabled]="!selectedUnit || isLoading"
             >
               Adicionar
-            </app-button>
+            </button>
           </div>
 
           <!-- Dropdown de sugestões -->
@@ -242,6 +240,37 @@ import { map } from 'rxjs/operators';
     button:disabled {
       opacity: 0.7;
       cursor: not-allowed;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #5e72e4 0%, #825ee4 100%);
+      color: white;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: linear-gradient(135deg, #4c63d2 0%, #6d46d3 100%);
+      box-shadow: 0 5px 15px rgba(94, 114, 228, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .btn-success {
+      background: #2dce89;
+      color: white;
+    }
+
+    .btn-success:hover:not(:disabled) {
+      background: #1fb471;
+      box-shadow: 0 5px 15px rgba(45, 206, 137, 0.3);
+      transform: translateY(-2px);
     }
   `]
 })
