@@ -160,65 +160,6 @@ import { FormFieldConfig } from './form-field-config';
     </div>
   `,
   styles: [`
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-
-    .form-group.col-span-2 {
-      grid-column: span 2;
-    }
-
-    .form-group.col-span-3 {
-      grid-column: span 3;
-    }
-
-    .form-group.col-span-4 {
-      grid-column: span 4;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-      color: #333;
-      font-size: 0.95rem;
-    }
-
-    .required {
-      color: #dc3545;
-      margin-left: 0.25rem;
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
-      font-family: inherit;
-      transition: border-color 0.3s, box-shadow 0.3s;
-      background-color: white;
-    }
-
-    .form-control:focus {
-      outline: none;
-      border-color: #1976d2;
-      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
-    }
-
-    .form-control:disabled {
-      background-color: #f5f5f5;
-      cursor: not-allowed;
-      opacity: 0.7;
-    }
-
-    input[type="checkbox"] {
-      margin-right: 0.5rem;
-      cursor: pointer;
-      width: auto;
-      padding: 0;
-    }
-
     .checkbox-label {
       display: flex;
       align-items: center;

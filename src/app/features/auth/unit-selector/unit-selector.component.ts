@@ -122,17 +122,6 @@ import { ButtonComponent } from '@shared/components/button/button.component';
       margin-bottom: 20px;
     }
 
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      color: #333;
-    }
-
     .unit-select {
       width: 100%;
       padding: 12px;
@@ -161,18 +150,6 @@ import { ButtonComponent } from '@shared/components/button/button.component';
       padding: 40px 20px;
       color: #999;
       font-size: 16px;
-    }
-
-    .alert {
-      padding: 12px 16px;
-      border-radius: 6px;
-      margin-bottom: 20px;
-    }
-
-    .alert-danger {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
     }
 
     .loading-state {

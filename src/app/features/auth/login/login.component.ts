@@ -92,17 +92,6 @@ import { ButtonComponent } from '@shared/components/button/button.component';
       font-weight: 400;
     }
 
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      color: #333;
-    }
-
     input {
       width: 100%;
       padding: 10px 12px;
@@ -133,15 +122,6 @@ import { ButtonComponent } from '@shared/components/button/button.component';
     button:disabled {
       opacity: 0.6;
       cursor: not-allowed;
-    }
-
-    .alert {
-      margin-top: 20px;
-      padding: 12px;
-      border-radius: 4px;
-      background-color: #fee;
-      color: #c33;
-      border: 1px solid #fcc;
     }
   `]
 })

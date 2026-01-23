@@ -142,37 +142,6 @@ export interface TabConfig {
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 20px;
     }
-
-    .form-actions {
-      display: flex;
-      gap: 10px;
-      justify-content: flex-start;
-      margin-top: 30px;
-    }
-
-    .btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      text-decoration: none;
-      display: inline-block;
-      transition: all 0.3s ease;
-      font-weight: 500;
-    }
-
-    .alert {
-      padding: 12px;
-      border-radius: 4px;
-      margin-bottom: 20px;
-    }
-
-    .alert-error {
-      background-color: #ffebee;
-      color: #c62828;
-      border: 1px solid #ef5350;
-    }
   `]
 })
 export class TabbedFormComponent {

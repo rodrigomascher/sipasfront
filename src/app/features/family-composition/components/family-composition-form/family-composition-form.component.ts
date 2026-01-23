@@ -103,18 +103,6 @@ import * as FamilyCompositionActions from '../../../../store/family-composition/
       color: #32325d;
     }
 
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-      color: #525f7f;
-      font-size: 0.9rem;
-    }
-
     input:not([type="checkbox"]) {
       width: 100%;
       padding: 0.75rem;
@@ -147,46 +135,6 @@ import * as FamilyCompositionActions from '../../../../store/family-composition/
 
       label {
         margin: 0;
-      }
-    }
-
-    .form-actions {
-      display: flex;
-      gap: 1rem;
-      margin-top: 2rem;
-    }
-
-    .btn {
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 0.55rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      flex: 1;
-
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #5e72e4 0%, #825ee4 100%);
-      color: white;
-
-      &:not(:disabled):hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(94, 114, 228, 0.3);
-      }
-    }
-
-    .btn-secondary {
-      background: #e3e6f0;
-      color: #525f7f;
-
-      &:hover {
-        background: #d3d6e0;
       }
     }
   `]

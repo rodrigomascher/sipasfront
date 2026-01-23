@@ -169,69 +169,6 @@ import { ChangePasswordDialogComponent } from '../change-password-dialog/change-
       border-top: 1px solid #eee;
       border-bottom: 1px solid #eee;
     }
-
-    .form-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 30px;
-      padding-top: 20px;
-      border-top: 1px solid #eee;
-    }
-
-    .btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      text-decoration: none;
-      display: inline-block;
-      transition: background 0.3s;
-    }
-
-    .btn-primary {
-      background: #007bff;
-      color: white;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background: #0056b3;
-    }
-
-    .btn-primary:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
-
-    .btn-secondary {
-      background: #6c757d;
-      color: white;
-    }
-
-    .btn-secondary:hover {
-      background: #545b62;
-    }
-
-    .btn-info {
-      background: #17a2b8;
-      color: white;
-    }
-
-    .btn-info:hover {
-      background: #138496;
-    }
-
-    .alert {
-      padding: 12px 20px;
-      border-radius: 4px;
-      margin-top: 20px;
-    }
-
-    .alert-danger {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
   `]
 })
 export class UsersFormComponent implements OnInit {

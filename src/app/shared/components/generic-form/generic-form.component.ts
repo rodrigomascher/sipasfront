@@ -105,30 +105,7 @@ import { ButtonComponent } from '../button/button.component';
       }
     }
 
-    .form-actions {
-      display: flex;
-      gap: 1rem;
-      margin-top: 2rem;
-    }
 
-    .btn {
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      transition: all 0.3s;
-    }
-
-    .alert-danger {
-      margin-bottom: 1.5rem;
-      padding: 1rem;
-      background-color: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-      border-radius: 4px;
-    }
   `]
 })
 export class GenericFormComponent {

@@ -83,32 +83,6 @@ import * as Selectors from '../../store/genders.selectors';
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
 
-    .form-group {
-      margin-bottom: 1.5rem;
-      display: flex;
-      flex-direction: column;
-    }
-
-    label {
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: #333;
-    }
-
-    .form-input {
-      padding: 0.75rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
-      font-family: inherit;
-    }
-
-    .form-input:focus {
-      outline: none;
-      border-color: #1976d2;
-      box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
-    }
-
     .form-checkbox {
       margin-right: 0.5rem;
       cursor: pointer;
@@ -118,58 +92,6 @@ import * as Selectors from '../../store/genders.selectors';
       color: #dc3545;
       font-size: 12px;
       margin-top: 0.25rem;
-    }
-
-    .form-actions {
-      display: flex;
-      gap: 1rem;
-      margin-top: 2rem;
-    }
-
-    .btn {
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 4px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .btn-primary {
-      background-color: #1976d2;
-      color: white;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background-color: #1565c0;
-    }
-
-    .btn-primary:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-
-    .btn-secondary {
-      background-color: #6c757d;
-      color: white;
-    }
-
-    .btn-secondary:hover {
-      background-color: #5a6268;
-    }
-
-    .alert {
-      margin-top: 1rem;
-      padding: 0.75rem;
-      border-radius: 4px;
-      font-size: 14px;
-    }
-
-    .alert-danger {
-      background-color: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
     }
   `]
 })
