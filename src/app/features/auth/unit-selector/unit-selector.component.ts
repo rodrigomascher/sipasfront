@@ -74,7 +74,107 @@ import { ButtonComponent } from '@shared/components/button/button.component';
       </div>
     </div>
   `,
-  styles: []
+  styles: [`
+    .unit-selector-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .unit-selector-box {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      padding: 40px;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .unit-selector-header {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #333;
+      margin: 0 0 10px 0;
+    }
+
+    .user-info {
+      font-size: 16px;
+      color: #667eea;
+      font-weight: 600;
+      margin: 0 0 8px 0;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #999;
+      margin: 0;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .unit-select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      background: white;
+      cursor: pointer;
+      transition: border-color 0.3s;
+    }
+
+    .unit-select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .unit-select:disabled {
+      background: #f5f5f5;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .unit-form {
+      margin-bottom: 20px;
+    }
+
+    .loading-state {
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .no-units {
+      padding: 30px;
+      text-align: center;
+      color: #999;
+    }
+
+    .unit-selector-footer {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+    }
+  `]
 })
 export class UnitSelectorComponent implements OnInit {
   units: any[] = [];

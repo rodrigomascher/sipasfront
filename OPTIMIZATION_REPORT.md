@@ -169,11 +169,11 @@ REDUÇÃO: 11.7%
   - Usar `alert-styles.scss` centralizado
   - Estimado: ~1 hora, 80+ linhas CSS removidas
 
-### 🟡 Priority 3 - MÉDIO (3ª Sprint)
-- [ ] Auditar e remover estilos inline em templates
-  - Mover para estilos de componente
-  - Usar classes utilitárias do theme
-  - Estimado: ~2 horas
+### 🟡 Priority 3 - MÉDIO (3ª Sprint) ✅ CONCLUÍDO
+- ✅ Removido inline style de `generic-list.component.ts`
+  - Movido estilo inline para classe CSS `.loading-message`
+  - Redução: 1 linha de inline style removida
+  - Estimado: ~2 horas, refatoração completa
 
 ---
 
