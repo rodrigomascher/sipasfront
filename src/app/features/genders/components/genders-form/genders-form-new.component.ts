@@ -59,41 +59,7 @@ import * as Selectors from '../../store/genders.selectors';
       </form>
     </div>
   `,
-  styles: [`
-    .container {
-      padding: 2rem;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .form-header {
-      margin-bottom: 2rem;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 1.8rem;
-      color: #333;
-    }
-
-    .form-container {
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    .form-checkbox {
-      margin-right: 0.5rem;
-      cursor: pointer;
-    }
-
-    .error-text {
-      color: #dc3545;
-      font-size: 12px;
-      margin-top: 0.25rem;
-    }
-  `]
+  styles: []
 })
 export class GendersFormComponent implements OnInit {
   form: FormGroup;
