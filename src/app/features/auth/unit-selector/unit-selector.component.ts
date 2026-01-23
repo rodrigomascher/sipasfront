@@ -289,7 +289,9 @@ export class UnitSelectorComponent implements OnInit {
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
-        this.error = err.error?.message || 'Erro ao selecionar unidade. Tente novamente.';
+        console.error('Erro ao selecionar unidade:', err);
+        const errorMessage = err.error?.message || err.message || 'Erro ao selecionar unidade. Tente novamente.';
+        this.error = errorMessage;
         this.isSelecting = false;
       }
     });
