@@ -7,13 +7,21 @@ import { AuthService } from './core/services/auth.service';
 import { SelectedUnitService } from './core/services/selected-unit.service';
 import { HeaderComponent } from './shared/components/header/header.component';
 import { SidebarComponent } from './shared/components/sidebar/sidebar.component';
+import { NotificationContainerComponent } from './shared/components/notification-container/notification-container.component';
+import { LoadingIndicatorComponent } from './shared/components/loading-indicator/loading-indicator.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, HeaderComponent, SidebarComponent],
+  imports: [CommonModule, RouterOutlet, HeaderComponent, SidebarComponent, NotificationContainerComponent, LoadingIndicatorComponent],
   template: `
     <div class="app-container">
+      <!-- Loading Indicator -->
+      <app-loading-indicator></app-loading-indicator>
+
+      <!-- Notification Container -->
+      <app-notification-container></app-notification-container>
+
       <!-- Header Component -->
       <app-header 
         [showHeader]="(showHeader$ | async) ?? false" 

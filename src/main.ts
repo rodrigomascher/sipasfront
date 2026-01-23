@@ -1,5 +1,5 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withPreloading } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
@@ -8,6 +8,9 @@ import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
 import { authInterceptor } from './app/core/interceptors/auth.interceptor';
+import { errorInterceptor } from './app/core/interceptors/error.interceptor';
+import { loadingInterceptor } from './app/core/interceptors/loading.interceptor';
+import { QuicklinkStrategy } from './app/core/strategies/preloading.strategy';
 import { environment } from './environments/environment';
 import { unitsReducer } from './app/store/units/units.reducer';
 import { usersReducer } from './app/store/users/users.reducer';
@@ -34,9 +37,9 @@ import { FamilyCompositionEffects } from './app/store/family-composition/family-
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideRouter(routes),
+    provideRouter(routes, withPreloading(QuicklinkStrategy)),
     provideHttpClient(
-      withInterceptors([authInterceptor])
+      withInterceptors([authInterceptor, loadingInterceptor, errorInterceptor])
     ),
     provideStore({
       units: unitsReducer,
