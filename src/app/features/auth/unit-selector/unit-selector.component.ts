@@ -257,6 +257,35 @@ export class UnitSelectorComponent implements OnInit {
   }
 
   private loadUserUnits(): void {
+    let units: any[] = [];
+    
+    // First, try to get units from the user object
+    if (this.user?.['units']) {
+      units = Array.isArray(this.user['units']) ? this.user['units'] : [];
+    }
+    
+    // If no units from user, try localStorage
+    if (units.length === 0) {
+      const unitsJson = localStorage.getItem('userUnits');
+      if (unitsJson) {
+        try {
+          units = JSON.parse(unitsJson);
+        } catch (err) {
+          console.error('[UNIT-SELECTOR] Error parsing userUnits:', err);
+        }
+      }
+    }
+    
+    this.units = units;
+    this.loading = false;
+    
+    // Se só tem 1 unidade, seleciona automaticamente
+    if (this.units.length === 1) {
+      this.selectUnit(this.units[0]);
+    }
+  }
+
+  private loadUnitsFromApi(): void {
     this.unitsService.getUnits().subscribe({
       next: (response) => {
         this.units = response.data || [];
@@ -289,7 +318,6 @@ export class UnitSelectorComponent implements OnInit {
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
-        console.error('Erro ao selecionar unidade:', err);
         const errorMessage = err.error?.message || err.message || 'Erro ao selecionar unidade. Tente novamente.';
         this.error = errorMessage;
         this.isSelecting = false;
@@ -300,10 +328,16 @@ export class UnitSelectorComponent implements OnInit {
   handleSelectUnit(): void {
     if (this.selectedUnitId) {
       this.isSelecting = true;
+      // Convert to number for comparison (ngModel returns string from select)
+      const unitIdToFind = Number(this.selectedUnitId);
+      
       // Find the selected unit object to pass to selectUnit
-      const selectedUnit = this.units.find(u => u.id === this.selectedUnitId);
+      const selectedUnit = this.units.find(u => u.id === unitIdToFind);
       if (selectedUnit) {
         this.selectUnit(selectedUnit);
+      } else {
+        this.error = 'Unidade não encontrada. Tente novamente.';
+        this.isSelecting = false;
       }
     }
   }

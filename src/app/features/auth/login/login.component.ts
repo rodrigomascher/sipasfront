@@ -175,6 +175,11 @@ export class LoginComponent implements OnInit {
         // Verificar quantidade de unidades do usuário
         const units = response.user?.['units'] || [];
         
+        // Store units in localStorage for the unit selector
+        if (units.length > 0) {
+          localStorage.setItem('userUnits', JSON.stringify(units));
+        }
+        
         if (units.length === 0) {
           this.error = 'Nenhuma unidade associada ao seu usuário.';
           return;
