@@ -241,37 +241,6 @@ import { map } from 'rxjs/operators';
       opacity: 0.7;
       cursor: not-allowed;
     }
-
-    .btn {
-      padding: 8px 16px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.2s;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #5e72e4 0%, #825ee4 100%);
-      color: white;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background: linear-gradient(135deg, #4c63d2 0%, #6d46d3 100%);
-      box-shadow: 0 5px 15px rgba(94, 114, 228, 0.3);
-      transform: translateY(-2px);
-    }
-
-    .btn-success {
-      background: #2dce89;
-      color: white;
-    }
-
-    .btn-success:hover:not(:disabled) {
-      background: #1fb471;
-      box-shadow: 0 5px 15px rgba(45, 206, 137, 0.3);
-      transform: translateY(-2px);
-    }
   `]
 })
 export class UserUnitsComponent implements OnInit {

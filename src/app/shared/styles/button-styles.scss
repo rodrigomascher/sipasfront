@@ -1,0 +1,140 @@
+/**
+ * Shared Button Styles
+ * Usado para botões HTML nativos quando app-button não é disponível
+ * Para novos componentes, prefira usar <app-button> em vez de <button>
+ */
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// Primary Button
+.btn-primary {
+  background: linear-gradient(135deg, #5e72e4 0%, #825ee4 100%);
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #4c63d2 0%, #6d46d3 100%);
+    box-shadow: 0 5px 15px rgba(94, 114, 228, 0.3);
+    transform: translateY(-2px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+// Secondary Button
+.btn-secondary {
+  background: #f7fafc;
+  color: #525f7f;
+  border: 2px solid #e3e6f0;
+
+  &:hover:not(:disabled) {
+    background: #f0f4ff;
+    border-color: #5e72e4;
+    color: #5e72e4;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+// Success Button
+.btn-success {
+  background: #2dce89;
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: #1fb471;
+    box-shadow: 0 5px 15px rgba(45, 206, 137, 0.3);
+    transform: translateY(-2px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+// Danger Button
+.btn-danger {
+  background: #f5365c;
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: #ec0c38;
+    box-shadow: 0 5px 15px rgba(245, 54, 92, 0.3);
+    transform: translateY(-2px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+// Info Button
+.btn-info {
+  background: #11cdef;
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: #0b9db5;
+    box-shadow: 0 5px 15px rgba(17, 205, 239, 0.3);
+    transform: translateY(-2px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+// Warning Button
+.btn-warning {
+  background: #fb6340;
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: #f04f1f;
+    box-shadow: 0 5px 15px rgba(251, 99, 64, 0.3);
+    transform: translateY(-2px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+// Small Button Size
+.btn-sm {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+// Large Button Size
+.btn-lg {
+  padding: 12px 24px;
+  font-size: 16px;
+}
+
+// Full Width Button
+.btn-block {
+  display: flex;
+  width: 100%;
+}
