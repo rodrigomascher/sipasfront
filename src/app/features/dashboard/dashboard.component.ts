@@ -32,10 +32,10 @@ import { CommonModule } from '@angular/common';
       <div class="card">
         <h3>Bem-vindo ao SIPAS</h3>
         <p>
-          Sistema de Integração de Permissões e Auditoria de Segurança
+          Sistema Integrado de Prontuário e Assistência Social
         </p>
         <p>
-          Use o menu de navegação acima para acessar as diferentes seções do sistema.
+          Use o menu de navegação lateral para acessar as diferentes seções do sistema.
         </p>
       </div>
     </div>

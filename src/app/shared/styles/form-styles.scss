@@ -1,0 +1,219 @@
+/**
+ * Shared Form Styles
+ * Estilos de formulário reutilizáveis para múltiplos componentes
+ * @import './form-styles.scss' em qualquer componente que use formulários
+ */
+
+// Form Groups
+.form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Labels
+.form-label,
+label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 14px;
+  display: block;
+}
+
+// Form Inputs
+.form-input,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="datetime-local"],
+textarea,
+select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.3s, box-shadow 0.3s;
+
+  &:focus {
+    outline: none;
+    border-color: #5e72e4;
+    box-shadow: 0 0 0 3px rgba(94, 114, 228, 0.1);
+  }
+
+  &:disabled {
+    background: #f5f5f5;
+    color: #999;
+    cursor: not-allowed;
+  }
+
+  &.error,
+  &:invalid {
+    border-color: #f5365c;
+    box-shadow: 0 0 0 3px rgba(245, 54, 92, 0.1);
+  }
+}
+
+// Textarea
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+// Checkbox & Radio
+.form-checkbox,
+.form-radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    width: auto;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    accent-color: #5e72e4;
+  }
+
+  label {
+    margin-bottom: 0;
+    cursor: pointer;
+    font-weight: 500;
+  }
+}
+
+// Form Actions
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  justify-content: flex-start;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+
+  &.center {
+    justify-content: center;
+  }
+
+  &.right {
+    justify-content: flex-end;
+  }
+
+  app-button,
+  button {
+    min-width: 120px;
+  }
+}
+
+// Form Errors
+.form-error,
+.error {
+  color: #f5365c;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
+// Form Success
+.form-success,
+.success {
+  color: #2dce89;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
+// Form Help Text
+.form-help,
+.help-text {
+  color: #999;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
+// Form Hints
+.form-hint {
+  background: #f9f9f9;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #666;
+  margin-top: 8px;
+  border-left: 3px solid #5e72e4;
+}
+
+// Checkbox field specific
+.checkbox-field {
+  .form-label,
+  label {
+    display: inline;
+    margin: 0;
+    font-weight: 500;
+
+    input[type="checkbox"] {
+      margin-right: 8px;
+      cursor: pointer;
+    }
+  }
+}
+
+// Disabled form state
+.form-disabled {
+  opacity: 0.6;
+  pointer-events: none;
+  background: #f5f5f5;
+  padding: 20px;
+  border-radius: 4px;
+}
+
+// Readonly field
+.readonly-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+
+  label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+  }
+
+  .readonly-value {
+    padding: 12px;
+    background: #f5f5f5;
+    border-radius: 4px;
+    color: #666;
+    font-family: monospace;
+  }
+}
+
+// Required field indicator
+.required::after {
+  content: " *";
+  color: #f5365c;
+}
+
+// Form sections
+.form-section {
+  margin-bottom: 30px;
+
+  .form-section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e3e6f0;
+  }
+}

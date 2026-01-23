@@ -1,0 +1,86 @@
+/**
+ * Shared Styles Index
+ * Centraliza todos os estilos compartilhados para fácil importação
+ * 
+ * Usage:
+ * @import 'app/shared/styles/index';
+ * Ou individualmente:
+ * @import 'app/shared/styles/theme-variables';
+ * @import 'app/shared/styles/form-styles';
+ */
+
+// Theme & Variables (sempre primeiro)
+@import './theme-variables.scss';
+
+// Common Styles
+@import './button-styles.scss';
+@import './form-styles.scss';
+@import './alert-styles.scss';
+
+// Utility Classes for common patterns
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.col {
+  flex: 1;
+  min-width: 0;
+}
+
+.col-auto {
+  flex: 0 1 auto;
+}
+
+.col-sm {
+  flex-basis: 50%;
+}
+
+.col-lg {
+  flex-basis: 33.333%;
+}
+
+// Common spacing utilities
+.mt-0 { margin-top: 0; }
+.mt-xs { margin-top: 4px; }
+.mt-sm { margin-top: 8px; }
+.mt-md { margin-top: 12px; }
+.mt-lg { margin-top: 16px; }
+.mt-xl { margin-top: 20px; }
+
+.mb-0 { margin-bottom: 0; }
+.mb-xs { margin-bottom: 4px; }
+.mb-sm { margin-bottom: 8px; }
+.mb-md { margin-bottom: 12px; }
+.mb-lg { margin-bottom: 16px; }
+.mb-xl { margin-bottom: 20px; }
+
+// Text utilities
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-left { text-align: left; }
+
+.text-bold { font-weight: 600; }
+.text-italic { font-style: italic; }
+
+// Visibility utilities
+.visible { visibility: visible; }
+.hidden { visibility: hidden; }
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

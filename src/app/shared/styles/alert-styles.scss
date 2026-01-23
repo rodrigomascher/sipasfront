@@ -1,0 +1,180 @@
+/**
+ * Shared Alert Styles
+ * Estilos de alertas reutilizáveis para múltiplos componentes
+ */
+
+.alert {
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  border: 1px solid transparent;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  // Alert icon
+  &::before {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 16px;
+  }
+}
+
+// Primary Alert
+.alert-primary {
+  background: #d1e7f1;
+  color: #0c5460;
+  border-color: #bee5eb;
+
+  &::before {
+    content: "ℹ";
+  }
+}
+
+// Secondary Alert
+.alert-secondary {
+  background: #e2e3e5;
+  color: #383d41;
+  border-color: #d6d8db;
+
+  &::before {
+    content: "◆";
+  }
+}
+
+// Success Alert
+.alert-success {
+  background: #d4edda;
+  color: #155724;
+  border-color: #c3e6cb;
+
+  &::before {
+    content: "✓";
+  }
+}
+
+// Danger Alert
+.alert-danger {
+  background: #f8d7da;
+  color: #721c24;
+  border-color: #f5c6cb;
+
+  &::before {
+    content: "✕";
+  }
+}
+
+// Warning Alert
+.alert-warning {
+  background: #fff3cd;
+  color: #856404;
+  border-color: #ffeaa7;
+
+  &::before {
+    content: "⚠";
+  }
+}
+
+// Info Alert
+.alert-info {
+  background: #d1ecf1;
+  color: #0c5460;
+  border-color: #bee5eb;
+
+  &::before {
+    content: "ℹ";
+  }
+}
+
+// Alert Close Button
+.alert-close {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  color: inherit;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+// Dismissible Alert
+.alert-dismissible {
+  padding-right: 36px;
+  position: relative;
+
+  .alert-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+  }
+}
+
+// Alert with Title
+.alert-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: block;
+}
+
+// Alert List Items
+.alert ul,
+.alert ol {
+  margin: 8px 0 0 0;
+  padding-left: 20px;
+
+  li {
+    margin-bottom: 4px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+// Alert Links
+.alert a {
+  color: inherit;
+  text-decoration: underline;
+  font-weight: 600;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+// Inline Alert (small variant)
+.alert-inline {
+  padding: 8px 12px;
+  margin: 0;
+  font-size: 13px;
+  display: inline-flex;
+  border-radius: 4px;
+}
+
+// Alert in forms
+.form-group .alert {
+  margin-bottom: 8px;
+  margin-top: 4px;
+  font-size: 13px;
+  padding: 8px 12px;
+}
