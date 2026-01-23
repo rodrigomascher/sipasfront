@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, interval, map, startWith } from 'rxjs';
+import { Observable, interval, map, startWith, throwError } from 'rxjs';
 import { environment } from '@environment/environment';
 
 export interface AuthCredentials {
@@ -33,10 +33,10 @@ export class AuthService {
   }
 
   selectUnit(unitId: number): Observable<AuthResponse> {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.getToken()}`
-    });
-    return this.http.post<AuthResponse>(`${this.apiUrl}/select-unit`, { unitId }, { headers });
+    if (!unitId || unitId <= 0) {
+      return throwError(() => new Error('Invalid unit ID'));
+    }
+    return this.http.post<AuthResponse>(`${this.apiUrl}/select-unit`, { unitId });
   }
 
   logout(): void {
