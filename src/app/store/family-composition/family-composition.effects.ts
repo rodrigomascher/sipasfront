@@ -30,7 +30,7 @@ export class FamilyCompositionEffects {
     this.actions$.pipe(
       ofType(FamilyCompositionActions.createFamilyComposition),
       switchMap(({ familyComposition }) =>
-        this.service.create(familyComposition).pipe(
+        this.service.createFamilyComposition(familyComposition).pipe(
           map((created) =>
             FamilyCompositionActions.createFamilyCompositionSuccess({ familyComposition: created }),
           ),
@@ -46,7 +46,7 @@ export class FamilyCompositionEffects {
     this.actions$.pipe(
       ofType(FamilyCompositionActions.updateFamilyComposition),
       switchMap(({ idFamilyComposition, idPerson, familyComposition }) =>
-        this.service.update(idFamilyComposition, idPerson, familyComposition).pipe(
+        this.service.updateFamilyComposition(idFamilyComposition, idPerson, familyComposition).pipe(
           map((updated) =>
             FamilyCompositionActions.updateFamilyCompositionSuccess({ familyComposition: updated }),
           ),
@@ -62,7 +62,7 @@ export class FamilyCompositionEffects {
     this.actions$.pipe(
       ofType(FamilyCompositionActions.deleteFamilyComposition),
       switchMap(({ idFamilyComposition, idPerson }) =>
-        this.service.delete(idFamilyComposition, idPerson).pipe(
+        this.service.deleteFamilyComposition(idFamilyComposition, idPerson).pipe(
           map(() =>
             FamilyCompositionActions.deleteFamilyCompositionSuccess({ idFamilyComposition, idPerson }),
           ),

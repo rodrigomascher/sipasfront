@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '@environment/environment';
+import { GenericHttpService, PaginationParams, PaginatedResponse } from './generic-http.service';
+import { Observable } from 'rxjs';
+
+// Re-export for backward compatibility
+export { PaginationParams, PaginatedResponse };
 
 export interface Role {
   id: number;
@@ -20,59 +24,32 @@ export interface CreateRoleDto {
 
 export interface UpdateRoleDto extends Partial<CreateRoleDto> {}
 
-export interface PaginationParams {
-  page?: number;
-  pageSize?: number;
-  sortBy?: string;
-  sortDirection?: 'asc' | 'desc';
-  search?: string;
-}
-
-export interface PaginatedResponse<T> {
-  data: T[];
-  total: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
-}
-
 @Injectable({
   providedIn: 'root'
 })
-export class RolesService {
-  private apiUrl = `${environment.apiUrl}/roles`;
-
-  constructor(private http: HttpClient) {}
-
-  getRoles(params?: PaginationParams): Observable<PaginatedResponse<Role>> {
-    let httpParams = new HttpParams();
-    if (params) {
-      if (params.page) httpParams = httpParams.set('page', params.page.toString());
-      if (params.pageSize) httpParams = httpParams.set('pageSize', params.pageSize.toString());
-      if (params.sortBy) httpParams = httpParams.set('sortBy', params.sortBy);
-      if (params.sortDirection) httpParams = httpParams.set('sortDirection', params.sortDirection);
-      if (params.search) httpParams = httpParams.set('search', params.search);
-    }
-    return this.http.get<PaginatedResponse<Role>>(this.apiUrl, { params: httpParams });
+export class RolesService extends GenericHttpService<Role> {
+  constructor(http: HttpClient) {
+    super(http, `${environment.apiUrl}/roles`);
   }
 
-  getAll(params?: PaginationParams): Observable<PaginatedResponse<Role>> {
-    return this.getRoles(params);
+  // Backward compatibility methods
+  getRoles(params?: PaginationParams): Observable<PaginatedResponse<Role>> {
+    return this.getAll(params);
   }
 
   getRoleById(id: number): Observable<Role> {
-    return this.http.get<Role>(`${this.apiUrl}/${id}`);
+    return this.getById(id);
   }
 
   createRole(role: CreateRoleDto): Observable<Role> {
-    return this.http.post<Role>(this.apiUrl, role);
+    return this.create(role);
   }
 
   updateRole(id: number, role: UpdateRoleDto): Observable<Role> {
-    return this.http.patch<Role>(`${this.apiUrl}/${id}`, role);
+    return this.patch(id, role);
   }
 
   deleteRole(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.delete(id);
   }
 }

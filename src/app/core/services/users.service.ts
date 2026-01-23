@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@environment/environment';
+import { GenericHttpService, PaginationParams, PaginatedResponse } from './generic-http.service';
+
+// Re-export for backward compatibility
+export { PaginationParams, PaginatedResponse };
 
 export interface User {
   id: number;
@@ -30,48 +34,21 @@ export interface UpdateUserDto {
   unitIds?: number[];
 }
 
-export interface PaginationParams {
-  page?: number;
-  pageSize?: number;
-  sortBy?: string;
-  sortDirection?: 'asc' | 'desc';
-  search?: string;
-}
-
-export interface PaginatedResponse<T> {
-  data: T[];
-  total: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
-}
-
 @Injectable({
   providedIn: 'root'
 })
-export class UsersService {
-  private apiUrl = `${environment.apiUrl}/users`;
-
-  constructor(private http: HttpClient) {}
-
-  getUsers(params?: PaginationParams): Observable<PaginatedResponse<User>> {
-    let httpParams = new HttpParams();
-    if (params) {
-      if (params.page) httpParams = httpParams.set('page', params.page.toString());
-      if (params.pageSize) httpParams = httpParams.set('pageSize', params.pageSize.toString());
-      if (params.sortBy) httpParams = httpParams.set('sortBy', params.sortBy);
-      if (params.sortDirection) httpParams = httpParams.set('sortDirection', params.sortDirection);
-      if (params.search) httpParams = httpParams.set('search', params.search);
-    }
-    return this.http.get<PaginatedResponse<User>>(this.apiUrl, { params: httpParams });
+export class UsersService extends GenericHttpService<User> {
+  constructor(http: HttpClient) {
+    super(http, `${environment.apiUrl}/users`);
   }
 
-  getAll(params?: PaginationParams): Observable<PaginatedResponse<User>> {
-    return this.getUsers(params);
+  // Backward compatibility methods
+  getUsers(params?: PaginationParams): Observable<PaginatedResponse<User>> {
+    return this.getAll(params);
   }
 
   getUserById(id: number): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/${id}`);
+    return this.getById(id);
   }
 
   getUsersByActive(isActive: boolean): Observable<User[]> {
@@ -79,22 +56,22 @@ export class UsersService {
   }
 
   createUser(user: CreateUserDto): Observable<User> {
-    return this.http.post<User>(this.apiUrl, user);
+    return this.create(user);
   }
 
   updateUser(id: number, user: UpdateUserDto): Observable<User> {
-    return this.http.put<User>(`${this.apiUrl}/${id}`, user);
+    return this.update(id, user);
   }
 
   deleteUser(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.delete(id);
   }
 
   activateUser(id: number): Observable<User> {
-    return this.http.patch<User>(`${this.apiUrl}/${id}`, { isActive: true });
+    return this.patch(id, { isActive: true });
   }
 
   deactivateUser(id: number): Observable<User> {
-    return this.http.patch<User>(`${this.apiUrl}/${id}`, { isActive: false });
+    return this.patch(id, { isActive: false });
   }
 }

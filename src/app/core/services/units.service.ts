@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@environment/environment';
+import { GenericHttpService, PaginationParams, PaginatedResponse } from './generic-http.service';
+
+// Re-export for backward compatibility
+export { PaginationParams, PaginatedResponse };
 
 export interface Unit {
   id: number;
@@ -26,48 +30,21 @@ export interface CreateUnitDto {
 
 export interface UpdateUnitDto extends Partial<CreateUnitDto> {}
 
-export interface PaginationParams {
-  page?: number;
-  pageSize?: number;
-  sortBy?: string;
-  sortDirection?: 'asc' | 'desc';
-  search?: string;
-}
-
-export interface PaginatedResponse<T> {
-  data: T[];
-  total: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
-}
-
 @Injectable({
   providedIn: 'root'
 })
-export class UnitsService {
-  private apiUrl = `${environment.apiUrl}/units`;
-
-  constructor(private http: HttpClient) {}
-
-  getUnits(params?: PaginationParams): Observable<PaginatedResponse<Unit>> {
-    let httpParams = new HttpParams();
-    if (params) {
-      if (params.page) httpParams = httpParams.set('page', params.page.toString());
-      if (params.pageSize) httpParams = httpParams.set('pageSize', params.pageSize.toString());
-      if (params.sortBy) httpParams = httpParams.set('sortBy', params.sortBy);
-      if (params.sortDirection) httpParams = httpParams.set('sortDirection', params.sortDirection);
-      if (params.search) httpParams = httpParams.set('search', params.search);
-    }
-    return this.http.get<PaginatedResponse<Unit>>(this.apiUrl, { params: httpParams });
+export class UnitsService extends GenericHttpService<Unit> {
+  constructor(http: HttpClient) {
+    super(http, `${environment.apiUrl}/units`);
   }
 
-  getAll(params?: PaginationParams): Observable<PaginatedResponse<Unit>> {
-    return this.getUnits(params);
+  // Backward compatibility methods
+  getUnits(params?: PaginationParams): Observable<PaginatedResponse<Unit>> {
+    return this.getAll(params);
   }
 
   getUnitById(id: number): Observable<Unit> {
-    return this.http.get<Unit>(`${this.apiUrl}/${id}`);
+    return this.getById(id);
   }
 
   getUnitsByCity(city: string): Observable<Unit[]> {
@@ -79,14 +56,14 @@ export class UnitsService {
   }
 
   createUnit(unit: CreateUnitDto): Observable<Unit> {
-    return this.http.post<Unit>(this.apiUrl, unit);
+    return this.create(unit);
   }
 
   updateUnit(id: number, unit: Partial<CreateUnitDto>): Observable<Unit> {
-    return this.http.patch<Unit>(`${this.apiUrl}/${id}`, unit);
+    return this.patch(id, unit);
   }
 
   deleteUnit(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.delete(id);
   }
 }

@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '@environment/environment';
+import { GenericHttpService, PaginationParams, PaginatedResponse } from './generic-http.service';
+import { Observable } from 'rxjs';
+
+// Re-export for backward compatibility
+export { PaginationParams, PaginatedResponse };
 
 export interface Department {
   id: number;
@@ -18,59 +22,32 @@ export interface CreateDepartmentDto {
 
 export interface UpdateDepartmentDto extends Partial<CreateDepartmentDto> {}
 
-export interface PaginationParams {
-  page?: number;
-  pageSize?: number;
-  sortBy?: string;
-  sortDirection?: 'asc' | 'desc';
-  search?: string;
-}
-
-export interface PaginatedResponse<T> {
-  data: T[];
-  total: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
-}
-
 @Injectable({
   providedIn: 'root'
 })
-export class DepartmentsService {
-  private apiUrl = `${environment.apiUrl}/departments`;
-
-  constructor(private http: HttpClient) {}
-
-  getDepartments(params?: PaginationParams): Observable<PaginatedResponse<Department>> {
-    let httpParams = new HttpParams();
-    if (params) {
-      if (params.page) httpParams = httpParams.set('page', params.page.toString());
-      if (params.pageSize) httpParams = httpParams.set('pageSize', params.pageSize.toString());
-      if (params.sortBy) httpParams = httpParams.set('sortBy', params.sortBy);
-      if (params.sortDirection) httpParams = httpParams.set('sortDirection', params.sortDirection);
-      if (params.search) httpParams = httpParams.set('search', params.search);
-    }
-    return this.http.get<PaginatedResponse<Department>>(this.apiUrl, { params: httpParams });
+export class DepartmentsService extends GenericHttpService<Department> {
+  constructor(http: HttpClient) {
+    super(http, `${environment.apiUrl}/departments`);
   }
 
-  getAll(params?: PaginationParams): Observable<PaginatedResponse<Department>> {
-    return this.getDepartments(params);
+  // Backward compatibility methods
+  getDepartments(params?: PaginationParams): Observable<PaginatedResponse<Department>> {
+    return this.getAll(params);
   }
 
   getDepartmentById(id: number): Observable<Department> {
-    return this.http.get<Department>(`${this.apiUrl}/${id}`);
+    return this.getById(id);
   }
 
   createDepartment(department: CreateDepartmentDto): Observable<Department> {
-    return this.http.post<Department>(this.apiUrl, department);
+    return this.create(department);
   }
 
   updateDepartment(id: number, department: UpdateDepartmentDto): Observable<Department> {
-    return this.http.patch<Department>(`${this.apiUrl}/${id}`, department);
+    return this.patch(id, department);
   }
 
   deleteDepartment(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.delete(id);
   }
 }
