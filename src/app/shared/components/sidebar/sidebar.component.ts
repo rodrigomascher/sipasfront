@@ -1,0 +1,273 @@
+import { Component, Input, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+
+@Component({
+  selector: 'app-sidebar',
+  standalone: true,
+  imports: [CommonModule, RouterLink, RouterLinkActive],
+  template: `
+    <aside class="sidebar" *ngIf="showSidebar">
+      <nav class="sidebar-nav">
+        <!-- SEGURANÇA -->
+        <div class="menu-section">
+          <div class="menu-group">
+            <button class="menu-group-title" (click)="toggleMenu('seguranca')">
+              <span class="icon-group">🔐</span>
+              <span>Segurança</span>
+              <span class="chevron" [class.open]="expandedMenus['seguranca']">›</span>
+            </button>
+            <ul class="menu-items" [class.expanded]="expandedMenus['seguranca']">
+              <li><a routerLink="/users" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                <span class="icon">👤</span>
+                <span>Cadastro de Usuários</span>
+              </a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- CADASTRO -->
+        <div class="menu-section">
+          <div class="menu-group">
+            <button class="menu-group-title" (click)="toggleMenu('cadastro')">
+              <span class="icon-group">📋</span>
+              <span>Cadastro</span>
+              <span class="chevron" [class.open]="expandedMenus['cadastro']">›</span>
+            </button>
+            <ul class="menu-items" [class.expanded]="expandedMenus['cadastro']">
+              <li><a routerLink="/genders" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                <span class="icon">⚧</span>
+                <span>Gêneros</span>
+              </a></li>
+              <li><a routerLink="/gender-identities" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                <span class="icon">💎</span>
+                <span>Identidades</span>
+              </a></li>
+              <li><a routerLink="/sexual-orientations" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                <span class="icon">❤️</span>
+                <span>Orientações</span>
+              </a></li>
+              <li><a routerLink="/relationship-degrees" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                <span class="icon">👨‍👩‍👧</span>
+                <span>Graus de Parentesco</span>
+              </a></li>
+              <li><a routerLink="/units" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                <span class="icon">🏢</span>
+                <span>Unidades</span>
+              </a></li>
+              <li><a routerLink="/departments" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                <span class="icon">📂</span>
+                <span>Departamentos</span>
+              </a></li>
+              <li><a routerLink="/roles" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                <span class="icon">👔</span>
+                <span>Cargos</span>
+              </a></li>
+              <li><a routerLink="/employees" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                <span class="icon">👥</span>
+                <span>Funcionários</span>
+              </a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- MUNÍCIPES -->
+        <div class="menu-section">
+          <div class="menu-group">
+            <button class="menu-group-title" (click)="toggleMenu('municipes')">
+              <span class="icon-group">👫</span>
+              <span>Munícipes</span>
+              <span class="chevron" [class.open]="expandedMenus['municipes']">›</span>
+            </button>
+            <ul class="menu-items" [class.expanded]="expandedMenus['municipes']">
+              <li><a routerLink="/persons" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                <span class="icon">📋</span>
+                <span>Cadastro de Munícipes</span>
+              </a></li>
+              <li><a routerLink="/family-composition" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                <span class="icon">👨‍👩‍👧‍👦</span>
+                <span>Composição Familiar</span>
+              </a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </aside>
+  `,
+  styles: [`
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: white;
+      border-right: 1px solid #e3e6f0;
+      padding: 1.5rem 0;
+      overflow-y: auto;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: #cbd5e0;
+      border-radius: 3px;
+
+      &:hover {
+        background: #a0aec0;
+      }
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .menu-section {
+      padding: 1rem 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .menu-group {
+      margin-bottom: 0.5rem;
+    }
+
+    .menu-group-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: transparent;
+      border: none;
+      color: #525f7f;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.15s ease;
+      margin: 0 0.5rem 0.25rem 0.5rem;
+      border-radius: 0.55rem;
+      text-align: left;
+
+      .icon-group {
+        font-size: 1rem;
+        min-width: 1.25rem;
+      }
+
+      .chevron {
+        margin-left: auto;
+        font-size: 1.5rem;
+        transition: transform 0.3s ease;
+        display: inline-block;
+
+        &.open {
+          transform: rotate(90deg);
+        }
+      }
+
+      &:hover {
+        background-color: #f8f9fe;
+        color: #5e72e4;
+      }
+    }
+
+    .menu-items {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      max-height: 500px;
+      overflow: hidden;
+      transition: max-height 0.3s ease, opacity 0.3s ease;
+      opacity: 1;
+
+      &:not(.expanded) {
+        max-height: 0;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      &.expanded {
+        max-height: 500px;
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      li {
+        margin: 0;
+        padding: 0;
+
+        a {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          padding: 0.75rem 1rem;
+          color: #525f7f;
+          text-decoration: none;
+          border-left: 3px solid transparent;
+          transition: all 0.15s ease;
+          font-size: 0.9rem;
+          font-weight: 500;
+          margin: 0 0.5rem;
+          border-radius: 0.55rem;
+
+          .icon {
+            font-size: 1rem;
+            min-width: 1.25rem;
+          }
+
+          &:hover {
+            background-color: #f8f9fe;
+            color: #5e72e4;
+            border-left-color: #5e72e4;
+            padding-left: 1rem;
+          }
+
+          &.active {
+            background: linear-gradient(135deg, #5e72e4 0%, #825ee4 100%);
+            color: white;
+            border-left-color: transparent;
+            box-shadow: 0 5px 15px rgba(94, 114, 228, 0.3);
+
+            .icon {
+              opacity: 0.9;
+            }
+          }
+        }
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+    }
+  `]
+})
+export class SidebarComponent implements OnInit {
+  @Input() showSidebar: boolean = true;
+
+  expandedMenus: { [key: string]: boolean } = {
+    seguranca: true,
+    cadastro: true,
+    municipes: false
+  };
+
+  constructor() {}
+
+  ngOnInit(): void {
+    // Initialization if needed
+  }
+
+  toggleMenu(menu: string): void {
+    this.expandedMenus[menu] = !this.expandedMenus[menu];
+  }
+}
