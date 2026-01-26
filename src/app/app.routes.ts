@@ -83,6 +83,11 @@ export const routes: Routes = [
     loadChildren: () => import('./features/ethnicities/ethnicities.routes').then(m => m.ethnicitiesRoutes)
   },
   {
+    path: 'income-types',
+    canActivate: [authGuard],
+    loadChildren: () => import('./features/income-types/income-types.routes').then(m => m.incomeTypesRoutes)
+  },
+  {
     path: '**',
     redirectTo: '/auth/login'
   }

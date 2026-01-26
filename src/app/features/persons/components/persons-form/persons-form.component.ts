@@ -12,6 +12,7 @@ import * as GenderIdentitiesActions from '../../../gender-identities/store/gende
 import * as SexualOrientationsActions from '../../../sexual-orientations/store/sexual-orientations.actions';
 import * as RacesActions from '../../../races/store/races.actions';
 import * as EthnicitiesActions from '../../../ethnicities/store/ethnicities.actions';
+import * as IncomeTypesActions from '../../../income-types/store/income-types.actions';
 import { TabbedFormComponent, TabConfig } from '../../../../shared/components/tabbed-form/tabbed-form.component';
 import { FormFieldConfig } from '../../../../shared/components/generic-form/form-field-config';
 
@@ -43,6 +44,7 @@ export class PersonsFormComponent implements OnInit {
   sexualOrientations$: Observable<any[]>;
   races$: Observable<any[]>;
   ethnicities$: Observable<any[]>;
+  incomeTypes$: Observable<any[]>;
 
   tabs: TabConfig[] = [];
 
@@ -60,6 +62,7 @@ export class PersonsFormComponent implements OnInit {
     this.sexualOrientations$ = this.store.select(state => (state as any).sexualOrientations?.sexualOrientations || []);
     this.races$ = this.store.select(state => (state as any).races?.races || []);
     this.ethnicities$ = this.store.select(state => (state as any).ethnicities?.ethnicities || []);
+    this.incomeTypes$ = this.store.select(state => (state as any).incomeTypes?.incomeTypes || []);
   }
 
   private createForm(): FormGroup {
@@ -140,6 +143,7 @@ export class PersonsFormComponent implements OnInit {
     this.store.dispatch(SexualOrientationsActions.loadSexualOrientations({ params: {} }));
     this.store.dispatch(RacesActions.loadRaces({ params: {} }));
     this.store.dispatch(EthnicitiesActions.loadEthnicities({ params: {} }));
+    this.store.dispatch(IncomeTypesActions.loadIncomeTypes({ params: {} }));
 
     // Subscribe to races and update the field options
     this.races$.subscribe(races => {
@@ -154,6 +158,14 @@ export class PersonsFormComponent implements OnInit {
       const ethnicityField = this.tabs[0].fields.find(f => f.name === 'ethnicityId');
       if (ethnicityField) {
         ethnicityField.options = ethnicities.map(ethnicity => ({ label: ethnicity.description, value: ethnicity.id }));
+      }
+    });
+
+    // Subscribe to income types and update the field options
+    this.incomeTypes$.subscribe(incomeTypes => {
+      const incomeTypeField = this.tabs[1].fields.find(f => f.name === 'incomeTypeId');
+      if (incomeTypeField) {
+        incomeTypeField.options = incomeTypes.map(incomeType => ({ label: incomeType.description, value: incomeType.id }));
       }
     });
 
