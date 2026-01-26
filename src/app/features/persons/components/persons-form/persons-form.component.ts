@@ -7,6 +7,10 @@ import { Observable } from 'rxjs';
 import { Person } from '../../../../core/services/persons.service';
 import * as PersonsActions from '../../store/persons.actions';
 import * as PersonsSelectors from '../../store/persons.selectors';
+import * as GendersActions from '../../../genders/store/genders.actions';
+import * as GenderIdentitiesActions from '../../../gender-identities/store/gender-identities.actions';
+import * as SexualOrientationsActions from '../../../sexual-orientations/store/sexual-orientations.actions';
+import * as RacesActions from '../../../races/store/races.actions';
 import { TabbedFormComponent, TabConfig } from '../../../../shared/components/tabbed-form/tabbed-form.component';
 import { FormFieldConfig } from '../../../../shared/components/generic-form/form-field-config';
 
@@ -36,6 +40,7 @@ export class PersonsFormComponent implements OnInit {
   genders$: Observable<any[]>;
   genderIdentities$: Observable<any[]>;
   sexualOrientations$: Observable<any[]>;
+  races$: Observable<any[]>;
 
   tabs: TabConfig[] = [];
 
@@ -51,6 +56,7 @@ export class PersonsFormComponent implements OnInit {
     this.genders$ = this.store.select(state => (state as any).genders?.genders || []);
     this.genderIdentities$ = this.store.select(state => (state as any).genderIdentities?.genderIdentities || []);
     this.sexualOrientations$ = this.store.select(state => (state as any).sexualOrientations?.sexualOrientations || []);
+    this.races$ = this.store.select(state => (state as any).races?.races || []);
   }
 
   private createForm(): FormGroup {
@@ -126,9 +132,42 @@ export class PersonsFormComponent implements OnInit {
   ngOnInit(): void {
     this.initializeTabs();
     this.store.dispatch(PersonsActions.loadPersons({}));
-    this.store.dispatch({type: '[Genders] Load'});
-    this.store.dispatch({type: '[Gender Identities] Load'});
-    this.store.dispatch({type: '[Sexual Orientations] Load'});
+    this.store.dispatch(GendersActions.loadGenders({ params: {} }));
+    this.store.dispatch(GenderIdentitiesActions.loadGenderIdentities({ params: {} }));
+    this.store.dispatch(SexualOrientationsActions.loadSexualOrientations({ params: {} }));
+    this.store.dispatch(RacesActions.loadRaces({ params: {} }));
+
+    // Subscribe to races and update the field options
+    this.races$.subscribe(races => {
+      const raceField = this.tabs[0].fields.find(f => f.name === 'raceId');
+      if (raceField) {
+        raceField.options = races.map(race => ({ label: race.description, value: race.id }));
+      }
+    });
+
+    // Subscribe to genders and update the field options
+    this.genders$.subscribe(genders => {
+      const genderField = this.tabs[0].fields.find(f => f.name === 'genderId');
+      if (genderField) {
+        genderField.options = genders.map(gender => ({ label: gender.description, value: gender.id }));
+      }
+    });
+
+    // Subscribe to gender identities and update the field options
+    this.genderIdentities$.subscribe(identities => {
+      const identityField = this.tabs[0].fields.find(f => f.name === 'genderIdentityId');
+      if (identityField) {
+        identityField.options = identities.map(identity => ({ label: identity.description, value: identity.id }));
+      }
+    });
+
+    // Subscribe to sexual orientations and update the field options
+    this.sexualOrientations$.subscribe(orientations => {
+      const orientationField = this.tabs[0].fields.find(f => f.name === 'sexualOrientation');
+      if (orientationField) {
+        orientationField.options = orientations.map(orientation => ({ label: orientation.description, value: orientation.id }));
+      }
+    });
 
     this.route.params.subscribe(params => {
       if (params['id']) {
@@ -201,6 +240,13 @@ export class PersonsFormComponent implements OnInit {
           {
             name: 'sexualOrientation',
             label: 'Orientação Sexual',
+            type: 'select',
+            options: [],
+            colSpan: 1
+          },
+          {
+            name: 'raceId',
+            label: 'Raça/Cor',
             type: 'select',
             options: [],
             colSpan: 1
@@ -392,13 +438,6 @@ export class PersonsFormComponent implements OnInit {
       {
         title: 'Complementar',
         fields: [
-          {
-            name: 'raceId',
-            label: 'Raça/Cor',
-            type: 'text',
-            placeholder: 'ID Raça/Cor',
-            colSpan: 1
-          },
           {
             name: 'ethnicityId',
             label: 'Etnia',

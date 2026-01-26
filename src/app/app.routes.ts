@@ -73,6 +73,11 @@ export const routes: Routes = [
     loadChildren: () => import('./features/family-composition/family-composition.routes').then(m => m.familyCompositionRoutes)
   },
   {
+    path: 'races',
+    canActivate: [authGuard],
+    loadChildren: () => import('./features/races/races.routes').then(m => m.racesRoutes)
+  },
+  {
     path: '**',
     redirectTo: '/auth/login'
   }

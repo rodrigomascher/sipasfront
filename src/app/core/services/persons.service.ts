@@ -131,7 +131,7 @@ export interface UpdatePersonDto {
 })
 export class PersonsService extends GenericHttpService<Person> {
   constructor(http: HttpClient) {
-    super(http, `${environment.apiUrl}/persons`);
+    super(http, `${environment.apiUrl}/api/persons`);
   }
 
   /**
