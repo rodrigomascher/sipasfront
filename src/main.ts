@@ -22,6 +22,7 @@ import { gendersReducer } from './app/features/genders/store/genders.reducer';
 import { genderIdentitiesReducer } from './app/features/gender-identities/store/gender-identities.reducer';
 import { sexualOrientationsReducer } from './app/features/sexual-orientations/store/sexual-orientations.reducer';
 import { racesReducer } from './app/features/races/store/races.reducer';
+import { ethnicitiesReducer } from './app/features/ethnicities/store/ethnicities.reducer';
 import { relationshipDegreeReducer } from './app/store/relationship-degree/relationship-degree.reducer';
 import { familyCompositionReducer } from './app/store/family-composition/family-composition.reducer';
 import { UnitsEffects } from './app/store/units/units.effects';
@@ -34,6 +35,7 @@ import { GendersEffects } from './app/features/genders/store/genders.effects';
 import { GenderIdentitiesEffects } from './app/features/gender-identities/store/gender-identities.effects';
 import { SexualOrientationsEffects } from './app/features/sexual-orientations/store/sexual-orientations.effects';
 import { RacesEffects } from './app/features/races/store/races.effects';
+import { EthnicitiesEffects } from './app/features/ethnicities/store/ethnicities.effects';
 import { RelationshipDegreeEffects } from './app/store/relationship-degree/relationship-degree.effects';
 import { FamilyCompositionEffects } from './app/store/family-composition/family-composition.effects';
 
@@ -54,10 +56,11 @@ bootstrapApplication(AppComponent, {
       genderIdentities: genderIdentitiesReducer,
       sexualOrientations: sexualOrientationsReducer,
       races: racesReducer,
+      ethnicities: ethnicitiesReducer,
       relationshipDegree: relationshipDegreeReducer,
       familyComposition: familyCompositionReducer
     }),
-    provideEffects([UnitsEffects, UsersEffects, DepartmentsEffects, RolesEffects, EmployeesEffects, PersonsEffects, GendersEffects, GenderIdentitiesEffects, SexualOrientationsEffects, RacesEffects, RelationshipDegreeEffects, FamilyCompositionEffects]),
+    provideEffects([UnitsEffects, UsersEffects, DepartmentsEffects, RolesEffects, EmployeesEffects, PersonsEffects, GendersEffects, GenderIdentitiesEffects, SexualOrientationsEffects, RacesEffects, EthnicitiesEffects, RelationshipDegreeEffects, FamilyCompositionEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: environment.production }),
   ],
 }).catch(err => console.error(err));

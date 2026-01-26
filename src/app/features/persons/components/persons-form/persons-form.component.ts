@@ -11,6 +11,7 @@ import * as GendersActions from '../../../genders/store/genders.actions';
 import * as GenderIdentitiesActions from '../../../gender-identities/store/gender-identities.actions';
 import * as SexualOrientationsActions from '../../../sexual-orientations/store/sexual-orientations.actions';
 import * as RacesActions from '../../../races/store/races.actions';
+import * as EthnicitiesActions from '../../../ethnicities/store/ethnicities.actions';
 import { TabbedFormComponent, TabConfig } from '../../../../shared/components/tabbed-form/tabbed-form.component';
 import { FormFieldConfig } from '../../../../shared/components/generic-form/form-field-config';
 
@@ -41,6 +42,7 @@ export class PersonsFormComponent implements OnInit {
   genderIdentities$: Observable<any[]>;
   sexualOrientations$: Observable<any[]>;
   races$: Observable<any[]>;
+  ethnicities$: Observable<any[]>;
 
   tabs: TabConfig[] = [];
 
@@ -57,6 +59,7 @@ export class PersonsFormComponent implements OnInit {
     this.genderIdentities$ = this.store.select(state => (state as any).genderIdentities?.genderIdentities || []);
     this.sexualOrientations$ = this.store.select(state => (state as any).sexualOrientations?.sexualOrientations || []);
     this.races$ = this.store.select(state => (state as any).races?.races || []);
+    this.ethnicities$ = this.store.select(state => (state as any).ethnicities?.ethnicities || []);
   }
 
   private createForm(): FormGroup {
@@ -136,12 +139,21 @@ export class PersonsFormComponent implements OnInit {
     this.store.dispatch(GenderIdentitiesActions.loadGenderIdentities({ params: {} }));
     this.store.dispatch(SexualOrientationsActions.loadSexualOrientations({ params: {} }));
     this.store.dispatch(RacesActions.loadRaces({ params: {} }));
+    this.store.dispatch(EthnicitiesActions.loadEthnicities({ params: {} }));
 
     // Subscribe to races and update the field options
     this.races$.subscribe(races => {
       const raceField = this.tabs[0].fields.find(f => f.name === 'raceId');
       if (raceField) {
         raceField.options = races.map(race => ({ label: race.description, value: race.id }));
+      }
+    });
+
+    // Subscribe to ethnicities and update the field options
+    this.ethnicities$.subscribe(ethnicities => {
+      const ethnicityField = this.tabs[0].fields.find(f => f.name === 'ethnicityId');
+      if (ethnicityField) {
+        ethnicityField.options = ethnicities.map(ethnicity => ({ label: ethnicity.description, value: ethnicity.id }));
       }
     });
 
@@ -247,6 +259,13 @@ export class PersonsFormComponent implements OnInit {
           {
             name: 'raceId',
             label: 'Raça/Cor',
+            type: 'select',
+            options: [],
+            colSpan: 1
+          },
+          {
+            name: 'ethnicityId',
+            label: 'Etnia',
             type: 'select',
             options: [],
             colSpan: 1

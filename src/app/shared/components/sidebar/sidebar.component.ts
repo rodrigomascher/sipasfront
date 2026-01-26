@@ -64,6 +64,10 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
                 <span class="icon">🎨</span>
                 <span>Raça/Cor</span>
               </a></li>
+              <li><a routerLink="/ethnicities" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                <span class="icon">🌍</span>
+                <span>Etnia</span>
+              </a></li>
               <li><a routerLink="/relationship-degrees" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
                 <span class="icon">👨‍👩‍👧</span>
                 <span>Graus de Parentesco</span>
