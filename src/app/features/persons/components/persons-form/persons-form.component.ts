@@ -168,16 +168,16 @@ export class PersonsFormComponent implements OnInit {
     // Subscribe to income types and update the field options
     this.incomeTypes$.subscribe(incomeTypes => {
       const incomeTypeField = this.tabs[1].fields.find(f => f.name === 'incomeTypeId');
-      i
+      if (incomeTypeField) {
+        incomeTypeField.options = incomeTypes.map(incomeType => ({ label: incomeType.description, value: incomeType.id }));
+      }
+    });
 
     // Subscribe to marital statuses and update the field options
     this.maritalStatuses$.subscribe(maritalStatuses => {
       const maritalStatusField = this.tabs[0].fields.find(f => f.name === 'maritalStatusId');
       if (maritalStatusField) {
         maritalStatusField.options = maritalStatuses.map(maritalStatus => ({ label: maritalStatus.description, value: maritalStatus.id }));
-      }
-    });f (incomeTypeField) {
-        incomeTypeField.options = incomeTypes.map(incomeType => ({ label: incomeType.description, value: incomeType.id }));
       }
     });
 

@@ -88,6 +88,11 @@ export const routes: Routes = [
     loadChildren: () => import('./features/income-types/income-types.routes').then(m => m.incomeTypesRoutes)
   },
   {
+    path: 'marital-statuses',
+    canActivate: [authGuard],
+    loadChildren: () => import('./features/marital-statuses/marital-statuses.routes').then(m => m.maritalStatusesRoutes)
+  },
+  {
     path: '**',
     redirectTo: '/auth/login'
   }

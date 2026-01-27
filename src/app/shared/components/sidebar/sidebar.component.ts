@@ -72,6 +72,10 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
                 <span class="icon">💰</span>
                 <span>Tipo de Renda</span>
               </a></li>
+              <li><a routerLink="/marital-statuses" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                <span class="icon">💍</span>
+                <span>Estado Civil</span>
+              </a></li>
               <li><a routerLink="/relationship-degrees" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
                 <span class="icon">👨‍👩‍👧</span>
                 <span>Graus de Parentesco</span>

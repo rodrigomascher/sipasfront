@@ -24,6 +24,7 @@ import { sexualOrientationsReducer } from './app/features/sexual-orientations/st
 import { racesReducer } from './app/features/races/store/races.reducer';
 import { ethnicitiesReducer } from './app/features/ethnicities/store/ethnicities.reducer';
 import { incomeTypesReducer } from './app/features/income-types/store/income-types.reducer';
+import { maritalStatusesReducer } from './app/features/marital-statuses/store/marital-statuses.reducer';
 import { relationshipDegreeReducer } from './app/store/relationship-degree/relationship-degree.reducer';
 import { familyCompositionReducer } from './app/store/family-composition/family-composition.reducer';
 import { UnitsEffects } from './app/store/units/units.effects';
@@ -38,6 +39,7 @@ import { SexualOrientationsEffects } from './app/features/sexual-orientations/st
 import { RacesEffects } from './app/features/races/store/races.effects';
 import { EthnicitiesEffects } from './app/features/ethnicities/store/ethnicities.effects';
 import { IncomeTypesEffects } from './app/features/income-types/store/income-types.effects';
+import { MaritalStatusesEffects } from './app/features/marital-statuses/store/marital-statuses.effects';
 import { RelationshipDegreeEffects } from './app/store/relationship-degree/relationship-degree.effects';
 import { FamilyCompositionEffects } from './app/store/family-composition/family-composition.effects';
 
@@ -59,10 +61,11 @@ bootstrapApplication(AppComponent, {
       sexualOrientations: sexualOrientationsReducer,
       races: racesReducer,
       ethnicities: ethnicitiesReducer,
+      maritalStatuses: maritalStatusesReducer,
       incomeTypes: incomeTypesReducer,
       relationshipDegree: relationshipDegreeReducer,
       familyComposition: familyCompositionReducer
-    }),
+    }),MaritalStatusesEffects, 
     provideEffects([UnitsEffects, UsersEffects, DepartmentsEffects, RolesEffects, EmployeesEffects, PersonsEffects, GendersEffects, GenderIdentitiesEffects, SexualOrientationsEffects, RacesEffects, EthnicitiesEffects, IncomeTypesEffects, RelationshipDegreeEffects, FamilyCompositionEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: environment.production }),
   ],
