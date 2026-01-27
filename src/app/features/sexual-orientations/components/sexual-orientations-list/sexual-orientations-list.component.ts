@@ -77,7 +77,7 @@ export class SexualOrientationsListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(Actions.loadSexualOrientations({ params: {} }));
+    this.store.dispatch(Actions.loadSexualOrientations({ params: { page: 1, pageSize: 10 } }));
   }
 
   onPaginationChange(params: PaginationParams): void {

@@ -77,7 +77,7 @@ export class GendersListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(GendersActions.loadGenders({ params: {} }));
+    this.store.dispatch(GendersActions.loadGenders({ params: { page: 1, pageSize: 10 } }));
   }
 
   onPaginationChange(params: PaginationParams): void {

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map, concatMap, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { RolesService, Role } from '../../core/services/roles.service';
 import * as RolesActions from './roles.actions';
@@ -10,7 +10,7 @@ export class RolesEffects {
   loadRoles$ = createEffect(() =>
     this.actions$.pipe(
       ofType(RolesActions.loadRoles),
-      switchMap(({ params }) => {
+      concatMap(({ params }) => {
         console.log('[RolesEffects] loadRoles with params:', params);
         return this.rolesService.getRoles(params).pipe(
           map((response) => {

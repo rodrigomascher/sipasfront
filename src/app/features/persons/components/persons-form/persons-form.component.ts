@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { Person } from '../../../../core/services/persons.service';
 import * as PersonsActions from '../../store/persons.actions';
@@ -34,7 +35,7 @@ import { FormFieldConfig } from '../../../../shared/components/generic-form/form
     ></app-tabbed-form>
   `
 })
-export class PersonsFormComponent implements OnInit {
+export class PersonsFormComponent implements OnInit, OnDestroy {
   form: FormGroup;
   isEditMode = false;
   personId: number | null = null;
@@ -49,6 +50,8 @@ export class PersonsFormComponent implements OnInit {
   maritalStatuses$: Observable<any[]>;
 
   tabs: TabConfig[] = [];
+  
+  private destroy$ = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
@@ -140,84 +143,107 @@ export class PersonsFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeTabs();
-    this.store.dispatch(PersonsActions.loadPersons({}));
-    this.store.dispatch(GendersActions.loadGenders({ params: {} }));
-    this.store.dispatch(GenderIdentitiesActions.loadGenderIdentities({ params: {} }));
-    this.store.dispatch(SexualOrientationsActions.loadSexualOrientations({ params: {} }));
-    this.store.dispatch(RacesActions.loadRaces({ params: {} }));
-    this.store.dispatch(MaritalStatusesActions.loadMaritalStatuses({ params: {} }));
-    this.store.dispatch(EthnicitiesActions.loadEthnicities({ params: {} }));
-    this.store.dispatch(IncomeTypesActions.loadIncomeTypes({ params: {} }));
+    // Only load lookup data for dropdowns, not the full persons list
+    this.store.dispatch(GendersActions.loadGenders({ params: { page: 1, pageSize: 10 } }));
+    this.store.dispatch(GenderIdentitiesActions.loadGenderIdentities({ params: { page: 1, pageSize: 10 } }));
+    this.store.dispatch(SexualOrientationsActions.loadSexualOrientations({ params: { page: 1, pageSize: 10 } }));
+    this.store.dispatch(RacesActions.loadRaces({ params: { page: 1, pageSize: 10 } }));
+    this.store.dispatch(MaritalStatusesActions.loadMaritalStatuses({ params: { page: 1, pageSize: 10 } }));
+    this.store.dispatch(EthnicitiesActions.loadEthnicities({ params: { page: 1, pageSize: 10 } }));
+    this.store.dispatch(IncomeTypesActions.loadIncomeTypes({ params: { page: 1, pageSize: 10 } }));
 
     // Subscribe to races and update the field options
-    this.races$.subscribe(races => {
-      const raceField = this.tabs[0].fields.find(f => f.name === 'raceId');
-      if (raceField) {
-        raceField.options = races.map(race => ({ label: race.description, value: race.id }));
-      }
-    });
+    this.races$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(races => {
+        const raceField = this.tabs[0].fields.find(f => f.name === 'raceId');
+        if (raceField) {
+          raceField.options = races.map(race => ({ label: race.description, value: race.id }));
+        }
+      });
 
     // Subscribe to ethnicities and update the field options
-    this.ethnicities$.subscribe(ethnicities => {
-      const ethnicityField = this.tabs[0].fields.find(f => f.name === 'ethnicityId');
-      if (ethnicityField) {
-        ethnicityField.options = ethnicities.map(ethnicity => ({ label: ethnicity.description, value: ethnicity.id }));
-      }
-    });
+    this.ethnicities$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(ethnicities => {
+        const ethnicityField = this.tabs[0].fields.find(f => f.name === 'ethnicityId');
+        if (ethnicityField) {
+          ethnicityField.options = ethnicities.map(ethnicity => ({ label: ethnicity.description, value: ethnicity.id }));
+        }
+      });
 
     // Subscribe to income types and update the field options
-    this.incomeTypes$.subscribe(incomeTypes => {
-      const incomeTypeField = this.tabs[1].fields.find(f => f.name === 'incomeTypeId');
-      if (incomeTypeField) {
-        incomeTypeField.options = incomeTypes.map(incomeType => ({ label: incomeType.description, value: incomeType.id }));
-      }
-    });
+    this.incomeTypes$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(incomeTypes => {
+        const incomeTypeField = this.tabs[1].fields.find(f => f.name === 'incomeTypeId');
+        if (incomeTypeField) {
+          incomeTypeField.options = incomeTypes.map(incomeType => ({ label: incomeType.description, value: incomeType.id }));
+        }
+      });
 
     // Subscribe to marital statuses and update the field options
-    this.maritalStatuses$.subscribe(maritalStatuses => {
-      const maritalStatusField = this.tabs[0].fields.find(f => f.name === 'maritalStatusId');
-      if (maritalStatusField) {
-        maritalStatusField.options = maritalStatuses.map(maritalStatus => ({ label: maritalStatus.description, value: maritalStatus.id }));
-      }
-    });
+    this.maritalStatuses$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(maritalStatuses => {
+        const maritalStatusField = this.tabs[0].fields.find(f => f.name === 'maritalStatusId');
+        if (maritalStatusField) {
+          maritalStatusField.options = maritalStatuses.map(maritalStatus => ({ label: maritalStatus.description, value: maritalStatus.id }));
+        }
+      });
 
     // Subscribe to genders and update the field options
-    this.genders$.subscribe(genders => {
-      const genderField = this.tabs[0].fields.find(f => f.name === 'genderId');
-      if (genderField) {
-        genderField.options = genders.map(gender => ({ label: gender.description, value: gender.id }));
-      }
-    });
+    this.genders$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(genders => {
+        const genderField = this.tabs[0].fields.find(f => f.name === 'genderId');
+        if (genderField) {
+          genderField.options = genders.map(gender => ({ label: gender.description, value: gender.id }));
+        }
+      });
 
     // Subscribe to gender identities and update the field options
-    this.genderIdentities$.subscribe(identities => {
-      const identityField = this.tabs[0].fields.find(f => f.name === 'genderIdentityId');
-      if (identityField) {
-        identityField.options = identities.map(identity => ({ label: identity.description, value: identity.id }));
-      }
-    });
+    this.genderIdentities$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(identities => {
+        const identityField = this.tabs[0].fields.find(f => f.name === 'genderIdentityId');
+        if (identityField) {
+          identityField.options = identities.map(identity => ({ label: identity.description, value: identity.id }));
+        }
+      });
 
     // Subscribe to sexual orientations and update the field options
-    this.sexualOrientations$.subscribe(orientations => {
-      const orientationField = this.tabs[0].fields.find(f => f.name === 'sexualOrientation');
-      if (orientationField) {
-        orientationField.options = orientations.map(orientation => ({ label: orientation.description, value: orientation.id }));
-      }
-    });
+    this.sexualOrientations$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(orientations => {
+        const orientationField = this.tabs[0].fields.find(f => f.name === 'sexualOrientation');
+        if (orientationField) {
+          orientationField.options = orientations.map(orientation => ({ label: orientation.description, value: orientation.id }));
+        }
+      });
 
-    this.route.params.subscribe(params => {
-      if (params['id']) {
-        this.isEditMode = true;
-        this.personId = parseInt(params['id'], 10);
-        this.store.dispatch(PersonsActions.loadPersonById({ id: this.personId }));
+    this.route.params
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(params => {
+        if (params['id']) {
+          this.isEditMode = true;
+          this.personId = parseInt(params['id'], 10);
+          this.store.dispatch(PersonsActions.loadPersonById({ id: this.personId }));
 
-        this.store.select(PersonsSelectors.selectSelectedPerson).subscribe(person => {
-          if (person) {
-            this.form.patchValue(person);
-          }
-        });
-      }
-    });
+          this.store.select(PersonsSelectors.selectSelectedPerson)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(person => {
+              if (person) {
+                this.form.patchValue(person);
+              }
+            });
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private initializeTabs(): void {

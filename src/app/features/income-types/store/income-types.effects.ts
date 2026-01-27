@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map, concatMap, switchMap } from 'rxjs/operators';
 import { IncomeTypesService } from '../../../core/services/income-types.service';
 import * as IncomeTypesActions from './income-types.actions';
 
@@ -10,7 +10,7 @@ export class IncomeTypesEffects {
   loadIncomeTypes$ = createEffect(() =>
     this.actions$.pipe(
       ofType(IncomeTypesActions.loadIncomeTypes),
-      switchMap(({ params }) =>
+      concatMap(({ params }) =>
         this.incomeTypesService.getAll(params).pipe(
           map((response) => IncomeTypesActions.loadIncomeTypesSuccess({ response })),
           catchError((error) => of(IncomeTypesActions.loadIncomeTypesFailure({ error })))

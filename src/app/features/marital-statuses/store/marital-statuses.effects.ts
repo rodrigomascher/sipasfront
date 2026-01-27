@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map, concatMap, switchMap } from 'rxjs/operators';
 import { MaritalStatusesService } from '../../../core/services/marital-statuses.service';
 import * as MaritalStatusesActions from './marital-statuses.actions';
 
@@ -10,7 +10,7 @@ export class MaritalStatusesEffects {
   loadMaritalStatuses$ = createEffect(() =>
     this.actions$.pipe(
       ofType(MaritalStatusesActions.loadMaritalStatuses),
-      switchMap(({ params }) =>
+      concatMap(({ params }) =>
         this.maritalStatusesService.getAll(params).pipe(
           map((response) => MaritalStatusesActions.loadMaritalStatusesSuccess({ response })),
           catchError((error) => of(MaritalStatusesActions.loadMaritalStatusesFailure({ error })))

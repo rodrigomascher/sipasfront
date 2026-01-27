@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map, concatMap, switchMap } from 'rxjs/operators';
 import * as RelationshipDegreeActions from './relationship-degree.actions';
 import { RelationshipDegreeService } from '../../core/services/relationship-degree.service';
 
@@ -10,7 +10,7 @@ export class RelationshipDegreeEffects {
   loadRelationshipDegrees$ = createEffect(() =>
     this.actions$.pipe(
       ofType(RelationshipDegreeActions.loadRelationshipDegrees),
-      switchMap(({ params }) =>
+      concatMap(({ params }) =>
         this.service.getAll(params).pipe(
           map((response) =>
             RelationshipDegreeActions.loadRelationshipDegreesSuccess({ response }),

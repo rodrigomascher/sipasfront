@@ -77,7 +77,7 @@ export class EthnicitiesListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(EthnicitiesActions.loadEthnicities({ params: {} }));
+    this.store.dispatch(EthnicitiesActions.loadEthnicities({ params: { page: 1, pageSize: 10 } }));
   }
 
   onPaginationChange(params: PaginationParams): void {

@@ -77,7 +77,7 @@ export class MaritalStatusesListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(MaritalStatusesActions.loadMaritalStatuses({ params: {} }));
+    this.store.dispatch(MaritalStatusesActions.loadMaritalStatuses({ params: { page: 1, pageSize: 10 } }));
   }
 
   onPaginationChange(params: PaginationParams): void {

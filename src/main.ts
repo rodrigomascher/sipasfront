@@ -65,8 +65,8 @@ bootstrapApplication(AppComponent, {
       incomeTypes: incomeTypesReducer,
       relationshipDegree: relationshipDegreeReducer,
       familyComposition: familyCompositionReducer
-    }),MaritalStatusesEffects, 
-    provideEffects([UnitsEffects, UsersEffects, DepartmentsEffects, RolesEffects, EmployeesEffects, PersonsEffects, GendersEffects, GenderIdentitiesEffects, SexualOrientationsEffects, RacesEffects, EthnicitiesEffects, IncomeTypesEffects, RelationshipDegreeEffects, FamilyCompositionEffects]),
+    }),
+    provideEffects([UnitsEffects, UsersEffects, DepartmentsEffects, RolesEffects, EmployeesEffects, PersonsEffects, GendersEffects, GenderIdentitiesEffects, SexualOrientationsEffects, RacesEffects, EthnicitiesEffects, IncomeTypesEffects, MaritalStatusesEffects, RelationshipDegreeEffects, FamilyCompositionEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: environment.production }),
   ],
 }).catch(err => console.error(err));

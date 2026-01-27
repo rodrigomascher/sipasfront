@@ -77,7 +77,7 @@ export class IncomeTypesListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(IncomeTypesActions.loadIncomeTypes({ params: {} }));
+    this.store.dispatch(IncomeTypesActions.loadIncomeTypes({ params: { page: 1, pageSize: 10 } }));
   }
 
   onPaginationChange(params: PaginationParams): void {

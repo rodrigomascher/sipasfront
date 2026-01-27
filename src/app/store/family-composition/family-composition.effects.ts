@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map, concatMap, switchMap } from 'rxjs/operators';
 import * as FamilyCompositionActions from './family-composition.actions';
 import { FamilyCompositionService } from '../../core/services/family-composition.service';
 
@@ -10,7 +10,7 @@ export class FamilyCompositionEffects {
   loadFamilyCompositions$ = createEffect(() =>
     this.actions$.pipe(
       ofType(FamilyCompositionActions.loadFamilyCompositions),
-      switchMap(({ params }) => {
+      concatMap(({ params }) => {
         console.log('[FamilyCompositionEffects] loadFamilyCompositions with params:', params);
         return this.service.getAll(params).pipe(
           map((response) => {

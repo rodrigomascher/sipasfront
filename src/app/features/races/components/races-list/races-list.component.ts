@@ -77,7 +77,7 @@ export class RacesListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(RacesActions.loadRaces({ params: {} }));
+    this.store.dispatch(RacesActions.loadRaces({ params: { page: 1, pageSize: 10 } }));
   }
 
   onPaginationChange(params: PaginationParams): void {

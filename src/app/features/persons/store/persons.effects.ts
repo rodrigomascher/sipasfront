@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { map, catchError, switchMap } from 'rxjs/operators';
+import { map, catchError, concatMap, switchMap } from 'rxjs/operators';
 import { PersonsService } from '../../../core/services/persons.service';
 import * as PersonsActions from './persons.actions';
 
@@ -10,7 +10,7 @@ export class PersonsEffects {
   loadPersons$ = createEffect(() =>
     this.actions$.pipe(
       ofType(PersonsActions.loadPersons),
-      switchMap(({ params }) => {
+      concatMap(({ params }) => {
         console.log('[PersonsEffects] loadPersons with params:', params);
         return this.personsService.getPersons(params).pipe(
           map((response) => {

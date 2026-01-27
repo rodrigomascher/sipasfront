@@ -10,8 +10,8 @@ export interface MaritalStatus {
   id: number;
   description: string;
   active?: boolean;
-  createdBy: number;
-  updatedBy?: number;
+  createdBy?: number | null;
+  updatedBy?: number | null;
   createdAt: Date;
   updatedAt?: Date;
 }
