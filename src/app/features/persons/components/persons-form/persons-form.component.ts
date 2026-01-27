@@ -13,6 +13,7 @@ import * as SexualOrientationsActions from '../../../sexual-orientations/store/s
 import * as RacesActions from '../../../races/store/races.actions';
 import * as EthnicitiesActions from '../../../ethnicities/store/ethnicities.actions';
 import * as IncomeTypesActions from '../../../income-types/store/income-types.actions';
+import * as MaritalStatusesActions from '../../../marital-statuses/store/marital-statuses.actions';
 import { TabbedFormComponent, TabConfig } from '../../../../shared/components/tabbed-form/tabbed-form.component';
 import { FormFieldConfig } from '../../../../shared/components/generic-form/form-field-config';
 
@@ -45,6 +46,7 @@ export class PersonsFormComponent implements OnInit {
   races$: Observable<any[]>;
   ethnicities$: Observable<any[]>;
   incomeTypes$: Observable<any[]>;
+  maritalStatuses$: Observable<any[]>;
 
   tabs: TabConfig[] = [];
 
@@ -62,6 +64,7 @@ export class PersonsFormComponent implements OnInit {
     this.sexualOrientations$ = this.store.select(state => (state as any).sexualOrientations?.sexualOrientations || []);
     this.races$ = this.store.select(state => (state as any).races?.races || []);
     this.ethnicities$ = this.store.select(state => (state as any).ethnicities?.ethnicities || []);
+    this.maritalStatuses$ = this.store.select(state => (state as any).maritalStatuses?.maritalStatuses || []);
     this.incomeTypes$ = this.store.select(state => (state as any).incomeTypes?.incomeTypes || []);
   }
 
@@ -142,6 +145,7 @@ export class PersonsFormComponent implements OnInit {
     this.store.dispatch(GenderIdentitiesActions.loadGenderIdentities({ params: {} }));
     this.store.dispatch(SexualOrientationsActions.loadSexualOrientations({ params: {} }));
     this.store.dispatch(RacesActions.loadRaces({ params: {} }));
+    this.store.dispatch(MaritalStatusesActions.loadMaritalStatuses({ params: {} }));
     this.store.dispatch(EthnicitiesActions.loadEthnicities({ params: {} }));
     this.store.dispatch(IncomeTypesActions.loadIncomeTypes({ params: {} }));
 
@@ -164,7 +168,15 @@ export class PersonsFormComponent implements OnInit {
     // Subscribe to income types and update the field options
     this.incomeTypes$.subscribe(incomeTypes => {
       const incomeTypeField = this.tabs[1].fields.find(f => f.name === 'incomeTypeId');
-      if (incomeTypeField) {
+      i
+
+    // Subscribe to marital statuses and update the field options
+    this.maritalStatuses$.subscribe(maritalStatuses => {
+      const maritalStatusField = this.tabs[0].fields.find(f => f.name === 'maritalStatusId');
+      if (maritalStatusField) {
+        maritalStatusField.options = maritalStatuses.map(maritalStatus => ({ label: maritalStatus.description, value: maritalStatus.id }));
+      }
+    });f (incomeTypeField) {
         incomeTypeField.options = incomeTypes.map(incomeType => ({ label: incomeType.description, value: incomeType.id }));
       }
     });
