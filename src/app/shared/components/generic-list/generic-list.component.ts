@@ -6,6 +6,7 @@ import { Observable, Subject } from 'rxjs';
 import { takeUntil, debounceTime } from 'rxjs/operators';
 import { GenericActionsComponent, GenericAction } from '../generic-actions/generic-actions.component';
 import { ButtonComponent } from '../button/button.component';
+import { ExportService } from '../../services/export.service';
 
 export interface ListColumn {
   key: string;
@@ -37,9 +38,15 @@ export type ListAction = GenericAction;
     <div class="container">
       <div class="header">
         <h1>{{ title }}</h1>
-        <app-button variant="primary" [routerLink]="createRoute">
-          + {{ createButtonLabel }}
-        </app-button>
+        <div class="header-actions">
+          <div class="export-buttons">
+            <button class="export-btn" title="Exportar para CSV" (click)="exportCSV()">📥 CSV</button>
+            <button class="export-btn" title="Exportar para Excel" (click)="exportExcel()">📥 Excel</button>
+          </div>
+          <app-button variant="primary" [routerLink]="createRoute">
+            + {{ createButtonLabel }}
+          </app-button>
+        </div>
       </div>
 
       <div class="search-box">
@@ -148,6 +155,37 @@ export type ListAction = GenericAction;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 2rem;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .export-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .export-btn {
+      padding: 0.5rem 1rem;
+      background-color: #f0f0f0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.3s;
+    }
+
+    .export-btn:hover {
+      background-color: #e8e8e8;
+      border-color: #999;
+    }
+
+    .export-btn:active {
+      background-color: #ddd;
     }
 
     h1 {
@@ -316,10 +354,20 @@ export class GenericListComponent implements OnInit, OnDestroy {
 
   private searchTerm$ = new Subject<string>();
   private destroy$ = new Subject<void>();
+  private currentItems: any[] = [];
+
+  constructor(private exportService: ExportService) {}
 
   ngOnInit() {
     this.pageSize = this.paginationConfig.pageSize;
     this.emitPaginationChange();
+
+    // Inscreve para armazenar items atuais
+    this.items$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(items => {
+        this.currentItems = items || [];
+      });
 
     this.searchTerm$
       .pipe(
@@ -376,6 +424,30 @@ export class GenericListComponent implements OnInit, OnDestroy {
 
   onActionTriggered(event: any) {
     // Handler for when an action is triggered
+  }
+
+  /**
+   * Exporta dados para CSV
+   */
+  exportCSV(): void {
+    if (this.currentItems.length === 0) {
+      alert('Nenhum dado para exportar');
+      return;
+    }
+    const columnKeys = this.columns.map(col => col.key);
+    this.exportService.exportToCSV(this.currentItems, this.title || 'export', columnKeys);
+  }
+
+  /**
+   * Exporta dados para Excel
+   */
+  exportExcel(): void {
+    if (this.currentItems.length === 0) {
+      alert('Nenhum dado para exportar');
+      return;
+    }
+    const columnKeys = this.columns.map(col => col.key);
+    this.exportService.exportToExcel(this.currentItems, this.title || 'export', this.title || 'Dados', columnKeys);
   }
 
   ngOnDestroy() {

@@ -48,7 +48,7 @@ export class UsersListComponent implements OnInit {
     { key: 'id', label: 'ID', formatter: (val) => `#${val}`, sortable: true },
     { key: 'email', label: 'Email', sortable: true },
     { key: 'name', label: 'Nome', sortable: true },
-    { key: 'isActive', label: 'Status', formatter: (val) => val ? 'Ativo' : 'Inativo' },
+    { key: 'isActive', label: 'Status', formatter: (val) => val ? 'Ativo' : 'Inativo', sortable: true },
     { key: 'lastLogin', label: 'Último Acesso', formatter: (val) => val ? new Date(val).toLocaleDateString('pt-BR') : 'Nunca', sortable: true }
   ];
   actions: GenericAction[] = [
